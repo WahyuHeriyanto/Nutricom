@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Nutricom</string>
+    <string name="ini_halaman_home">Ini halaman home</string>
+    <string name="balance">Rp 100.000</string>
+    <string name="greeting">Halo, </string>
+    <string name="time">Waktu </string>
+    <string name="cal_burn">Kalori terbakar </string>
+    <string name="point">Poin  </string>
+    <string name="rangking">Peringkat  </string>
+    <string name="dashboard_information">Times \nCalories Burn \nPoints \nRangking
+    </string>
+    <string name="more_information">More Information</string>
+
+    <string name="notification">Notification</string>
+
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_shopping">Warung Sehat</string>
+    <string name="Shop_Content1">
+        "Menjual aneka jajanan sehat, murah, dan dengan kualitas premum.\n\n"
+
+        "Berdiri sejak 1945, kami berusaha menyajikan makanan dan minuman sehat kepada para konsume tercinta kami."
+        "Dengan memadukan cita rasa yang khas dan konsep makanan tradisional, anda pasti suka.\n\n"
+        "Jaminan, tidak enak, uang kembali"
+
+    </string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Setting</string>
+    <string name="sync_header">Security</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Username</string>
+    <string name="reply_title">Gender</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Show profile to public</string>
+    <string name="attachment_title">Anyone can message me</string>
+    <string name="attachment_summary_on">Anyone, include who have not been added
+    </string>
+    <string name="attachment_summary_off">Only spesific people you added</string>
+
+
+</resources>
