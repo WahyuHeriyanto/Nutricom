@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HomeFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/product_logo"
+        android:layout_margin="10dp"/>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/balances"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:text="@string/greeting"
+        android:textSize="36sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="100dp"
+        android:text="@string/tagline_home"
+        android:textSize="20sp"/>
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/slider_images"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="155dp"/>
+
+    <ImageButton
+        android:id="@+id/infoButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/nutricion_info"
+        android:background="@android:color/transparent"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="310dp"/>
+
+
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/height_values"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="365dp"/>
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/weight_values"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="-120dp"
+        android:layout_marginTop="365dp"/>
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/calories_values"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="120dp"
+        android:layout_marginTop="365dp"/>
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bmi_values"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginStart="-30dp"
+        android:layout_marginTop="470dp"/>
+
+    <ImageView
+        android:id="@+id/imageView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/bmi_title"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="590dp"/>
+
+
+
+</FrameLayout>

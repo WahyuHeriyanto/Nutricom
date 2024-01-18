@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Nutricom</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="home_fragment">Ini Home</string>
+    <string name="activity_fragment">Ini Activity</string>
+    <string name="shop_fragment">Ini Shop</string>
+    <string name="channel_fragment">Ini Channel</string>
+    <string name="greeting">Hello, </string>
+    <string name="tagline_home">Take care of your health and stay in a good mood! </string>
+    <string name="activity_tagline">Make your Exercise </string>
+    <string name="shop_tagline">CHOOSE YOUR FAVORITE </string>
+    <string name="channel_title">Channels </string>
+
+    <string name="google_map_api_key">AIzaSyBlA4jJrsZ8zqfdrb_gKgsZU2es9uUhcuM</string>
+
+
+</resources>

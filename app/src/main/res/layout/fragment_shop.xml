@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShopFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/product_logo"
+        android:layout_margin="10dp"/>
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/balances"
+        android:layout_marginStart="170dp"
+        android:layout_marginTop="10dp"/>
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/shop_big_pict"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="90dp"/>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/shop_tagline"
+        android:textStyle="bold"
+        android:textSize="26sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="290dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/rice_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="340dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/salad_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="340dp"
+        android:layout_marginStart="-120dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/meat_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="340dp"
+        android:layout_marginStart="120dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/yogurt_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="480dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/juice_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="480dp"
+        android:layout_marginStart="120dp"/>
+
+    <ImageButton
+        android:id="@+id/imageButton10"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:src="@drawable/milk_button"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="480dp"
+        android:layout_marginStart="-120dp"/>
+
+
+</FrameLayout>

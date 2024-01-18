@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ArticleActivity">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/white">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Nutricion Data and Information"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    >
+                </TextView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="We provide trusted Information and Data on Nutrification"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="60dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    >
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="News"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="340dp"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <ImageView
+                    android:layout_width="360dp"
+                    android:layout_height="240dp"
+                    android:layout_marginTop="120dp"
+                    android:layout_gravity="center_horizontal"
+                    app:srcCompat="@drawable/videos_play">
+                </ImageView>
+
+
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/white">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Scientists identify how dietary restriction slows brain aging and increases lifespan"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    >
+                </TextView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="The mechanism provides potential therapeutic targets to slow aging and age-related ..."
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="60dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    >
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="11 January 2024"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="240dp"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="120dp"
+                    app:srcCompat="@drawable/img_content_one">
+                </ImageView>
+
+
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/white">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="New reasons eating less fat should be one of your resolutions"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    >
+                </TextView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="A new study to motivate your New Year's resolutions: it demonstrates that high-fat ..."
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="60dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    >
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="10 January 2024"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="240dp"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="120dp"
+                    app:srcCompat="@drawable/img_pict_two">
+                </ImageView>
+
+
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="15dp"
+                app:cardElevation="5dp"
+                app:cardCornerRadius="5dp"
+                app:cardBackgroundColor="@color/white">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Nutritional quality must be at the heart of climate smart agriculture' -- researchers"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    >
+                </TextView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Farmers in sub-Saharan Africa need to diversify away from growing maize and switch to crops that are ..."
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="60dp"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    >
+                </TextView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="11 January 2024"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="240dp"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    >
+                </TextView>
+
+                <ImageView
+                    android:layout_width="150dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="120dp"
+                    app:srcCompat="@drawable/img_pict_three">
+                </ImageView>
+
+
+
+
+
+
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
