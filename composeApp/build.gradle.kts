@@ -52,10 +52,12 @@ kotlin {
     
     sourceSets {
         val desktopMain by getting
+        val androidMain by getting
         
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
+            implementation ("com.google.firebase:firebase-auth-ktx")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
@@ -109,6 +111,11 @@ android {
     }
     dependencies {
         debugImplementation(compose.uiTooling)
+        implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+        implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
+        implementation ("com.google.firebase:firebase-auth-ktx")
+        implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.4.0")
+        implementation ("com.google.android.gms:play-services-auth:20.7.0")
     }
 }
 
