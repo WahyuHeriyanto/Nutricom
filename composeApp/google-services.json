@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1080205844391",
+    "project_id": "nutricom-41968",
+    "storage_bucket": "nutricom-41968.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080205844391:android:b4802232c1f0704003a082",
+        "android_client_info": {
+          "package_name": "org.wahyuheriyanto.nutricom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1080205844391-q6s8n41jad4ndh4s3vmqpgjof9d4j9r5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.wahyuheriyanto.nutricom",
+            "certificate_hash": "f2008638d2567c2478d24e0010617c11fe1b6293"
+          }
+        },
+        {
+          "client_id": "1080205844391-36mv9po7lem7t0tbl46qlrgcpbeql6r0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgFQyxb8n_KvwSZ_wqVB1TOpiIDie3rwA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1080205844391-36mv9po7lem7t0tbl46qlrgcpbeql6r0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
