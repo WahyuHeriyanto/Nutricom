@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import org.wahyuheriyanto.nutricom.view.SplashScreen
 import org.wahyuheriyanto.nutricom.view.LoginScreen
+import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         Handler().postDelayed({
                 setContent {
                     Surface {
-                        LoginScreen()
+                        LoginScreen(viewModel = AuthViewModel())
                     }
                 }
         }, 4000)
