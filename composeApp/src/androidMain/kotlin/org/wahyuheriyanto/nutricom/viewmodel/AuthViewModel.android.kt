@@ -14,9 +14,7 @@ actual fun performLogin(email: String, password: String) {
                 .signInWithEmailAndPassword(email, password)
                 .await()
             val user = authResult.user
-            // Update login state sesuai hasil login
-            // Di sini, kita perlu mengakses instance AuthViewModel
-            // Mungkin perlu menggunakan callback atau state management
+
         } catch (e: Exception) {
             // Tangani error
         }
