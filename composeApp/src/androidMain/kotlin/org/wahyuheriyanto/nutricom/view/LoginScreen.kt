@@ -24,31 +24,32 @@ fun LoginScreen(viewModel: AuthViewModel) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
+
+    // LaunchedEffect untuk memantau perubahan loginState dan memicu dialog sukses
+    LaunchedEffect(loginState) {
+        if (loginState is LoginState.Success) {
+            showSuccessDialog = true
+        }
+    }
 
     Box(
-        modifier = Modifier.padding(20.dp,250.dp)
+        modifier = Modifier.padding(20.dp, 150.dp)
             .clip(RoundedCornerShape(10.dp))
             .background(Color(android.graphics.Color.parseColor("#00AA16")))
-    ){
-
-        ConstraintLayout{
-
-            val (textOne, emailCon,passCon,loginCon)= createRefs()
-
+    ) {
+        ConstraintLayout {
+            val (textOne, emailCon, passCon, loginCon, registerCon) = createRefs()
 
             val startGuideline = createGuidelineFromStart(0.3f)
             val endGuideline = createGuidelineFromEnd(0.3f)
             val topGuideline = createGuidelineFromTop(0.2f)
-            val bottomGuideline = createGuidelineFromBottom(0.4f)
-
-            val inStartGuideline = createGuidelineFromStart(0.4f)
-            val inEndGuideline = createGuidelineFromEnd(0.4f)
 
             TextField(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("Email") },
-                modifier = Modifier.constrainAs(emailCon){
+                modifier = Modifier.constrainAs(emailCon) {
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
                     top.linkTo(topGuideline)
@@ -56,13 +57,12 @@ fun LoginScreen(viewModel: AuthViewModel) {
                     .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
             )
 
-
             TextField(
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("Password") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.constrainAs(passCon){
+                modifier = Modifier.constrainAs(passCon) {
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
                     top.linkTo(emailCon.bottom)
@@ -71,33 +71,43 @@ fun LoginScreen(viewModel: AuthViewModel) {
                     .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
             )
 
-            Text("Forgot Password", modifier = Modifier.constrainAs(textOne){
+            Text("Forgot Password", modifier = Modifier.constrainAs(textOne) {
                 start.linkTo(passCon.start)
                 top.linkTo(passCon.bottom)
-            },
-                color = Color.White)
-            
+            }, color = Color.White)
+
             Button(
                 onClick = { viewModel.login(email, password) },
-                modifier = Modifier.constrainAs(loginCon){
-                    start.linkTo(inStartGuideline)
-                    end.linkTo(inEndGuideline)
+                modifier = Modifier.constrainAs(loginCon) {
+                    start.linkTo(startGuideline)
+                    end.linkTo(endGuideline)
                     top.linkTo(textOne.bottom)
-
                 }
                     .padding(10.dp)
-                    .background(Color.Transparent)
-                    , colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#CAE8AC")))
+                    .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#CAE8AC")))
             ) {
                 Text("Login", modifier = Modifier.background(color = Color.Transparent))
+            }
+
+            // Tombol untuk Register
+            Button(
+                onClick = { viewModel.register(email, password) },
+                modifier = Modifier.constrainAs(registerCon) {
+                    start.linkTo(startGuideline)
+                    end.linkTo(endGuideline)
+                    top.linkTo(loginCon.bottom)
+                }
+                    .padding(10.dp)
+                    .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#CAE8AC")))
+            ) {
+                Text("Register", modifier = Modifier.background(color = Color.Transparent))
             }
 
             when (loginState) {
                 is LoginState.Loading -> {
                     CircularProgressIndicator()
-                }
-                is LoginState.Success -> {
-                    Text("Login successful!")
                 }
                 is LoginState.Error -> {
                     Text("Error: ${(loginState as LoginState.Error).message}")
@@ -106,30 +116,27 @@ fun LoginScreen(viewModel: AuthViewModel) {
                     // Idle state
                 }
             }
-
-
         }
 
-
-
-
-    }
-
-
-
-    
-}
-
-@Composable
-fun RoundedBox(shape: Shape){
-
-}
-
-@Preview
-@Composable
-
-fun LoginScreenPreview(){
-    Surface(modifier = Modifier.fillMaxSize()) {
-        LoginScreen(viewModel = AuthViewModel())
+        // Tampilan AlertDialog untuk registrasi sukses
+        if (showSuccessDialog) {
+            AlertDialog(
+                onDismissRequest = {
+                    showSuccessDialog = false  // Menghilangkan dialog ketika di-dismiss
+                },
+                title = { Text("Registrasi Berhasil") },
+                text = { Text("Akun Anda telah berhasil terdaftar.") },
+                confirmButton = {
+                    Button(onClick = {
+                        showSuccessDialog = false  // Menutup dialog dengan mengubah state
+                    }) {
+                        Text("OK")
+                    }
+                }
+            )
+        }
     }
 }
+
+
+
