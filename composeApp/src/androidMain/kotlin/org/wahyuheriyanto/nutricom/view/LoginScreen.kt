@@ -17,19 +17,53 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun LoginScreen(viewModel: AuthViewModel) {
+fun MainScreen(viewModel: AuthViewModel) {
+    val navController = rememberNavController()
+    NavHost(navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(viewModel) {
+                // Navigasi ke HomeScreen setelah login berhasil
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true } // Menghapus halaman login dari stack
+                }
+            }
+        }
+        composable("home") {
+            HomeScreen()
+        }
+    }
+}
+
+
+@Composable
+fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
+    var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
 
-    // LaunchedEffect untuk memantau perubahan loginState dan memicu dialog sukses
+    // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
-        if (loginState is LoginState.Success) {
-            showSuccessDialog = true
+        when (loginState) {
+            is LoginState.Success -> {
+                onLoginSuccess()  // Pindah ke HomeScreen
+            }
+            is LoginState.Error -> {
+                showErrorDialog = true  // Tampilkan dialog error
+            }
+            is LoginState.Loading -> {
+                // Optional: Menampilkan loading indicator jika perlu
+            }
+            LoginState.Idle -> {
+                // Optional: Tidak ada aksi
+            }
         }
     }
 
@@ -90,7 +124,6 @@ fun LoginScreen(viewModel: AuthViewModel) {
                 Text("Login", modifier = Modifier.background(color = Color.Transparent))
             }
 
-            // Tombol untuk Register
             Button(
                 onClick = { viewModel.register(email, password) },
                 modifier = Modifier.constrainAs(registerCon) {
@@ -118,17 +151,17 @@ fun LoginScreen(viewModel: AuthViewModel) {
             }
         }
 
-        // Tampilan AlertDialog untuk registrasi sukses
-        if (showSuccessDialog) {
+        // Tampilan AlertDialog untuk error login
+        if (showErrorDialog) {
             AlertDialog(
                 onDismissRequest = {
-                    showSuccessDialog = false  // Menghilangkan dialog ketika di-dismiss
+                    showErrorDialog = false  // Menghilangkan dialog ketika di-dismiss
                 },
-                title = { Text("Registrasi Berhasil") },
-                text = { Text("Akun Anda telah berhasil terdaftar.") },
+                title = { Text("Login Gagal") },
+                text = { Text("Email dan password tidak terdaftar.") },
                 confirmButton = {
                     Button(onClick = {
-                        showSuccessDialog = false  // Menutup dialog dengan mengubah state
+                        showErrorDialog = false  // Menutup dialog dengan mengubah state
                     }) {
                         Text("OK")
                     }

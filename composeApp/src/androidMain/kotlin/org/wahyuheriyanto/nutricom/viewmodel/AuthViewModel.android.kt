@@ -6,20 +6,24 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-// Implementasi actual untuk platform Android
-actual fun performLogin(email: String, password: String) {
+actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val authResult = FirebaseAuth.getInstance()
                 .signInWithEmailAndPassword(email, password)
                 .await()
+
+            // Jika login berhasil
             val user = authResult.user
+            viewModel.setLoginState(LoginState.Success("Login successful!"))
 
         } catch (e: Exception) {
-            // Tangani error
+            // Jika login gagal
+            viewModel.setLoginState(LoginState.Error("Email dan password tidak terdaftar"))
         }
     }
 }
+
 
 actual fun performRegister(email: String, password: String) {
     CoroutineScope(Dispatchers.IO).launch {
