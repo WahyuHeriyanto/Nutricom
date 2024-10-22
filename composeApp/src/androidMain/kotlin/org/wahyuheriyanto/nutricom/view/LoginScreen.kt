@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -49,6 +50,7 @@ fun MainScreen(viewModel: AuthViewModel) {
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
 
+    var checked by remember { mutableStateOf(true) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
@@ -61,13 +63,13 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 onLoginSuccess()  // Pindah ke HomeScreen
             }
             is LoginState.Error -> {
-                showErrorDialog = true  // Tampilkan dialog error
+                showErrorDialog = true
             }
             is LoginState.Loading -> {
-                // Optional: Menampilkan loading indicator jika perlu
+
             }
             LoginState.Idle -> {
-                // Optional: Tidak ada aksi
+
             }
         }
     }
@@ -118,11 +120,14 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (textOne, textTwo, emailCon, passCon, loginCon, registerCon) = createRefs()
+                val (rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerCon) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
                 val endGuideline = createGuidelineFromEnd(0.4f)
                 val topGuideline = createGuidelineFromTop(0.2f)
+
+                val checkStartGuideline = createGuidelineFromStart(0.05f)
+                val checkEndGuideline = createGuidelineFromEnd(0.05f)
 
                 TextField(
                     value = email,
@@ -155,9 +160,37 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 )
 
                 Text("Forgot Password", modifier = Modifier.constrainAs(textOne) {
-                    start.linkTo(passCon.start)
+
+                    end.linkTo(checkEndGuideline)
                     top.linkTo(passCon.bottom)
-                }, color = Color.White)
+                }
+                    .padding(
+                        0.dp,16.dp
+                    ), color = Color.White)
+
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.constrainAs(rememberme){
+                    start.linkTo(checkStartGuideline)
+                    top.linkTo(passCon.bottom)
+
+                }) {
+                    Checkbox(
+                        checked = checked,
+                        onCheckedChange = { checked = it }
+                    )
+                    Text(
+                        "Remember me", color = Color.White
+                    )
+
+                }
+
+                Text(
+                    ""
+                )
+
+
 
                 Button(
                     onClick = { viewModel.login(email, password) },
@@ -165,7 +198,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .constrainAs(loginCon) {
                             start.linkTo(startGuideline)
                             end.linkTo(endGuideline)
-                            top.linkTo(textOne.bottom)
+                            top.linkTo(rememberme.bottom)
                         }
                         .padding(10.dp)
                         .size(120.dp,40.dp)
@@ -213,13 +246,13 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
             if (showErrorDialog) {
                 AlertDialog(
                     onDismissRequest = {
-                        showErrorDialog = false  // Menghilangkan dialog ketika di-dismiss
+                        showErrorDialog = false
                     },
                     title = { Text("Login Gagal") },
                     text = { Text("Email dan password tidak terdaftar.") },
                     confirmButton = {
                         Button(onClick = {
-                            showErrorDialog = false  // Menutup dialog dengan mengubah state
+                            showErrorDialog = false
                         }) {
                             Text("OK")
                         }
