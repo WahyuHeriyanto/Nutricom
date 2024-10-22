@@ -10,3 +10,10 @@ actual fun performLogin(
     password: String
 ) {
 }
+
+actual fun performRegister(
+    viewModel: AuthViewModel,
+    email: String,
+    password: String
+) {
+}

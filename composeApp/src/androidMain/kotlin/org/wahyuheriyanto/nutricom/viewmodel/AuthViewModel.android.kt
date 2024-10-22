@@ -25,16 +25,19 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
 }
 
 
-actual fun performRegister(email: String, password: String) {
+actual fun performRegister(viewModel: AuthViewModel, email: String, password: String) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val authResult = FirebaseAuth.getInstance()
                 .createUserWithEmailAndPassword(email, password)
                 .await()
-            val user = authResult.user
-            // Anda bisa mengirimkan hasil registrasi ke UI dengan cara mengupdate state
+
+            // Jika registrasi berhasil
+            viewModel.setLoginState(LoginState.Success("Registration successful!"))
+
         } catch (e: Exception) {
-            // Tangani error
+            // Jika registrasi gagal
+            viewModel.setLoginState(LoginState.Error("Registration failed"))
         }
     }
 }

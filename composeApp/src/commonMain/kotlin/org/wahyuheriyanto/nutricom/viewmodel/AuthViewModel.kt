@@ -24,19 +24,9 @@ class AuthViewModel : ViewModel() {
 
     fun register(email: String, password: String) {
         _loginState.update { LoginState.Loading }
-        CoroutineScope(Dispatchers.Default).launch {
-            try {
-                performRegister(email, password)
-                withContext(Dispatchers.Main) {
-                    _loginState.update { LoginState.Success("Registration successful!") }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    _loginState.update { LoginState.Error(e.message ?: "Registration failed") }
-                }
-            }
-        }
+        performRegister(this, email, password) // Kirim instance viewModel saat memanggil fungsi
     }
+
 
     fun setLoginState(state: LoginState) {
         _loginState.value = state
@@ -46,7 +36,7 @@ class AuthViewModel : ViewModel() {
 // Deklarasi expect untuk fungsi login dan register di luar kelas
 expect fun performLogin(viewModel: AuthViewModel, email: String, password: String)
 
-expect fun performRegister(email: String, password: String)
+expect fun performRegister(viewModel: AuthViewModel, email: String, password: String)
 
 // Definisi status login/registrasi
 sealed class LoginState {
