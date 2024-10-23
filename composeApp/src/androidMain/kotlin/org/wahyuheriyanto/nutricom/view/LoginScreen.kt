@@ -237,11 +237,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
                 }
 
-                Text(
-                    ""
-                )
-
-
 
                 Button(
                     onClick = { viewModel.login(email, password) },
