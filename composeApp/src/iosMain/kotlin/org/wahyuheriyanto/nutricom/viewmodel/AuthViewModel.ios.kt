@@ -15,3 +15,9 @@ actual fun performRegister(
     password: String
 ) {
 }
+
+actual fun performGoogleSignIn(
+    viewModel: AuthViewModel,
+    googleIdToken: String
+) {
+}

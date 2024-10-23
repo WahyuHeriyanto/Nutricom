@@ -1,9 +1,12 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
@@ -41,3 +44,20 @@ actual fun performRegister(viewModel: AuthViewModel, email: String, password: St
         }
     }
 }
+
+
+
+
+actual fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String) {
+    val credential = GoogleAuthProvider.getCredential(idToken, null)
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            FirebaseAuth.getInstance().signInWithCredential(credential).await()
+            viewModel.setLoginState(LoginState.Success("Login successful!"))
+        } catch (e: Exception) {
+            viewModel.setLoginState(LoginState.Error("Login failed: ${e.message}"))
+        }
+    }
+}
+
+

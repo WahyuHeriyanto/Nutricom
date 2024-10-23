@@ -20,6 +20,10 @@ class AuthViewModel : ViewModel() {
         performLogin(this, email, password) // Kirim instance viewModel saat memanggil fungsi
     }
 
+    fun loginWithGoogle(idToken: String) {
+        _loginState.update { LoginState.Loading }
+        performGoogleSignIn(this, idToken) // Kirim instance viewModel saat memanggil fungsi
+    }
 
 
     fun register(email: String, password: String) {
@@ -31,12 +35,20 @@ class AuthViewModel : ViewModel() {
     fun setLoginState(state: LoginState) {
         _loginState.value = state
     }
+
+
 }
 
 // Deklarasi expect untuk fungsi login dan register di luar kelas
 expect fun performLogin(viewModel: AuthViewModel, email: String, password: String)
 
 expect fun performRegister(viewModel: AuthViewModel, email: String, password: String)
+
+expect fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String)
+
+// CommonMain: Define the expect function for Google Sign-In
+
+
 
 // Definisi status login/registrasi
 sealed class LoginState {

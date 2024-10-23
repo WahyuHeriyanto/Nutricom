@@ -1,5 +1,9 @@
 package org.wahyuheriyanto.nutricom.view
 
+import android.app.Activity
+import android.provider.Settings.Global.getString
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +30,16 @@ import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import org.wahyuheriyanto.nutricom.MainActivity.Companion.REQUEST_CODE_GOOGLE_SIGN_IN
+
 import org.wahyuheriyanto.nutricom.R
+
+// In your Android-specific Activity or Fragment
+
 
 @Composable
 fun MainScreen(viewModel: AuthViewModel) {
@@ -46,6 +60,7 @@ fun MainScreen(viewModel: AuthViewModel) {
 }
 
 
+
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
@@ -55,6 +70,41 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     var password by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
+
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+
+    // GoogleSignInOptions setup
+    val googleSignInOptions = remember {
+        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id)) // Web client ID from Firebase
+            .requestEmail()
+            .build()
+    }
+
+    val googleSignInClient = remember {
+        GoogleSignIn.getClient(context, googleSignInOptions)
+    }
+
+    // Register for activity result launcher
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) { result ->
+        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
+        try {
+            val account = task.getResult(ApiException::class.java)
+            // Pass Google ID token to FirebaseAuth
+            val idToken = account?.idToken
+            if (idToken != null) {
+                viewModel.loginWithGoogle(idToken)
+            }
+        } catch (e: ApiException) {
+            // Handle error
+        }
+    }
+
+
+
+
 
     // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
@@ -120,7 +170,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerCon) = createRefs()
+                val (googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerCon) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
                 val endGuideline = createGuidelineFromEnd(0.4f)
@@ -159,13 +209,14 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
 
-                Text("Forgot Password", modifier = Modifier.constrainAs(textOne) {
+                Text("Forgot Password", modifier = Modifier
+                    .constrainAs(textOne) {
 
-                    end.linkTo(checkEndGuideline)
-                    top.linkTo(passCon.bottom)
-                }
+                        end.linkTo(checkEndGuideline)
+                        top.linkTo(passCon.bottom)
+                    }
                     .padding(
-                        0.dp,16.dp
+                        0.dp, 16.dp
                     ), color = Color.White)
 
 
@@ -201,7 +252,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                             top.linkTo(rememberme.bottom)
                         }
                         .padding(10.dp)
-                        .size(120.dp,40.dp)
+                        .size(120.dp, 40.dp)
                         .background(Color.Transparent),
                     colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#CAE8AC")))
                 ) {
@@ -213,6 +264,22 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                     end.linkTo(endGuideline)
                     top.linkTo(loginCon.bottom)
                 }, color = Color.White)
+
+
+                Button(onClick = {
+                    // Trigger Google Sign-In here
+                    val signInIntent = googleSignInClient.signInIntent
+                    launcher.launch(signInIntent)
+                }
+                , modifier = Modifier.constrainAs(googlesign){
+                    start.linkTo(startGuideline)
+                        end.linkTo(endGuideline)
+                        top.linkTo(textTwo.bottom)
+                    }) {
+                    Image(painter = painterResource(id = R.drawable.logo_nutricom), contentDescription = null,
+                        modifier = Modifier.size(10.dp))
+                    Text("Login with Google")
+                }
 
 //                Button(
 //                    onClick = { viewModel.register(email, password) },

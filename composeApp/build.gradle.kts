@@ -121,6 +121,9 @@ android {
 
     }
 }
+dependencies {
+    implementation(libs.androidx.appcompat)
+}
 
 compose.desktop {
     application {
