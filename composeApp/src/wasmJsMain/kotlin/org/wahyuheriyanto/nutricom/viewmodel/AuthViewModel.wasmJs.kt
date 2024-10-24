@@ -18,7 +18,6 @@ actual fun performRegister(
 }
 
 actual fun performGoogleSignIn(
-    viewModel: AuthViewModel,
-    googleIdToken: String
+    viewModel: AuthViewModel, idToken: String
 ) {
 }
