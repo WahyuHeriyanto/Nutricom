@@ -6,6 +6,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -46,15 +47,21 @@ fun MainScreen(viewModel: AuthViewModel) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(viewModel) {
-                // Navigasi ke HomeScreen setelah login berhasil
+            LoginScreen(viewModel, onLoginSuccess = {
                 navController.navigate("home") {
-                    popUpTo("login") { inclusive = true } // Menghapus halaman login dari stack
+                    popUpTo("login") { inclusive = true }
                 }
-            }
+            }, onSignUpClick = {
+                navController.navigate("register")
+            })
         }
         composable("home") {
             HomeScreen()
+        }
+        composable("register") {
+            RegisterScreen(viewModel = AuthViewModel()) {
+                
+            }
         }
     }
 }
@@ -62,7 +69,7 @@ fun MainScreen(viewModel: AuthViewModel) {
 
 
 @Composable
-fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
+fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
 
     var checked by remember { mutableStateOf(true) }
@@ -160,7 +167,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         Box(
             modifier = Modifier
                 .padding(0.dp, 10.dp)
-                .size(320.dp, 400.dp)
+                .size(320.dp, 420.dp)
                 .constrainAs(loginBox) {
                     start.linkTo(backStartGuideline)
                     end.linkTo(backEndGuideline)
@@ -170,7 +177,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerCon) = createRefs()
+                val (googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerText) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
                 val endGuideline = createGuidelineFromEnd(0.4f)
@@ -276,6 +283,19 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                     Text("Login with Google")
                 }
 
+                Text(
+                    "Don't have an account? Sign Up",
+                    modifier = Modifier
+                        .constrainAs(registerText) {
+                            start.linkTo(startGuideline)
+                            end.linkTo(endGuideline)
+                            top.linkTo(googlesign.bottom)
+                        }
+                        .clickable { onSignUpClick() },
+                    color = Color.White,
+                    fontSize = 16.sp
+                )
+
 //                Button(
 //                    onClick = { viewModel.register(email, password) },
 //                    modifier = Modifier
@@ -334,7 +354,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 fun UIPreview(){
 
     Surface(modifier= Modifier.fillMaxSize()) {
-        LoginScreen(viewModel = AuthViewModel()) {
+        LoginScreen(viewModel = AuthViewModel(), onLoginSuccess = { /*TODO*/ }) {
             
         }
 
