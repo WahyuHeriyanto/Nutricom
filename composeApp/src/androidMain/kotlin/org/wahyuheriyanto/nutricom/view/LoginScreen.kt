@@ -302,23 +302,23 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 }
 
 
-                Box(modifier = Modifier.constrainAs(progress){
-                    start.linkTo(startGuideline)
-                    end.linkTo(endGuideline)
-                    bottom.linkTo(emailCon.top)
-                }){
-//                    when (loginState) {
-//                        is LoginState.Loading -> {
-//                            CircularProgressIndicator()
-//                        }
-//                        is LoginState.Error -> {
-//                            Text((loginState as LoginState.Error).message, color = Color.Red)
-//                        }
-//                        else -> {
-//                            // Idle state
-//                        }
-//                    }
-                }
+//                Box(modifier = Modifier.constrainAs(progress){
+//                    start.linkTo(startGuideline)
+//                    end.linkTo(endGuideline)
+//                    bottom.linkTo(emailCon.top)
+//                }){
+////                    when (loginState) {
+////                        is LoginState.Loading -> {
+////                            CircularProgressIndicator()
+////                        }
+////                        is LoginState.Error -> {
+////                            Text((loginState as LoginState.Error).message, color = Color.Red)
+////                        }
+////                        else -> {
+////                            // Idle state
+////                        }
+////                    }
+//                }
 
 
             }
