@@ -1,7 +1,7 @@
 package org.wahyuheriyanto.nutricom.view
 
 import android.app.Activity
-import android.provider.Settings.Global.getString
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -15,12 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,17 +30,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import org.wahyuheriyanto.nutricom.MainActivity.Companion.REQUEST_CODE_GOOGLE_SIGN_IN
-
 import org.wahyuheriyanto.nutricom.R
-
-// In your Android-specific Activity or Fragment
 
 
 @Composable
+//Main Screen of Login Page
 fun MainScreen(viewModel: AuthViewModel) {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "login") {
@@ -54,30 +48,26 @@ fun MainScreen(viewModel: AuthViewModel) {
             }, onSignUpClick = {
                 navController.navigate("register")
             })
-        }
+        } //Login Page Navigation
         composable("home") {
             HomeScreen()
-        }
+        } //Home Page Navigation
         composable("register") {
             RegisterScreen(viewModel = AuthViewModel()) {
-                
             }
-        }
-    }
-}
-
-
+        } //Register Page Navigation
+    } //NavHost
+} //MainScreen
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
 
-    var checked by remember { mutableStateOf(true) }
+    var checked by remember { mutableStateOf(false) }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
-
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -104,14 +94,11 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
             if (idToken != null) {
                 viewModel.loginWithGoogle(idToken)
             }
+
         } catch (e: ApiException) {
             // Handle error
         }
     }
-
-
-
-
 
     // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
@@ -121,12 +108,11 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
             }
             is LoginState.Error -> {
                 showErrorDialog = true
+
             }
             is LoginState.Loading -> {
-
             }
             LoginState.Idle -> {
-
             }
         }
     }
@@ -135,7 +121,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
         contentDescription = null,
         modifier = Modifier.fillMaxSize())
     ConstraintLayout {
-
         val (logo, title, loginBox) = createRefs()
 
         val backStartGuideline = createGuidelineFromStart(0.2f)
@@ -153,7 +138,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     top.linkTo(backTopGuideline)
                 }
         )
-
 
         Text(text = "SIGN IN", fontSize = 30.sp,
             fontStyle = FontStyle.Normal,
@@ -177,12 +161,11 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerText) = createRefs()
+                val (progress, googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerText) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
                 val endGuideline = createGuidelineFromEnd(0.4f)
-                val topGuideline = createGuidelineFromTop(0.2f)
-
+                val topGuideline = createGuidelineFromTop(0.1f)
                 val checkStartGuideline = createGuidelineFromStart(0.05f)
                 val checkEndGuideline = createGuidelineFromEnd(0.05f)
 
@@ -190,6 +173,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     value = email,
                     onValueChange = { email = it },
                     label = { Text("Email") },
+                    singleLine = true,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(emailCon) {
@@ -205,6 +189,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     onValueChange = { password = it },
                     label = { Text("Password") },
                     visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(passCon) {
@@ -216,24 +201,15 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
 
-                Text("Forgot Password", modifier = Modifier
-                    .constrainAs(textOne) {
-
-                        end.linkTo(checkEndGuideline)
-                        top.linkTo(passCon.bottom)
-                    }
-                    .padding(
-                        0.dp, 16.dp
-                    ), color = Color.White)
-
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.constrainAs(rememberme){
                     start.linkTo(checkStartGuideline)
                     top.linkTo(passCon.bottom)
+                }
 
-                }) {
+                ) {
+
                     Checkbox(
                         checked = checked,
                         onCheckedChange = { checked = it }
@@ -241,9 +217,12 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     Text(
                         "Remember me", color = Color.White
                     )
+                    Spacer(modifier = Modifier.width(30.dp))
+                    Text("Forgot Password"
+                        , color = Color.White
+                    )
 
                 }
-
 
                 Button(
                     onClick = { viewModel.login(email, password) },
@@ -267,71 +246,90 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     top.linkTo(loginCon.bottom)
                 }, color = Color.White)
 
-
-                Button(onClick = {
-                    // Trigger Google Sign-In here
-                    val signInIntent = googleSignInClient.signInIntent
-                    launcher.launch(signInIntent)
-                }
-                , modifier = Modifier.constrainAs(googlesign){
-                    start.linkTo(startGuideline)
+                Button(
+                    onClick = {
+                        // Trigger Google Sign-In here
+                        val signInIntent = googleSignInClient.signInIntent
+                        launcher.launch(signInIntent)
+                    },
+                    modifier = Modifier.constrainAs(googlesign) {
+                        start.linkTo(startGuideline)
                         end.linkTo(endGuideline)
                         top.linkTo(textTwo.bottom)
-                    }) {
-                    Image(painter = painterResource(id = R.drawable.logo_nutricom), contentDescription = null,
-                        modifier = Modifier.size(10.dp))
-                    Text("Login with Google")
+                    }
+                        .padding(0.dp,10.dp),
+                    colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#FFFFFF")))
+
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)// Jarak antara ikon dan teks
+
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.google_icon),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp) // Ukuran ikon Google
+                        )
+                        Text("Login with Google")
+                    }
                 }
 
-                Text(
-                    "Don't have an account? Sign Up",
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier
                         .constrainAs(registerText) {
                             start.linkTo(startGuideline)
                             end.linkTo(endGuideline)
                             top.linkTo(googlesign.bottom)
                         }
-                        .clickable { onSignUpClick() },
-                    color = Color.White,
-                    fontSize = 16.sp
-                )
+                ) {
 
-//                Button(
-//                    onClick = { viewModel.register(email, password) },
-//                    modifier = Modifier
-//                        .constrainAs(registerCon) {
-//                            start.linkTo(startGuideline)
-//                            end.linkTo(endGuideline)
-//                            top.linkTo(loginCon.bottom)
-//                        }
-//                        .padding(10.dp)
-//                        .background(Color.Transparent),
-//                    colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#CAE8AC")))
-//                ) {
-//                    Text("Register", modifier = Modifier.background(color = Color.Transparent))
-//                }
+                    Text(
+                        "Don't have an account?",
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
 
-                when (loginState) {
-                    is LoginState.Loading -> {
-                        CircularProgressIndicator()
-                    }
-                    is LoginState.Error -> {
-                        Text("Error: ${(loginState as LoginState.Error).message}")
-                    }
-                    else -> {
-                        // Idle state
-                    }
+                    Text(
+                        "Sign Up",
+                        modifier = Modifier.clickable { onSignUpClick() },
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
+
                 }
-            }
 
-            // Tampilan AlertDialog untuk error login
+
+                Box(modifier = Modifier.constrainAs(progress){
+                    start.linkTo(startGuideline)
+                    end.linkTo(endGuideline)
+                    bottom.linkTo(emailCon.top)
+                }){
+//                    when (loginState) {
+//                        is LoginState.Loading -> {
+//                            CircularProgressIndicator()
+//                        }
+//                        is LoginState.Error -> {
+//                            Text((loginState as LoginState.Error).message, color = Color.Red)
+//                        }
+//                        else -> {
+//                            // Idle state
+//                        }
+//                    }
+                }
+
+
+            }
+            // Show AlertDialog for login error
             if (showErrorDialog) {
                 AlertDialog(
                     onDismissRequest = {
                         showErrorDialog = false
                     },
                     title = { Text("Login Gagal") },
-                    text = { Text("Email dan password tidak terdaftar.") },
+                    text = { Text("Email and password invalid. Please try again") },
                     confirmButton = {
                         Button(onClick = {
                             showErrorDialog = false
@@ -342,22 +340,15 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 )
             }
         }
-
     }
-
-
 }
 
 @Preview
 @Composable
-
 fun UIPreview(){
-
     Surface(modifier= Modifier.fillMaxSize()) {
         LoginScreen(viewModel = AuthViewModel(), onLoginSuccess = { /*TODO*/ }) {
-            
         }
-
     }
 }
 

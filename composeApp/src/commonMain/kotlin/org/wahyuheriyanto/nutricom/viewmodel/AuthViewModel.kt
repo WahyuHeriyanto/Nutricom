@@ -13,11 +13,13 @@ import kotlinx.coroutines.withContext
 // Kelas AuthViewModel
 class AuthViewModel : ViewModel() {
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
-    val loginState: StateFlow<LoginState> = _loginState.asStateFlow()
+    val loginState: StateFlow<LoginState> = _loginState
 
     fun login(email: String, password: String) {
         _loginState.update { LoginState.Loading }
         performLogin(this, email, password) // Kirim instance viewModel saat memanggil fungsi
+//        _loginState.value = LoginState.Loading
+//        _loginState.value = LoginState.Error("")
     }
 
     fun loginWithGoogle(idToken: String) {
