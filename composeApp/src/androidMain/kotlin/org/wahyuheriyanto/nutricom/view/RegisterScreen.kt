@@ -20,7 +20,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-
+import android.app.DatePickerDialog
+import androidx.compose.material.IconButton
+import androidx.compose.material.Icon
+import java.util.Calendar
+import android.content.Context
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -86,6 +90,8 @@ fun evaluatePasswordStrength(password: String): Pair<PasswordStrength, Int> {
 
 
 
+
+
 @Composable
 fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
@@ -106,8 +112,12 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
     var passwordVisible by remember { mutableStateOf(false) } // State untuk visibility password
 
+
+
     val context = LocalContext.current
     val activity = context as? Activity
+
+
 
     // GoogleSignInOptions setup
     val googleSignInOptions = remember {
@@ -136,7 +146,18 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         }
     }
 
+    // DatePicker Dialog
+    fun showDatePickerDialog(context: Context) {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
 
+        DatePickerDialog(context, { _, selectedYear, selectedMonth, selectedDay ->
+            // Format the selected date to dd/MM/yyyy
+            birth = String.format("%02d/%02d/%d", selectedDay, selectedMonth + 1, selectedYear)
+        }, year, month, day).show()
+    }
 
 
 
@@ -294,6 +315,17 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                     value = birth,
                     onValueChange = { birth = it },
                     label = { Text("date and birth") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { showDatePickerDialog(context) },
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.calendar_icon), // Make sure to have this icon
+                                contentDescription = "",
+                                modifier = Modifier.size(24.dp) // Adjust size as needed
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .width(250.dp)
                         .padding(0.dp, 10.dp)
