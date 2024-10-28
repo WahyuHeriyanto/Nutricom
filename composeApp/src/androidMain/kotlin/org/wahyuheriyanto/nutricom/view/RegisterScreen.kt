@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,11 +61,37 @@ fun RegisterNav(viewModel: AuthViewModel) {
     }
 }
 
+enum class PasswordStrength(val label: String, val color: Color) {
+    WEAK("Weak", Color.Red),
+    FAIR("Fair", Color.Yellow),
+    GOOD("Good", Color.Blue),
+    STRONG("Strong", Color.Green)
+}
+
+fun evaluatePasswordStrength(password: String): Pair<PasswordStrength, Int> {
+    val lengthScore = password.length * 5
+    val uppercaseScore = if (password.any { it.isUpperCase() }) 20 else 0
+    val numberScore = if (password.any { it.isDigit() }) 10 else 0
+    val specialCharScore = if (password.any { !it.isLetterOrDigit() }) 10 else 0
+
+    val totalScore = lengthScore + uppercaseScore + numberScore + specialCharScore
+
+    return when {
+        totalScore < 30 -> Pair(PasswordStrength.WEAK, totalScore)
+        totalScore < 60 -> Pair(PasswordStrength.FAIR, totalScore)
+        totalScore < 80 -> Pair(PasswordStrength.GOOD, totalScore)
+        else -> Pair(PasswordStrength.STRONG, totalScore)
+    }
+}
+
 
 
 @Composable
 fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
+    var passwordStrength by remember { mutableStateOf(PasswordStrength.WEAK) }
+    var passwordStrengthPercent by remember { mutableStateOf(0) }
+
 
 
     var email by remember { mutableStateOf("") }
@@ -74,8 +101,10 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     var birth by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var checkPass by remember{ mutableStateOf("") }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passError by remember { mutableStateOf<String?>(null) }
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
-
+    var passwordVisible by remember { mutableStateOf(false) } // State untuk visibility password
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -129,6 +158,22 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         }
     }
 
+    // Email validation function
+    fun validateEmail(input: String): String? {
+        return when {
+            "@" !in input -> "Email harus mengandung '@'."
+            input.contains(" ") -> "Email tidak boleh mengandung spasi."
+            else -> null
+        }
+    }
+
+    fun validatePass(input: String): String? {
+        return when {
+            input != password  -> "The password you entered is not the same"
+            else -> null
+        }
+    }
+
     Image(painter = painterResource(R.drawable.background_login),
         contentDescription = null,
         modifier = Modifier.fillMaxSize(),
@@ -166,7 +211,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (googlesign, rememberme, textOne, textTwo, emailCon, loginCon, nameCon,userCon,
+                val (progress, textOne, textTwo, emailCon, loginCon, nameCon,userCon,
                     phoneCon, birthCon, passCon,confirmCon, registerCon) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
@@ -178,8 +223,11 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
                 TextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { email = it
+                        emailError = validateEmail(it)},
                     label = { Text("Email") },
+                    singleLine = true,
+                    isError = emailError != null,
                     modifier = Modifier
                         .width(250.dp)
                         .padding(0.dp, 10.dp)
@@ -190,6 +238,14 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         }
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
+
+                emailError?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 TextField(
                     value = name,
@@ -252,9 +308,23 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
                 TextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { password = it
+                        val (strength, percent) = evaluatePasswordStrength(it)
+                        passwordStrength = strength
+                        passwordStrengthPercent = percent
+                        },
                     label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation(),
+                    singleLine = true,
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                painter = painterResource(id = if (passwordVisible) R.drawable.open_eye else R.drawable.close_eye),
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                modifier = Modifier.size(25.dp)
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(passCon) {
@@ -266,11 +336,36 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
 
+                LinearProgressIndicator(
+                    progress = passwordStrengthPercent / 100f,
+                    color = passwordStrength.color,
+                    modifier = Modifier
+                        .constrainAs(progress) {
+                            start.linkTo(startGuideline)
+                            end.linkTo(endGuideline)
+                            top.linkTo(loginCon.bottom)
+                        }
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .height(8.dp)
+                )
+                Text(
+                    text = passwordStrength.label,
+                    color = passwordStrength.color,
+                    modifier = Modifier.constrainAs(textOne) {
+                        start.linkTo(startGuideline)
+                        end.linkTo(endGuideline)
+                        top.linkTo(progress.bottom)
+                    }
+                )
+
                 TextField(
                     value = checkPass,
-                    onValueChange = { checkPass = it },
+                    onValueChange = { checkPass = it
+                        passError = validatePass(it)},
                     label = { Text("Confirm Password") },
                     visualTransformation = PasswordVisualTransformation(),
+                    isError = passError != null,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(confirmCon) {
@@ -281,6 +376,14 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .padding(0.dp, 10.dp)
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
+
+                passError?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
 
 
