@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,46 +33,65 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.data.DataStoreUtils
 
 
 @Composable
 //Main Screen of Login Page
 fun MainScreen(viewModel: AuthViewModel) {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = "login") {
-        composable("login") {
-            LoginScreen(viewModel, onLoginSuccess = {
-                navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Image(painter = painterResource(R.drawable.background_login),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize())
+
+        NavHost(navController, startDestination = "login") {
+            composable("login") {
+                LoginScreen(viewModel, onLoginSuccess = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }, onSignUpClick = {
+                    navController.navigate("register")
+                })
+            } //Login Page Navigation
+            composable("home") {
+                HomeScreen()
+            } //Home Page Navigation
+            composable("register") {
+                RegisterScreen(viewModel = AuthViewModel()) {
                 }
-            }, onSignUpClick = {
-                navController.navigate("register")
-            })
-        } //Login Page Navigation
-        composable("home") {
-            HomeScreen()
-        } //Home Page Navigation
-        composable("register") {
-            RegisterScreen(viewModel = AuthViewModel()) {
-            }
-        } //Register Page Navigation
-    } //NavHost
+            } //Register Page Navigation
+        } //NavHost
+
+
+    }
+
+
+
 } //MainScreen
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
+    val context = LocalContext.current
     val loginState by viewModel.loginState.collectAsState()
+    val savedCredentials by DataStoreUtils.getCredentials(context).collectAsState(initial = Pair(null, null))
+    val coroutineScope = rememberCoroutineScope()
 
-    var checked by remember { mutableStateOf(false) }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    var checked by remember { mutableStateOf(savedCredentials.first != null) }
+    var email by remember { mutableStateOf(savedCredentials.first ?: "") }
+    var password by remember { mutableStateOf(savedCredentials.second ?: "") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
     var emailError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
+    var passwordVisible by remember { mutableStateOf(false) } // State untuk visibility password
 
-    val context = LocalContext.current
+
+
     val activity = context as? Activity
 
     // Email validation function
@@ -121,6 +141,12 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
         }
     }
 
+    LaunchedEffect(savedCredentials) {
+        savedCredentials.first?.let { email = it }
+        savedCredentials.second?.let { password = it }
+        Log.d("DataStoreUtils", "Loaded saved email: ${savedCredentials.first}, password: ${savedCredentials.second}")
+    }
+
     // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -138,9 +164,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
         }
     }
 
-    Image(painter = painterResource(R.drawable.background_login),
-        contentDescription = null,
-        modifier = Modifier.fillMaxSize())
     ConstraintLayout {
         val (logo, title, loginBox) = createRefs()
 
@@ -219,9 +242,18 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     onValueChange = { password = it
                         passwordError = validatePassword(it, email)},
                     label = { Text("Password") },
-                    visualTransformation = PasswordVisualTransformation(),
+                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     singleLine = true,
                     isError = passwordError != null,
+                    trailingIcon = {
+                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                            Icon(
+                                painter = painterResource(id = if (passwordVisible) R.drawable.open_eye else R.drawable.close_eye),
+                                contentDescription = if (passwordVisible) "Hide password" else "Show password",
+                                modifier = Modifier.size(25.dp)
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(passCon) {
@@ -265,7 +297,15 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 }
 
                 Button(
-                    onClick = { viewModel.login(email, password) },
+                    onClick = { viewModel.login(email, password)
+                        if (checked) {
+                            // Save email and password when the user logs in
+                            coroutineScope.launch {
+                                DataStoreUtils.saveCredentials(context, email, password)
+                                Log.d("DataStoreUtils", "Saved email: $email, password: $password")
+                            }
+                        }
+                              },
                     modifier = Modifier
                         .constrainAs(loginCon) {
                             start.linkTo(startGuideline)
@@ -292,12 +332,13 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                         val signInIntent = googleSignInClient.signInIntent
                         launcher.launch(signInIntent)
                     },
-                    modifier = Modifier.constrainAs(googlesign) {
-                        start.linkTo(startGuideline)
-                        end.linkTo(endGuideline)
-                        top.linkTo(textTwo.bottom)
-                    }
-                        .padding(0.dp,10.dp),
+                    modifier = Modifier
+                        .constrainAs(googlesign) {
+                            start.linkTo(startGuideline)
+                            end.linkTo(endGuideline)
+                            top.linkTo(textTwo.bottom)
+                        }
+                        .padding(0.dp, 10.dp),
                     colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#FFFFFF")))
 
                 ) {
@@ -387,8 +428,8 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
 @Composable
 fun UIPreview(){
     Surface(modifier= Modifier.fillMaxSize()) {
-        LoginScreen(viewModel = AuthViewModel(), onLoginSuccess = { /*TODO*/ }) {
-        }
+        MainScreen(viewModel = AuthViewModel())
+
     }
 }
 

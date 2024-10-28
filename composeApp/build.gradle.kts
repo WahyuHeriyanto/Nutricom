@@ -63,6 +63,10 @@ kotlin {
             implementation("com.google.firebase:firebase-analytics") // Sesuai dengan kebutuhan
             implementation("com.google.android.gms:play-services-auth:20.7.0")
             implementation ("androidx.navigation:navigation-compose:2.6.0")
+            implementation ("androidx.media3:media3-exoplayer:1.0.0") // Versi dapat disesuaikan
+            implementation ("androidx.media3:media3-ui:1.0.0")
+            implementation("androidx.datastore:datastore-preferences:1.0.0")
+            implementation("androidx.datastore:datastore:1.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)
