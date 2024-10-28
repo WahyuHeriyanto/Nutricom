@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -65,7 +66,7 @@ fun RegisterNav(viewModel: AuthViewModel) {
 fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     val loginState by viewModel.loginState.collectAsState()
 
-    var checked by remember { mutableStateOf(true) }
+
     var email by remember { mutableStateOf("") }
     var name by remember { mutableStateOf("") }
     var userName by remember { mutableStateOf("") }
@@ -73,7 +74,6 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     var birth by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var checkPass by remember{ mutableStateOf("") }
-    var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
 
 
@@ -131,7 +131,9 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
     Image(painter = painterResource(R.drawable.background_login),
         contentDescription = null,
-        modifier = Modifier.fillMaxSize())
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop)
+
     ConstraintLayout {
 
         val (title, loginBox) = createRefs()

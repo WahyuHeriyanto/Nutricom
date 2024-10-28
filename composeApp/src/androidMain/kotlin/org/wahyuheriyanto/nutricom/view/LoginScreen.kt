@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
@@ -44,9 +45,6 @@ fun MainScreen(viewModel: AuthViewModel) {
     val navController = rememberNavController()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Image(painter = painterResource(R.drawable.background_login),
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize())
 
         NavHost(navController, startDestination = "login") {
             composable("login") {
@@ -163,6 +161,13 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
             }
         }
     }
+
+    Image(
+        painter = painterResource(R.drawable.background_login),
+        contentDescription = null,
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop // Menggunakan Crop untuk menutupi layar sepenuhnya
+    )
 
     ConstraintLayout {
         val (logo, title, loginBox) = createRefs()
