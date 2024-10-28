@@ -154,7 +154,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
         Box(
             modifier = Modifier
                 .padding(0.dp, 10.dp)
-                .size(320.dp, 750.dp)
+                .size(320.dp, 600.dp)
                 .constrainAs(loginBox) {
                     start.linkTo(backStartGuideline)
                     end.linkTo(backEndGuideline)

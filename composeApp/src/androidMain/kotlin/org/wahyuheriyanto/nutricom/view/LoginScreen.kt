@@ -68,9 +68,30 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
     var password by remember { mutableStateOf("") }
     var showSuccessDialog by remember { mutableStateOf(false) }  // State untuk dialog sukses
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
 
     val context = LocalContext.current
     val activity = context as? Activity
+
+    // Email validation function
+    fun validateEmail(input: String): String? {
+        return when {
+            "@" !in input -> "Email harus mengandung '@'."
+            input.contains(" ") -> "Email tidak boleh mengandung spasi."
+            else -> null
+        }
+    }
+
+    // Password validation function
+    fun validatePassword(input: String, email: String): String? {
+        val emailLocalPart = email.substringBefore("@")
+        return when {
+            input.length < 6 -> "Password minimal harus 6 karakter."
+            emailLocalPart.isNotEmpty() && emailLocalPart in input -> "Password tidak boleh mengandung nama dari email."
+            else -> null
+        }
+    }
 
     // GoogleSignInOptions setup
     val googleSignInOptions = remember {
@@ -171,9 +192,11 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
 
                 TextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = { email = it
+                        emailError = validateEmail(it)},
                     label = { Text("Email") },
                     singleLine = true,
+                    isError = emailError != null,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(emailCon) {
@@ -183,13 +206,22 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                         }
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
+                emailError?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 TextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = { password = it
+                        passwordError = validatePassword(it, email)},
                     label = { Text("Password") },
                     visualTransformation = PasswordVisualTransformation(),
                     singleLine = true,
+                    isError = passwordError != null,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(passCon) {
@@ -200,6 +232,14 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                         .padding(0.dp, 10.dp)
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
+
+                passwordError?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
