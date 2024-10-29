@@ -109,6 +109,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     var checkPass by remember{ mutableStateOf("") }
     var emailError by remember { mutableStateOf<String?>(null) }
     var passError by remember { mutableStateOf<String?>(null) }
+    var phoneError by remember { mutableStateOf<String?>(null) }
     var showErrorDialog by remember { mutableStateOf(false) } // State untuk dialog error
     var passwordVisible by remember { mutableStateOf(false) } // State untuk visibility password
 
@@ -191,6 +192,14 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
     fun validatePass(input: String): String? {
         return when {
             input != password  -> "The password you entered is not the same"
+            else -> null
+        }
+    }
+
+    fun validatePhone(input: String): String? {
+        return when {
+            input.any { !it.isDigit() } -> "Input must number"
+            input.length < 10 -> "min 10 digits of number"
             else -> null
         }
     }
@@ -299,8 +308,11 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
 
                 TextField(
                     value = phoneNum,
-                    onValueChange = { phoneNum = it },
+                    onValueChange = { phoneNum = it
+                        phoneError = validatePhone(it)},
                     label = { Text("Phone number") },
+                    singleLine = true,
+                    isError = phoneError != null,
                     modifier = Modifier
                         .width(250.dp)
                         .constrainAs(phoneCon) {
@@ -310,6 +322,14 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         }
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
                 )
+
+                phoneError?.let {
+                    Text(
+                        text = it,
+                        color = Color.Red,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
 
                 TextField(
                     value = birth,
@@ -362,7 +382,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .constrainAs(passCon) {
                             start.linkTo(startGuideline)
                             end.linkTo(endGuideline)
-                            top.linkTo(birthCon.bottom)
+                            top.linkTo(textOne.bottom)
                         }
 
                         .background(Color(android.graphics.Color.parseColor("#FFFFFF")))
@@ -375,12 +395,13 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                         .constrainAs(progress) {
                             start.linkTo(startGuideline)
                             end.linkTo(endGuideline)
-                            top.linkTo(loginCon.bottom)
+                            top.linkTo(birthCon.bottom)
                         }
-                        .padding(8.dp)
+                        .padding(32.dp, 0.dp)
                         .fillMaxWidth()
                         .height(8.dp)
                 )
+
                 Text(
                     text = passwordStrength.label,
                     color = passwordStrength.color,
@@ -417,12 +438,21 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                     )
                 }
 
-
-
-
-
                 Button(
-                    onClick = { viewModel.register(email, password) },
+                    onClick = {
+                        if (emailError == null &&
+                            passError == null &&
+                            phoneError == null &&
+                            email.isNotBlank() &&
+                            password.isNotBlank() &&
+                            userName.isNotBlank() &&
+                            birth.isNotBlank() &&
+                            name.isNotBlank())
+                        {
+                        viewModel.register(email, password)
+                    } else {
+                        showErrorDialog = true // Show dialog if errors exist
+                    } },
                     modifier = Modifier
                         .constrainAs(loginCon) {
                             start.linkTo(startGuideline)
@@ -457,8 +487,8 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                     onDismissRequest = {
                         showErrorDialog = false
                     },
-                    title = { Text("Login Gagal") },
-                    text = { Text("Email dan password tidak terdaftar.") },
+                    title = { Text("Register Failed") },
+                    text = { Text("Check it again") },
                     confirmButton = {
                         Button(onClick = {
                             showErrorDialog = false

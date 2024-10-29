@@ -1,7 +1,10 @@
 package org.wahyuheriyanto.nutricom.model
 
-data class User(
-    val id: String = "",
-    val name: String = "",
-    val email : String = ""
+data class UserItem(
+    val email: String = "",
+    val fullName: String = "",
+    val username: String = "",
+    val phoneNumber: String = "",
+    val dateOfBirth: String = "",
+    val password: String = ""
 )
