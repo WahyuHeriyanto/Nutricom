@@ -9,17 +9,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.wahyuheriyanto.nutricom.model.LoginItem
+import org.wahyuheriyanto.nutricom.model.UserItem
 
 // Kelas AuthViewModel
 class AuthViewModel : ViewModel() {
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
 
-    fun login(email: String, password: String) {
+
+    fun login(userItem : LoginItem) {
         _loginState.update { LoginState.Loading }
-        performLogin(this, email, password) // Kirim instance viewModel saat memanggil fungsi
-//        _loginState.value = LoginState.Loading
-//        _loginState.value = LoginState.Error("")
+        performLogin(this, userItem.email, userItem.password) // Kirim instance viewModel saat memanggil fungsi
     }
 
     fun loginWithGoogle(idToken: String) {
@@ -28,9 +29,15 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    fun register(email: String, password: String) {
+    fun register(userItem : UserItem ) {
         _loginState.update { LoginState.Loading }
-        performRegister(this, email, password) // Kirim instance viewModel saat memanggil fungsi
+        performRegister(this,
+            userItem.email,
+            userItem.password,
+            userItem.fullName,
+            userItem.userName,
+            userItem.phoneNumber,
+            userItem.dateOfBirth) // Kirim instance viewModel saat memanggil fungsi
     }
 
 
@@ -44,7 +51,7 @@ class AuthViewModel : ViewModel() {
 // Deklarasi expect untuk fungsi login dan register di luar kelas
 expect fun performLogin(viewModel: AuthViewModel, email: String, password: String)
 
-expect fun performRegister(viewModel: AuthViewModel, email: String, password: String)
+expect fun performRegister(viewModel: AuthViewModel, email: String, password: String, name :String, user : String, phone : String, birth : String)
 
 expect fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String)
 

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,15 +36,47 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
 }
 
 
-actual fun performRegister(viewModel: AuthViewModel, email: String, password: String) {
+actual fun performRegister(viewModel: AuthViewModel,
+                           email: String,
+                           password: String,
+                           name :String,
+                           user : String,
+                           phone : String,
+                           birth : String) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
             val authResult = FirebaseAuth.getInstance()
                 .createUserWithEmailAndPassword(email, password)
                 .await()
 
-            // Jika registrasi berhasil
-            viewModel.setLoginState(LoginState.Success("Registration successful!"))
+            val users = authResult.user
+
+              // Jika registrasi berhasil
+            if (users != null) {
+                // Data pengguna yang akan disimpan di Firestore
+                val userData = hashMapOf(
+                    "email" to email,
+                    "password" to password,
+                    "fullName" to name,       // Data dari input user
+                    "userName" to user,
+                    "phoneNumber" to phone,
+                    "dateOfBirth" to birth // Pertimbangkan hashing
+                )
+
+                // Simpan data ke Firestore
+                FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(users.uid)
+                    .set(userData)
+                    .await()
+
+
+
+                viewModel.setLoginState(LoginState.Success("Registration successful!"))
+            } else {
+                Log.e("ErrorRegis","Masih error")
+            }
+
 
         } catch (e: Exception) {
             // Jika registrasi gagal

@@ -37,6 +37,8 @@ import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.data.DataStoreUtils
+import org.wahyuheriyanto.nutricom.model.LoginItem
+import org.wahyuheriyanto.nutricom.model.UserItem
 
 
 @Composable
@@ -302,7 +304,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 }
 
                 Button(
-                    onClick = { viewModel.login(email, password)
+                    onClick = { viewModel.login(LoginItem(email,password))
                         if (checked) {
                             // Save email and password when the user logs in
                             coroutineScope.launch {

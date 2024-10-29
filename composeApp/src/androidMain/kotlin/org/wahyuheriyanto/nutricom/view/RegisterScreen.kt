@@ -25,6 +25,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Icon
 import java.util.Calendar
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +44,7 @@ import com.google.android.gms.common.api.ApiException
 import org.wahyuheriyanto.nutricom.MainActivity.Companion.REQUEST_CODE_GOOGLE_SIGN_IN
 
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.model.UserItem
 
 // In your Android-specific Activity or Fragment
 
@@ -449,9 +451,10 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                             birth.isNotBlank() &&
                             name.isNotBlank())
                         {
-                        viewModel.register(email, password)
+                        viewModel.register(UserItem(email,password,name,userName,phoneNum,birth))
                     } else {
-                        showErrorDialog = true // Show dialog if errors exist
+//                        showErrorDialog = true
+                    Log.e("ErrorRegis","Masih error")// Show dialog if errors exist
                     } },
                     modifier = Modifier
                         .constrainAs(loginCon) {
