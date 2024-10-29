@@ -59,7 +59,7 @@ fun MainScreen(viewModel: AuthViewModel) {
                 })
             } //Login Page Navigation
             composable("home") {
-                HomeScreen()
+                HomeScreen {}
             } //Home Page Navigation
             composable("register") {
                 RegisterScreen(viewModel = AuthViewModel()) {
