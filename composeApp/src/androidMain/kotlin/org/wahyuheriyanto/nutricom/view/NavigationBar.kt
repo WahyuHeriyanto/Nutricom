@@ -20,7 +20,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import org.wahyuheriyanto.nutricom.R
 
 @Composable
 fun NavigationBar(
@@ -40,29 +43,30 @@ fun NavigationBar(
             )
         },
         bottomBar = {
-            BottomNavigation(modifier = Modifier
-                .background(Color(android.graphics.Color.parseColor("#00C160")))) {
+            BottomNavigation(backgroundColor = Color.White
+            //Color(android.graphics.Color.parseColor("#CAE8AC")
+            ) {
                 BottomNavigationItem(
 
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                    icon = { Icon(painter = painterResource(id = R.drawable.home_icon), contentDescription ="" ) },
                     label = { Text("Home") },
                     selected = false,
                     onClick = { onBottomNavItemSelected("home") }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    icon = { Icon(painter = painterResource(id = R.drawable.running_icon), contentDescription ="" ) },
                     label = { Text("Settings") },
                     selected = false,
                     onClick = { onBottomNavItemSelected("settings") }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    icon = { Icon(painter = painterResource(id = R.drawable.basket_icon), contentDescription = "") },
                     label = { Text("Settings") },
                     selected = false,
                     onClick = { onBottomNavItemSelected("settings") }
                 )
                 BottomNavigationItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                    icon = { Icon(painter = painterResource(id = R.drawable.globe_icon), contentDescription = "") },
                     label = { Text("Settings") },
                     selected = false,
                     onClick = { onBottomNavItemSelected("settings") }
