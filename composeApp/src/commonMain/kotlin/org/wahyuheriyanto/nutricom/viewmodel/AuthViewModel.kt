@@ -21,7 +21,19 @@ class AuthViewModel : ViewModel() {
 
 
     private val _points = MutableStateFlow(0L) // StateFlow untuk nilai points
+    private val _fullName = MutableStateFlow("")
+    private val _userName = MutableStateFlow("")
+    private val _email = MutableStateFlow("")
+    private val _phone = MutableStateFlow("")
+    private val _date = MutableStateFlow("")
+
     val points: StateFlow<Long> = _points
+    val fullName: StateFlow<String> = _fullName
+    val userName: StateFlow<String> = _userName
+    val email: StateFlow<String> = _email
+    val phone: StateFlow<String> = _phone
+    val date: StateFlow<String> = _date
+
 
 
     fun login(userItem : LoginItem) {
@@ -53,8 +65,19 @@ class AuthViewModel : ViewModel() {
 
 
 
-    fun updatePoints(newPoints: Long) {
+    fun updatePoints(newPoints: Long,
+                     newFullName: String,
+                     newUserName: String,
+                     newEmail: String,
+                     newPhone: String,
+                     newDate: String)
+    {
         _points.value = newPoints
+        _fullName.value = newFullName
+        _userName.value = newUserName
+        _email.value = newEmail
+        _phone.value = newPhone
+        _date.value = newDate
     }
 
 

@@ -30,11 +30,16 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                 firestore.collection("users").document(uid).get()
                     .addOnSuccessListener { document ->
                         val pointsValue = document.getLong("point") ?: 0L
+                        val nameValue = document.getString("userName") ?: ""
+                        val fullNameValue = document.getString("fullName")?: ""
+                        val emailValue = document.getString("email")?: ""
+                        val phoneValue = document.getString("phoneNumber") ?: ""
+                        val dateValue = document.getString("dateOfBirth") ?: ""
 
                         when {
                             pointsValue != 0L -> {
                                 viewModel.setLoginState(LoginState.Success("Login successful!"))
-                                viewModel.updatePoints(pointsValue) // Perbarui points di ViewModel
+                                viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
                                 Log.e("CekPoint", "Point : $pointsValue")
                             }
                             else -> {

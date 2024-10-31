@@ -59,7 +59,8 @@ fun MainScreen(viewModel: AuthViewModel) {
             } //Login Page Navigation
             composable("home") {
                 // Pass the existing viewModel instance here
-                HomeScreen(viewModel = viewModel)
+                NavigationBar(viewModel = viewModel)
+//                HomeScreen(viewModel = viewModel)
             } //Home Page Navigation
             composable("register") {
                 // Pass the existing viewModel instance here

@@ -62,9 +62,9 @@ fun RegisterNav(viewModel: AuthViewModel) {
             }
         }
         composable("home") {
-            HomeScreen(viewModel = AuthViewModel()) {
-                
-            }
+//            HomeScreen(viewModel = AuthViewModel()) {
+//
+//            }
         }
     }
 }
