@@ -51,6 +51,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 
 
@@ -147,7 +148,6 @@ fun NavigationBar(viewModel: AuthViewModel,
                             Icon(painter = painterResource(id = R.drawable.wallet_icon), contentDescription = "",
                                 modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(10.dp))
-
                             when (loginState) {
                         is LoginState.Loading -> {
 
@@ -188,7 +188,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                 startDestination = "home",
                 Modifier.padding(innerPadding)
             ) {
-                composable("home") { HomeScreen() }
+                composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                 composable("activity") { ActivityScreen() }
                 composable("market") { MarketScreen() }
                 composable("community") { CommunityScreen() }

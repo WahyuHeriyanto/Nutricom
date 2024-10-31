@@ -22,8 +22,6 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                 .await()
             // Jika login berhasil
             val user = authResult.user
-
-
             user?.let { currentUser ->
                 val uid = currentUser.uid
                 val firestore = FirebaseFirestore.getInstance()
@@ -40,6 +38,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                             pointsValue != 0L -> {
                                 viewModel.setLoginState(LoginState.Success("Login successful!"))
                                 viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
+                                viewModel.setUidCurrent(uid)
                                 Log.e("CekPoint", "Point : $pointsValue")
                             }
                             else -> {

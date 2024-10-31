@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.wahyuheriyanto.nutricom.model.DataItem
 import org.wahyuheriyanto.nutricom.model.LoginItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 
@@ -18,6 +19,9 @@ import org.wahyuheriyanto.nutricom.model.UserItem
 class AuthViewModel : ViewModel() {
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
+
+    private val _uid = MutableStateFlow("")
+    val uid: StateFlow<String> = _uid
 
 
     private val _points = MutableStateFlow(0L) // StateFlow untuk nilai points
@@ -61,6 +65,10 @@ class AuthViewModel : ViewModel() {
 
     fun setLoginState(state: LoginState) {
         _loginState.value = state
+    }
+
+    fun setUidCurrent(currentUid: String){
+        _uid.value = currentUid
     }
 
 
