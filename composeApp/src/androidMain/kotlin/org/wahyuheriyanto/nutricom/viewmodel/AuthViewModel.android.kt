@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.wahyuheriyanto.nutricom.model.UserItem
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
     CoroutineScope(Dispatchers.IO).launch {
@@ -21,7 +22,28 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                 .await()
             // Jika login berhasil
             val user = authResult.user
-            viewModel.setLoginState(LoginState.Success("Login successful!"))
+
+
+            user?.let { currentUser ->
+                val uid = currentUser.uid
+                val firestore = FirebaseFirestore.getInstance()
+                firestore.collection("users").document(uid).get()
+                    .addOnSuccessListener { document ->
+                        val pointsValue = document.getLong("point") ?: 0L
+
+                        when {
+                            pointsValue != 0L -> {
+                                viewModel.setLoginState(LoginState.Success("Login successful!"))
+                                viewModel.updatePoints(pointsValue) // Perbarui points di ViewModel
+                                Log.e("CekPoint", "Point : $pointsValue")
+                            }
+                            else -> {
+                                Log.e("Error","Belum keisi")
+                            }
+                        }
+                    }
+            }
+
 
         } catch (e: FirebaseAuthInvalidCredentialsException) {
             // Tangani error kredensial yang salah
@@ -51,6 +73,9 @@ actual fun performRegister(viewModel: AuthViewModel,
 
             val users = authResult.user
 
+            val point: Int = UserItem().point
+
+
               // Jika registrasi berhasil
             if (users != null) {
                 // Data pengguna yang akan disimpan di Firestore
@@ -60,7 +85,8 @@ actual fun performRegister(viewModel: AuthViewModel,
                     "fullName" to name,       // Data dari input user
                     "userName" to user,
                     "phoneNumber" to phone,
-                    "dateOfBirth" to birth // Pertimbangkan hashing
+                    "dateOfBirth" to birth,
+                    "point" to point // Pertimbangkan hashing
                 )
 
                 // Simpan data ke Firestore

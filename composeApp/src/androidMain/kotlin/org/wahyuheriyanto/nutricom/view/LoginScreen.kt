@@ -42,7 +42,6 @@ import org.wahyuheriyanto.nutricom.model.UserItem
 
 
 @Composable
-//Main Screen of Login Page
 fun MainScreen(viewModel: AuthViewModel) {
     val navController = rememberNavController()
 
@@ -59,19 +58,16 @@ fun MainScreen(viewModel: AuthViewModel) {
                 })
             } //Login Page Navigation
             composable("home") {
-                HomeScreen {}
+                // Pass the existing viewModel instance here
+                HomeScreen(viewModel = viewModel)
             } //Home Page Navigation
             composable("register") {
+                // Pass the existing viewModel instance here
                 RegisterScreen(viewModel = AuthViewModel()) {
                 }
             } //Register Page Navigation
-        } //NavHost
-
-
+        }
     }
-
-
-
 } //MainScreen
 
 @Composable
@@ -152,6 +148,8 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
         when (loginState) {
             is LoginState.Success -> {
                 onLoginSuccess()  // Pindah ke HomeScreen
+                Log.e("CekPoint","lewat")
+
             }
             is LoginState.Error -> {
                 showErrorDialog = true
@@ -163,6 +161,8 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
             }
         }
     }
+
+
 
     Image(
         painter = painterResource(R.drawable.background_login),

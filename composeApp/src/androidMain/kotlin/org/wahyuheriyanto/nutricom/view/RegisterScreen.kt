@@ -62,8 +62,8 @@ fun RegisterNav(viewModel: AuthViewModel) {
             }
         }
         composable("home") {
-            HomeScreen {
-
+            HomeScreen(viewModel = AuthViewModel()) {
+                
             }
         }
     }
@@ -183,6 +183,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
             }
         }
     }
+
 
     // Email validation function
     fun validateEmail(input: String): String? {

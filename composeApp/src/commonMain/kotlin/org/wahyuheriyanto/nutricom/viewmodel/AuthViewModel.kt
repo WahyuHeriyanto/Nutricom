@@ -1,5 +1,7 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +18,10 @@ import org.wahyuheriyanto.nutricom.model.UserItem
 class AuthViewModel : ViewModel() {
     private val _loginState = MutableStateFlow<LoginState>(LoginState.Idle)
     val loginState: StateFlow<LoginState> = _loginState
+
+
+    private val _points = MutableStateFlow(0L) // StateFlow untuk nilai points
+    val points: StateFlow<Long> = _points
 
 
     fun login(userItem : LoginItem) {
@@ -46,6 +52,12 @@ class AuthViewModel : ViewModel() {
     }
 
 
+
+    fun updatePoints(newPoints: Long) {
+        _points.value = newPoints
+    }
+
+
 }
 
 // Deklarasi expect untuk fungsi login dan register di luar kelas
@@ -66,3 +78,4 @@ sealed class LoginState {
     data class Success(val message: String) : LoginState()
     data class Error(val message: String) : LoginState()
 }
+
