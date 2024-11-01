@@ -63,9 +63,9 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
 
     ConstraintLayout {
-        val (title, text, carousel, indicator, boxindi) = createRefs()
+        val (title, text, carousel, indicator, boxindi, bmi) = createRefs()
 
-        val topGuideline = createGuidelineFromTop(0.08f)
+        val topGuideline = createGuidelineFromTop(0.02f)
         val bottomGuideline = createGuidelineFromBottom(0.1f)
         val startGuideline = createGuidelineFromStart(0.1f)
         val endGuidelines = createGuidelineFromEnd(0.0f)
@@ -128,16 +128,16 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 .constrainAs(carousel) {
                     top.linkTo(text.bottom)
                     start.linkTo(startGuideline)
-                    end.linkTo(endGuidelines)
+                    end.linkTo(endGuideline)
                 }
-                .fillMaxWidth()
-                .height(200.dp)
+                .width(300.dp)
+                .height(180.dp)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { _, dragAmount ->
                         // Detect horizontal drag to change image
-                        if (dragAmount < -50) {
+                        if (dragAmount < -60) {
                             activeIndex = (activeIndex + 1).coerceAtMost(images.size - 1)
-                        } else if (dragAmount > 50) {
+                        } else if (dragAmount > 60) {
                             activeIndex = (activeIndex - 1).coerceAtLeast(0)
                         }
                     }
@@ -236,6 +236,44 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
             }
         }
+        Box(modifier = Modifier
+            .padding(10.dp, 10.dp)
+            .size(260.dp, 100.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .constrainAs(bmi) {
+                top.linkTo(boxindi.bottom)
+                start.linkTo(startGuideline)
+                end.linkTo(endGuideline)
+            }
+            .background(Color(android.graphics.Color.parseColor("#C9E4EF")))
+        ){
+            Row (modifier = Modifier.align(Alignment.Center)){
+                Image(painter = painterResource(id = R.drawable.bmi_icon), contentDescription = "",
+                    modifier = Modifier.size(130.dp))
+
+                Spacer(modifier = Modifier.width(30.dp))
+
+                when (loginState) {
+                    is LoginState.Loading -> {
+                    }
+                    is LoginState.Success -> {
+                        val bmis = bv
+                        Text(text = "$bmis",
+                            fontSize = 45.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(20.dp)
+                            )
+                    }
+                    else -> {
+                    }
+                }
+
+
+            }
+
+        }
+
+
 
     }
 
