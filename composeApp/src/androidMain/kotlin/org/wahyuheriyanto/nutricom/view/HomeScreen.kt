@@ -62,7 +62,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
 
     ConstraintLayout {
-        val (title, text, carousel, indicator, boxindi, bmi) = createRefs()
+        val (title, text, carousel, indicator, boxindi, label, bmi) = createRefs()
 
         val topGuideline = createGuidelineFromTop(0.02f)
         val bottomGuideline = createGuidelineFromBottom(0.1f)
@@ -174,7 +174,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             end.linkTo(endGuideline)
         }){
             Box(modifier = Modifier
-                .padding(10.dp, 10.dp)
+                .padding(10.dp, 5.dp)
                 .size(100.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
@@ -190,7 +190,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                                 fontWeight = FontWeight.Bold,
                                 )
                             Text(text = "KG",
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Bold,
                                 )
                         }
@@ -202,7 +202,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
             }
             Box(modifier = Modifier
-                .padding(10.dp, 10.dp)
+                .padding(10.dp, 5.dp)
                 .size(100.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
@@ -218,7 +218,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                                 fontWeight = FontWeight.Bold,
                             )
                             Text(text = "CM",
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Bold,
                             )
                         }
@@ -228,7 +228,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
             }
             Box(modifier = Modifier
-                .padding(10.dp, 10.dp)
+                .padding(10.dp, 5.dp)
                 .size(100.dp)
                 .clip(RoundedCornerShape(10.dp))
                 .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
@@ -244,7 +244,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                                 fontWeight = FontWeight.Bold,
                             )
                             Text(text = "KKal",
-                                fontSize = 20.sp,
+                                fontSize = 25.sp,
                                 fontWeight = FontWeight.Bold,
                             )
                         }
@@ -254,12 +254,68 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
             }
         }
+
+        //name table
+        Row (modifier = Modifier.constrainAs(label){
+            top.linkTo(boxindi.bottom)
+            start.linkTo(startGuideline)
+            end.linkTo(endGuideline)
+        }){
+            Box(modifier = Modifier
+                .padding(10.dp, 5.dp)
+                .size(100.dp,30.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(android.graphics.Color.parseColor("#00AA16")))
+            ){
+                Text(text = "Weight",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+
+            }
+
+            Box(modifier = Modifier
+                .padding(10.dp, 5.dp)
+                .size(100.dp,30.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(android.graphics.Color.parseColor("#00AA16")))
+            ){
+                Text(text = "Height",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+
+            }
+
+            Box(modifier = Modifier
+                .padding(10.dp, 5.dp)
+                .size(100.dp,30.dp)
+                .clip(RoundedCornerShape(10.dp))
+                .background(Color(android.graphics.Color.parseColor("#00AA16")))
+            ){
+                Text(text = "Calorie",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color.White
+                )
+
+            }
+
+
+        }
+
+
         Box(modifier = Modifier
-            .padding(10.dp, 10.dp)
+            .padding(0.dp, 10.dp)
             .size(260.dp, 100.dp)
             .clip(RoundedCornerShape(10.dp))
             .constrainAs(bmi) {
-                top.linkTo(boxindi.bottom)
+                top.linkTo(label.bottom)
                 start.linkTo(startGuideline)
                 end.linkTo(endGuideline)
             }
@@ -276,10 +332,10 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     }
                     is LoginState.Success -> {
                         val bmis = bv
-                        Text(text = "$bmis",
-                            fontSize = 45.sp,
+                        Text(text = "$bmis BMI",
+                            fontSize = 30.sp,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(20.dp,0.dp)
+                            modifier = Modifier.padding(0.dp,30.dp)
                         )
                     }
                     else -> {
