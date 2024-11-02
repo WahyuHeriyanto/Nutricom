@@ -8,7 +8,6 @@ import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -135,9 +134,9 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { _, dragAmount ->
                         // Detect horizontal drag to change image
-                        if (dragAmount < -60) {
+                        if (dragAmount < -90) {
                             activeIndex = (activeIndex + 1).coerceAtMost(images.size - 1)
-                        } else if (dragAmount > 60) {
+                        } else if (dragAmount > 90) {
                             activeIndex = (activeIndex - 1).coerceAtLeast(0)
                         }
                     }
@@ -185,10 +184,17 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     }
                     is LoginState.Success -> {
                         val weights = wv
-                        Text(text = "$weights",
-                            fontSize = 45.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.Center))
+                        Column(modifier = Modifier.align(Alignment.Center)) {
+                            Text(text = "$weights",
+                                fontSize = 45.sp,
+                                fontWeight = FontWeight.Bold,
+                                )
+                            Text(text = "KG",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                )
+                        }
+
                     }
                     else -> {
                     }
@@ -205,11 +211,17 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     is LoginState.Loading -> {
                     }
                     is LoginState.Success -> {
-                        val weights = hv
-                        Text(text = "$weights",
-                            fontSize = 45.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.Center))
+                        val heights = hv
+                        Column(modifier = Modifier.align(Alignment.Center)) {
+                            Text(text = "$heights",
+                                fontSize = 45.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(text = "CM",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
                     }
                     else -> {
                     }
@@ -226,10 +238,16 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     }
                     is LoginState.Success -> {
                         val calories = cv
-                        Text(text = "$calories",
-                            fontSize = 45.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.align(Alignment.Center))
+                        Column(modifier = Modifier.align(Alignment.Center)) {
+                            Text(text = "$calories",
+                                fontSize = 45.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(text = "KKal",
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
                     }
                     else -> {
                     }
@@ -247,11 +265,11 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             }
             .background(Color(android.graphics.Color.parseColor("#C9E4EF")))
         ){
-            Row (modifier = Modifier.align(Alignment.Center)){
+            Row (modifier = Modifier.align(Alignment.CenterStart)){
                 Image(painter = painterResource(id = R.drawable.bmi_icon), contentDescription = "",
                     modifier = Modifier.size(130.dp))
 
-                Spacer(modifier = Modifier.width(30.dp))
+//                Spacer(modifier = Modifier.width(10.dp))
 
                 when (loginState) {
                     is LoginState.Loading -> {
@@ -261,8 +279,8 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                         Text(text = "$bmis",
                             fontSize = 45.sp,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(20.dp)
-                            )
+                            modifier = Modifier.padding(20.dp,0.dp)
+                        )
                     }
                     else -> {
                     }
