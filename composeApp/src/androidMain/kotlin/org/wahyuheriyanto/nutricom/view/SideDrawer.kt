@@ -5,9 +5,12 @@ package org.wahyuheriyanto.nutricom.view
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,43 +40,57 @@ fun SideDrawer(navController: NavController) {
             .background(Color.White)
     ) {
         // Header with the logo
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(), // Make the Row fill the entire width
+            verticalAlignment = Alignment.CenterVertically // Align items vertically in the center
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.nutricom_logo_small),
                 contentDescription = "Nutricom Icon",
                 modifier = Modifier
                     .size(120.dp)
-                    .padding(10.dp,0.dp)
+                    .padding(10.dp, 0.dp)
             )
 
-            Text(text = "Nama")
+            // Center the text vertically within a Column
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp), // Add some spacing between the image and text
+                verticalArrangement = Arrangement.Center, // Center items vertically
+                horizontalAlignment = Alignment.CenterHorizontally // Center items horizontally
+            ) {
+                Text(text = "Username:", fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(5.dp))
+                Text(text = "ID Number : ", fontSize = 16.sp)
+            }
         }
 
 
-        Spacer(modifier = Modifier.height(16.dp))
 
-
-        Text(text = "Dashboard",
-            fontSize = 20.sp,
-            modifier = Modifier.padding(10.dp,0.dp))
+        Box(modifier = Modifier
+            .background(color = Color.Gray)
+            .fillMaxWidth()
+            .height(1.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Options buttons
         DrawerOption(
-            iconResId = R.drawable.running_icon,
-            label = "Option 1",
-            onClick = { navController.navigate("option1") }
+            iconResId = R.drawable.profile_icon,
+            label = "My Account",
+            onClick = { navController.navigate("Option 1") }
         )
 
         DrawerOption(
-            iconResId = R.drawable.basket_icon,
-            label = "Option 2",
-            onClick = { navController.navigate("option2") }
+            iconResId = R.drawable.wallet_side_icon,
+            label = "My Nutripoints",
+            onClick = { navController.navigate("Option 2") }
         )
 
         DrawerOption(
-            iconResId = R.drawable.globe_icon,
-            label = "Option 3",
-            onClick = { navController.navigate("option3") }
+            iconResId = R.drawable.calendar_side_icon,
+            label = "My Schedules",
+            onClick = { navController.navigate("Option 3") }
         )
     }
 }
