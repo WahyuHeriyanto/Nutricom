@@ -177,9 +177,7 @@ fun NavigationBar(viewModel: AuthViewModel,
             BottomNavigationBar(navController = navController)
         },
         drawerContent = {
-            SideDrawer { selectedItem ->
-                // Handle item selection from the side drawer
-            }
+            SideDrawer(navController = navController)
         },
         content = {
                 innerPadding ->
@@ -192,6 +190,11 @@ fun NavigationBar(viewModel: AuthViewModel,
                 composable("activity") { ActivityScreen() }
                 composable("market") { MarketScreen() }
                 composable("community") { CommunityScreen() }
+                
+                //buat sidedrawer
+//                composable("option1") { OptionScreen1() }
+//                composable("option2") { OptionScreen2() }
+//                composable("option3") { OptionScreen3() }
             }
 
         }
