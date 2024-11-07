@@ -190,7 +190,9 @@ fun NavigationBar(viewModel: AuthViewModel,
                 composable("activity") { ActivityScreen() }
                 composable("market") { MarketScreen() }
                 composable("community") { CommunityScreen() }
-                
+                composable("wallet"){ WalletScreen()}
+
+
                 //buat sidedrawer
 //                composable("option1") { OptionScreen1() }
 //                composable("option2") { OptionScreen2() }
