@@ -3,6 +3,7 @@ package org.wahyuheriyanto.nutricom.view
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -144,7 +145,9 @@ fun NavigationBar(viewModel: AuthViewModel,
                             .height(35.dp)
                             .background(Color(android.graphics.Color.parseColor("#DCEFC9")))) {
 
-                        Row {
+                        Row (modifier = Modifier.clickable {
+                            navController.navigate("wallet") // Navigate to WalletScreen when clicked
+                        }) {
                             Icon(painter = painterResource(id = R.drawable.wallet_icon), contentDescription = "",
                                 modifier = Modifier.size(20.dp))
                             Spacer(modifier = Modifier.width(10.dp))
@@ -154,7 +157,11 @@ fun NavigationBar(viewModel: AuthViewModel,
                         }
                         is LoginState.Success -> {
                             val points = point
-                            Text(text = "$points pts", fontSize = 18.sp)
+                            Text(
+                                text = "$points pts",
+                                fontSize = 18.sp,
+
+                            )
                             Log.e("CekPoint","Point 2 : $points")
                         }
                         else -> {
