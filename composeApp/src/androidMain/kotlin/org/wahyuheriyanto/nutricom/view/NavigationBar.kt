@@ -195,9 +195,11 @@ fun NavigationBar(viewModel: AuthViewModel,
             ) {
                 composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                 composable("activity") { ActivityScreen() }
-                composable("market") { MarketScreen() }
+                composable("market") { HealthScreen() }
                 composable("community") { CommunityScreen() }
                 composable("wallet"){ WalletScreen()}
+                composable("schedule"){ ScheduleScreen()}
+
 
 
                 //buat sidedrawer

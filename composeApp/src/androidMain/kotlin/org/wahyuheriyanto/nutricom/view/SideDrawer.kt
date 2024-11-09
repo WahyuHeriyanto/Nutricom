@@ -84,13 +84,13 @@ fun SideDrawer(navController: NavController) {
         DrawerOption(
             iconResId = R.drawable.wallet_side_icon,
             label = "My Nutripoints",
-            onClick = { navController.navigate("Option 2") }
+            onClick = { navController.navigate("wallet") }
         )
 
         DrawerOption(
             iconResId = R.drawable.calendar_side_icon,
             label = "My Schedules",
-            onClick = { navController.navigate("Option 3") }
+            onClick = { navController.navigate("schedule") }
         )
     }
 }

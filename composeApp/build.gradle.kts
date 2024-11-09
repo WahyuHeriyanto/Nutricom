@@ -68,6 +68,7 @@ kotlin {
             implementation("androidx.datastore:datastore-preferences:1.0.0")
             implementation("androidx.datastore:datastore:1.0.0")
             implementation("com.google.firebase:firebase-firestore:24.3.0")
+            implementation ("org.tensorflow:tensorflow-lite:2.10.0")
 
 
         }
