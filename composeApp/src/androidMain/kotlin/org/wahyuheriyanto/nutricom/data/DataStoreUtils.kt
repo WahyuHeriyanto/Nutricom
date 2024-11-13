@@ -33,6 +33,13 @@ object DataStoreUtils {
         }
     }
 
+    // Fungsi untuk menghapus UID dari DataStore saat logout
+    suspend fun clearLoginCredentials(context: Context) {
+        context.dataStore.edit { prefs ->
+            prefs.remove(UID_KEY)
+        }
+    }
+
     // Retrieve saved email and password
     fun getCredentials(context: Context): Flow<Pair<String?, String?>> {
         return context.dataStore.data.map { prefs ->

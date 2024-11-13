@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     Surface {
                         val viewModel: AuthViewModel = viewModel()
                         MainScreen(viewModel)
+
                     }
                 }
         }, 4000)

@@ -41,7 +41,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import org.wahyuheriyanto.nutricom.MainActivity.Companion.REQUEST_CODE_GOOGLE_SIGN_IN
 
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.model.UserItem

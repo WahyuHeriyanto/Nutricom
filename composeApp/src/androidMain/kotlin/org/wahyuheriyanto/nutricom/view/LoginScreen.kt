@@ -38,38 +38,86 @@ import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.data.DataStoreUtils
 import org.wahyuheriyanto.nutricom.model.LoginItem
+import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
+import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
 @Composable
 fun MainScreen(viewModel: AuthViewModel) {
+    val context = LocalContext.current
     val navController = rememberNavController()
+    val uidCredentials by DataStoreUtils.getLoginCredentials(context).collectAsState(initial = null)
+    val savedCredentials by DataStoreUtils.getCredentials(context).collectAsState(initial = Pair(null, null))
+    var email by remember { mutableStateOf(savedCredentials.first ?: "") }
+    var password by remember { mutableStateOf(savedCredentials.second ?: "") }
+    val loginState by viewModel.loginState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Log.e("cekpokok", "Cek nilai : $uidCredentials")
 
-        NavHost(navController, startDestination = "login") {
-            composable("login") {
-                LoginScreen(viewModel, onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
-                    }
-                }, onSignUpClick = {
-                    navController.navigate("register")
-                })
-            } //Login Page Navigation
-            composable("home") {
-                // Pass the existing viewModel instance here
-                NavigationBar(viewModel = viewModel)
-//                HomeScreen(viewModel = viewModel)
-            } //Home Page Navigation
-            composable("register") {
-                // Pass the existing viewModel instance here
-                RegisterScreen(viewModel = AuthViewModel()) {
+    // Mengisi email dan password dari DataStore jika tersedia
+    LaunchedEffect(savedCredentials) {
+        savedCredentials.first?.let { email = it }
+        savedCredentials.second?.let { password = it }
+        Log.d("DataStoreUtils", "Loaded saved email: ${savedCredentials.first}, password: ${savedCredentials.second}")
+    }
+
+    // Melakukan login hanya jika uidCredentials sudah ada dan hanya sekali
+//    LaunchedEffect(uidCredentials) {
+//        if (!uidCredentials.isNullOrEmpty()) {
+//            performData(viewModel = viewModel, viewModelTwo = DataViewModel())
+//            Log.e("cekpokok", "Memanggil login sekali saja")
+//        }
+//    }
+
+    // Menangani hasil login untuk navigasi
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is LoginState.Success -> {
+                DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
                 }
-            } //Register Page Navigation
+                Log.e("CekPoint", "Login berhasil, navigasi ke home")
+            }
+            is LoginState.Error -> {
+                Log.e("cekpokok", "Terjadi error saat login")
+            }
+            is LoginState.Loading -> {
+                Log.e("cekpokok", "Sedang loading login")
+            }
+            LoginState.Idle -> {
+                Log.e("cekpokok", "Idle")
+            }
         }
     }
-} //MainScreen
+
+    // Navigasi sesuai dengan kondisi uidCredentials
+    NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
+        composable("login") {
+            LoginScreen(viewModel, onLoginSuccess = {
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }, onSignUpClick = {
+                navController.navigate("register")
+            })
+        }
+
+        composable("home") {
+            NavigationBar(viewModel = viewModel)
+        }
+
+        composable("register") {
+            RegisterScreen(viewModel = AuthViewModel()) {
+            }
+        }
+    }
+}
+
+
+
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
@@ -150,6 +198,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
     LaunchedEffect(loginState) {
         when (loginState) {
             is LoginState.Success -> {
+                DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
                 onLoginSuccess()  // Pindah ke HomeScreen
                 Log.e("CekPoint","lewat")
 

@@ -71,6 +71,7 @@ kotlin {
             implementation ("org.tensorflow:tensorflow-lite:2.10.0")
             implementation ("com.google.firebase:firebase-storage-ktx")
             implementation("io.coil-kt:coil-compose:2.1.0")
+            implementation ("androidx.work:work-runtime-ktx:2.7.1")
 
 
         }

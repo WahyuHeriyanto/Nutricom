@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wahyuheriyanto.nutricom.data.DataStoreUtils
+import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
@@ -43,6 +44,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                                 viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
                                 viewModel.setUidCurrent(uid)
                                 Log.e("CekPoint", "Point : $pointsValue")
+                                Log.e("cekpokok", "benarsekali")
 
                             }
                             else -> {

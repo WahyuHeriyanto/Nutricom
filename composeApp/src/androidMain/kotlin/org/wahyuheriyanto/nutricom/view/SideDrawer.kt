@@ -25,15 +25,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.data.DataStoreUtils
 
 @Composable
 fun SideDrawer(navController: NavController) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -92,6 +98,27 @@ fun SideDrawer(navController: NavController) {
             label = "My Schedules",
             onClick = { navController.navigate("schedule") }
         )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = {
+//                    navController.navigate("login") // Arahkan ke layar login setelah logout
+                    // Hapus UID dari DataStore
+                    CoroutineScope(Dispatchers.IO).launch {
+                        DataStoreUtils.clearLoginCredentials(context)
+                    }
+                })
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.profile_icon),
+                contentDescription = "",
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(text = "Logout", fontSize = 16.sp)
+        }
     }
 }
 

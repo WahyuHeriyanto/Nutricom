@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wahyuheriyanto.nutricom.model.DataItem
 import org.wahyuheriyanto.nutricom.model.LoginItem
+import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 
 // Kelas AuthViewModel
@@ -95,6 +96,7 @@ class AuthViewModel : ViewModel() {
 expect fun performLogin(viewModel: AuthViewModel, email: String, password: String)
 
 expect fun performRegister(viewModel: AuthViewModel, email: String, password: String, name :String, user : String, phone : String, birth : String)
+
 
 expect fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String)
 

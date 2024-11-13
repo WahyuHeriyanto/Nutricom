@@ -8,3 +8,6 @@ data class DataItem(
     val bmi: Int =0
 
 )
+data class UidItem(
+    var uid:String = ""
+)
