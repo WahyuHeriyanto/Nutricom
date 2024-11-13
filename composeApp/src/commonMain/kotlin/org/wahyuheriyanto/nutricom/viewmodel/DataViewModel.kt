@@ -16,6 +16,9 @@ class DataViewModel :ViewModel(){
     val calorie: StateFlow<Long> = _calorie
     val bmi: StateFlow<Long> = _bmi
 
+    private val _imageUrls = MutableStateFlow<List<String>>(emptyList())
+    val imageUrls: StateFlow<List<String>> = _imageUrls
+
     fun updateData(newWeight: Long,
                      newHeight: Long,
                      newCalorie: Long,
@@ -28,6 +31,14 @@ class DataViewModel :ViewModel(){
 
     }
 
+    fun updateImage(newImage: List<String>)
+    {
+        _imageUrls.value = newImage
+
+    }
+
 }
 
 expect fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel)
+
+expect fun fetchImageUrls(viewModelTwo: DataViewModel)

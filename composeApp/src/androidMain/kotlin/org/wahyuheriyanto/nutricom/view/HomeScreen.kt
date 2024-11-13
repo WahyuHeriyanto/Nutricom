@@ -43,16 +43,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.rememberImagePainter
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.fetchImageUrls
 import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
 @Composable
 fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     val loginState by viewModel.loginState.collectAsState()
+    val imageUrls by viewModelTwo.imageUrls.collectAsState()
     val name by viewModel.userName.collectAsState()
     val wv by viewModelTwo.weight.collectAsState()
     val hv by viewModelTwo.height.collectAsState()
@@ -60,6 +63,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     val bv by viewModelTwo.bmi.collectAsState()
 
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
+    fetchImageUrls(viewModelTwo = viewModelTwo)
 
     ConstraintLayout {
         val (title, text, carousel, indicator, boxindi, label, bmi) = createRefs()
@@ -79,6 +83,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             R.drawable.green_box_signin,
             R.drawable.green_box_signin
         )
+        val imagess = imageUrls
 
         var activeIndex by remember { mutableStateOf(0) }
 
@@ -143,7 +148,10 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
         ) {
             CarouselItem(
-                imageRes = images[activeIndex],
+                imageRes =
+                //images[activeIndex]
+                if (imageUrls.isNotEmpty()) imageUrls[activeIndex] else images[activeIndex]
+                ,
                 title = "Health Tip #${activeIndex + 1}",
                 description = "Stay active and eat well!",
                 onClick = {} // You can specify an action here if needed
@@ -355,7 +363,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 }
 
 @Composable
-fun CarouselItem(imageRes: Int, title: String, description: String, onClick: () -> Unit) {
+fun CarouselItem(imageRes: Any, title: String, description: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(330.dp)
@@ -364,8 +372,13 @@ fun CarouselItem(imageRes: Int, title: String, description: String, onClick: () 
             .padding(8.dp)
             .clickable(onClick = onClick)
     ) {
+        val painter = if (imageRes is Int) {
+            painterResource(imageRes)
+        } else {
+            rememberImagePainter(imageRes)
+        }
         Image(
-            painter = painterResource(imageRes),
+            painter = painter,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()

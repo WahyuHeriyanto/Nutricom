@@ -69,6 +69,8 @@ kotlin {
             implementation("androidx.datastore:datastore:1.0.0")
             implementation("com.google.firebase:firebase-firestore:24.3.0")
             implementation ("org.tensorflow:tensorflow-lite:2.10.0")
+            implementation ("com.google.firebase:firebase-storage-ktx")
+            implementation("io.coil-kt:coil-compose:2.1.0")
 
 
         }

@@ -6,3 +6,6 @@ actual fun performData(
     viewModelTwo: DataViewModel
 ) {
 }
+
+actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
+}

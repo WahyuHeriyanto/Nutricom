@@ -3,6 +3,7 @@ package org.wahyuheriyanto.nutricom.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,4 +45,27 @@ actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     }
     }
 
+}
+
+actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        val storageRef = FirebaseStorage.getInstance().reference.child("images")
+        val firestore = FirebaseFirestore.getInstance()
+        val imageList = mutableListOf<String>()
+
+        firestore.collection("images") // Misalnya, koleksi tempat Anda menyimpan referensi gambar
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val imageUrl = document.getString("url") // Dapatkan URL gambar
+                    if (imageUrl != null) {
+                        imageList.add(imageUrl)
+                    }
+                }
+                viewModelTwo.updateImage(imageList)
+            }
+            .addOnFailureListener { exception ->
+                // Tangani jika ada kegagalan
+            }
+    }
 }

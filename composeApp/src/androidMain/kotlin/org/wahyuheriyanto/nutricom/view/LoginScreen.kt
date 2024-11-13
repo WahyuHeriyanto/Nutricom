@@ -76,8 +76,10 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
     val context = LocalContext.current
     val loginState by viewModel.loginState.collectAsState()
     val savedCredentials by DataStoreUtils.getCredentials(context).collectAsState(initial = Pair(null, null))
+    val uidCredentials by DataStoreUtils.getLoginCredentials(context).collectAsState(initial = null)
     val coroutineScope = rememberCoroutineScope()
 
+    var uidLogin by remember { mutableStateOf(uidCredentials ?: "") }
     var checked by remember { mutableStateOf(savedCredentials.first != null) }
     var email by remember { mutableStateOf(savedCredentials.first ?: "") }
     var password by remember { mutableStateOf(savedCredentials.second ?: "") }

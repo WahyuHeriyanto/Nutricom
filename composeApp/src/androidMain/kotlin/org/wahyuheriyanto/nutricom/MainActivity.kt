@@ -30,15 +30,10 @@ import org.wahyuheriyanto.nutricom.viewmodel.performGoogleSignIn
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private lateinit var viewModel: AuthViewModel // Initialize your ViewModel
-
-    companion object {
-        const val REQUEST_CODE_GOOGLE_SIGN_IN = 1001
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         setContent {
             SplashScreen()

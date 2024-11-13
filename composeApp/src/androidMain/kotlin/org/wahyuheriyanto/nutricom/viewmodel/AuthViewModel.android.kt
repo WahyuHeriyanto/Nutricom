@@ -1,6 +1,8 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.GoogleAuthProvider
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.wahyuheriyanto.nutricom.data.DataStoreUtils
 import org.wahyuheriyanto.nutricom.model.UserItem
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
@@ -40,6 +43,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                                 viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
                                 viewModel.setUidCurrent(uid)
                                 Log.e("CekPoint", "Point : $pointsValue")
+
                             }
                             else -> {
                                 Log.e("Error","Belum keisi")

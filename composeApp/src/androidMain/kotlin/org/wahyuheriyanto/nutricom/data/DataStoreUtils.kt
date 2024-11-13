@@ -14,7 +14,7 @@ private val Context.dataStore by preferencesDataStore(name = "user_prefs")
 object DataStoreUtils {
     private val EMAIL_KEY = stringPreferencesKey("email")
     private val PASSWORD_KEY = stringPreferencesKey("password")
-    private val LOGIN_STATUS_KEY = stringPreferencesKey("login_status")
+    private val UID_KEY = stringPreferencesKey("uid")
 
 
     // Save email and password
@@ -27,9 +27,9 @@ object DataStoreUtils {
 
     //Preparing
 
-    suspend fun saveLoginCredentials(context: Context, login_status: String) {
+    suspend fun saveLoginCredentials(context: Context, uid: String) {
         context.dataStore.edit { prefs ->
-            prefs[LOGIN_STATUS_KEY] = login_status
+            prefs[UID_KEY] = uid
         }
     }
 
@@ -42,7 +42,7 @@ object DataStoreUtils {
 
     fun getLoginCredentials(context: Context): Flow<String?> {
         return context.dataStore.data.map { prefs ->
-            prefs[LOGIN_STATUS_KEY]
+            prefs[UID_KEY]
         }
     }
 }
