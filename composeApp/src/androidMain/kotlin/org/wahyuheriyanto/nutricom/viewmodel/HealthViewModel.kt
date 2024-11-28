@@ -10,24 +10,34 @@ import org.wahyuheriyanto.nutricom.data.TFLiteModel
 class HealthViewModel(application: Application) : AndroidViewModel(application) {
     private val tfliteModel = TFLiteModel(application)
     private val _analysisResult = MutableStateFlow("")
-
-    // Ubah menjadi StateFlow
     val analysisResult: StateFlow<String> get() = _analysisResult
 
-    fun analyze(age: Float, gender: Float, height: Float, weight: Float, bmi: Float) {
-        val inputFeatures = floatArrayOf(age, gender, height, weight, bmi)
-        val categoryIndex = tfliteModel.analyzeInput(inputFeatures)
-        _analysisResult.value = interpretCategory(categoryIndex)
+    // Fungsi untuk normalisasi
+    private fun normalize(value: Float, min: Float, max: Float): Float {
+        return (value - min) / (max - min)
     }
 
-    private fun interpretCategory(index: Int): String {
-        return when (index) {
-            0 -> "Normal Weight"
-            1 -> "Overweight"
-            2 -> "Underweight"
-            3 -> "Obese"
-            else -> "Unknown"
-        }
+    fun analyze(gender: Float, age: Float, hypertension: Float, heartDisease: Float, smokingHistory: Float, bmi: Float, hba1c: Float, glucoseLevel: Float) {
+        // Normalisasi input sesuai dengan rentang yang sesuai dengan data training
+        val inputFeatures = floatArrayOf(
+            normalize(gender, 0f, 1f),
+            normalize(age, 0f, 100f),
+            normalize(hypertension, 0f, 1f),
+            normalize(heartDisease, 0f, 1f),
+            normalize(smokingHistory, 0f, 4f),
+            normalize(bmi, 10f, 50f),
+            normalize(hba1c, 3f, 15f),
+            normalize(glucoseLevel, 50f, 300f)
+        )
+
+        val result = tfliteModel.analyzeInput(inputFeatures)
+        _analysisResult.value = if (result == 1) "Diabetes Detected" else "No Diabetes Detected"
+    }
+
+    fun resetAnalysis() {
+        _analysisResult.value = ""
     }
 }
+
+
 
