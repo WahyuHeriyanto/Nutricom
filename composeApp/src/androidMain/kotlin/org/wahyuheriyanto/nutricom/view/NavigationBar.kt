@@ -196,7 +196,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                 Modifier.padding(innerPadding)
             ) {
                 composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                composable("activity") { ActivityScreen() }
+                composable("activity") { PredictionScreen() }
                 composable("market") { HealthScreen() }
                 composable("community") { CommunityScreen() }
                 composable("wallet"){ WalletScreen()}
