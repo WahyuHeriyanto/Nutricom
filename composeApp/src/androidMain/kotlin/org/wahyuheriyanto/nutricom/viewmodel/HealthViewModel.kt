@@ -5,6 +5,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.json.JSONObject
 import org.wahyuheriyanto.nutricom.data.TFLiteModel
 
 class HealthViewModel(application: Application) : AndroidViewModel(application) {
@@ -38,6 +39,9 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
         _analysisResult.value = ""
     }
 }
+
+
+
 
 
 
