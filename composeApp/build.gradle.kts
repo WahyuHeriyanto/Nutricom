@@ -72,8 +72,8 @@ kotlin {
             implementation ("com.google.firebase:firebase-storage-ktx")
             implementation("io.coil-kt:coil-compose:2.1.0")
             implementation ("androidx.work:work-runtime-ktx:2.7.1")
-            implementation ("org.tensorflow:tensorflow-lite-select-tf-ops:2.12.0")
-
+            implementation("com.squareup.retrofit2:retrofit:2.9.0")
+            implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
 

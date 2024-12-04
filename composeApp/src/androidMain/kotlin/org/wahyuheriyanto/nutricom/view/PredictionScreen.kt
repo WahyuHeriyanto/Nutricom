@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
@@ -21,6 +20,16 @@ import org.wahyuheriyanto.nutricom.viewmodel.HealthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.PredictionViewModel
 import androidx.compose.ui.graphics.drawscope.Stroke
 import kotlin.math.roundToInt
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.wahyuheriyanto.nutricom.data.InputData
 
 @Composable
 fun CustomLineChart(data: List<Float>, modifier: Modifier = Modifier) {
@@ -67,28 +76,69 @@ fun CustomLineChart(data: List<Float>, modifier: Modifier = Modifier) {
 
 @Composable
 fun PredictionScreen(viewModel: PredictionViewModel = viewModel()) {
-    var days by remember { mutableStateOf("5") }
+    // Variabel inputData diinisialisasi tanpa nilai default
+    var inputData by remember { mutableStateOf(InputData("", 0f, 0f, 0f, 0f, 0f, 0f)) }
     var data by remember { mutableStateOf(listOf<Float>()) }
     val prediction by viewModel.predictionResult.collectAsState()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Menambahkan scroll
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         OutlinedTextField(
-            value = days,
-            onValueChange = { days = it },
-            label = { Text("Days to Predict") }
+            value = inputData.date,
+            onValueChange = { inputData = inputData.copy(date = it) },
+            label = { Text("Date (dd/mm/yyyy)") }
         )
+        OutlinedTextField(
+            value = inputData.weight.toString(),
+            onValueChange = { inputData = inputData.copy(weight = it.toFloat()) },
+            label = { Text("Weight") }
+        )
+        OutlinedTextField(
+            value = inputData.bloodSugar.toString(),
+            onValueChange = { inputData = inputData.copy(bloodSugar = it.toFloat()) },
+            label = { Text("Blood Sugar") }
+        )
+        OutlinedTextField(
+            value = inputData.bloodPressureSystolic.toString(),
+            onValueChange = { inputData = inputData.copy(bloodPressureSystolic = it.toFloat()) },
+            label = { Text("Blood Pressure Systolic") }
+        )
+        OutlinedTextField(
+            value = inputData.bloodPressureDiastolic.toString(),
+            onValueChange = { inputData = inputData.copy(bloodPressureDiastolic = it.toFloat()) },
+            label = { Text("Blood Pressure Diastolic") }
+        )
+        OutlinedTextField(
+            value = inputData.cholesterol.toString(),
+            onValueChange = { inputData = inputData.copy(cholesterol = it.toFloat()) },
+            label = { Text("Cholesterol") }
+        )
+        OutlinedTextField(
+            value = inputData.heartRate.toString(),
+            onValueChange = { inputData = inputData.copy(heartRate = it.toFloat()) },
+            label = { Text("Heart Rate") }
+        )
+
         Button(onClick = {
-            data = listOf(70f, 72f, 74f, 73f, 75f) // Contoh data input simulasi
-            viewModel.predictTrend(listOf(floatArrayOf(70f, 110f, 120f, 80f, 180f, 72f)), days.toInt())
+            viewModel.getPrediction(inputData) // Kirim input ke API
         }) {
             Text("Predict")
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        CustomLineChart(data = prediction.flatMap { it.asList() })
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Tampilkan hasil prediksi dalam bentuk grafik
+        prediction?.let {
+            CustomLineChart(data = it)
+        }
     }
 }
+
+
+
 
