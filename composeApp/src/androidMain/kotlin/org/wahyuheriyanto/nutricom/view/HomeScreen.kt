@@ -1,9 +1,10 @@
 package org.wahyuheriyanto.nutricom.view
 
-import android.util.Log
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,11 +17,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -43,7 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
+import kotlinx.coroutines.delay
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
@@ -51,29 +51,22 @@ import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchImageUrls
 import org.wahyuheriyanto.nutricom.viewmodel.performData
 
-
 @Composable
 fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
-    //Tolong rombak ini
     val loginState by viewModel.loginState.collectAsState()
     val imageUrls by viewModelTwo.imageUrls.collectAsState()
     val name by viewModel.userName.collectAsState()
-    val wv by viewModelTwo.weight.collectAsState()
-    val hv by viewModelTwo.height.collectAsState()
-    val cv by viewModelTwo.calorie.collectAsState()
-    val bv by viewModelTwo.bmi.collectAsState()
 
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
     fetchImageUrls(viewModelTwo = viewModelTwo)
 
+
+
     ConstraintLayout {
-        val (title, text, carousel, indicator, boxindi, label, bmi) = createRefs()
+        val (title, text, boxCarousel, carousel, indicator) = createRefs()
 
         val topGuideline = createGuidelineFromTop(0.02f)
-        val bottomGuideline = createGuidelineFromBottom(0.1f)
         val startGuideline = createGuidelineFromStart(0.1f)
-        val endGuidelines = createGuidelineFromEnd(0.0f)
-
         val endGuideline = createGuidelineFromEnd(0.1f)
 
         // Carousel image resources
@@ -84,9 +77,17 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             R.drawable.green_box_signin,
             R.drawable.green_box_signin
         )
-        val imagess = imageUrls
 
         var activeIndex by remember { mutableStateOf(0) }
+        val imageCount = imageUrls.size
+
+        // Carousel Auto-Slide with Timer
+        LaunchedEffect(imageCount) {
+            while (true) {
+                delay(3000L) // Delay 3 detik
+                activeIndex = (activeIndex + 1) % imageCount
+            }
+        }
 
         Row(modifier = Modifier.constrainAs(title){
             top.linkTo(topGuideline)
@@ -97,7 +98,6 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 fontSize = 30.sp,
                 fontWeight = FontWeight.Bold
             )
-
             when (loginState) {
                 is LoginState.Loading -> {
 
@@ -126,6 +126,16 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 .padding(0.dp, 10.dp)
         )
 
+        Box(modifier = Modifier.fillMaxWidth()
+            .constrainAs(boxCarousel){
+                top.linkTo(text.bottom)
+            }
+            .fillMaxWidth()
+            .height(250.dp)
+            .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
+        )
+
+
         // Carousel Content
         // Single image carousel
         Box(
@@ -137,26 +147,30 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
                 .width(300.dp)
                 .height(180.dp)
+                .background(Color.Transparent)
                 .pointerInput(Unit) {
-                    detectHorizontalDragGestures { _, dragAmount ->
-                        // Detect horizontal drag to change image
-                        if (dragAmount < -90) {
-                            activeIndex = (activeIndex + 1).coerceAtMost(images.size - 1)
-                        } else if (dragAmount > 90) {
-                            activeIndex = (activeIndex - 1).coerceAtLeast(0)
+                    detectDragGestures(
+                        onDrag = { change, dragAmount ->
+                            change.consume()
+                            if (dragAmount.x < -50) {
+                                activeIndex = (activeIndex + 1) % imageCount
+                            } else if (dragAmount.x > 50) {
+                                activeIndex = (activeIndex - 1 + imageCount) % imageCount
+                            }
                         }
-                    }
+                    )
                 }
         ) {
-            CarouselItem(
-                imageRes =
-                //images[activeIndex]
-                if (imageUrls.isNotEmpty()) imageUrls[activeIndex] else images[activeIndex]
-                ,
-                title = "Health Tip #${activeIndex + 1}",
-                description = "Stay active and eat well!",
-                onClick = {} // You can specify an action here if needed
-            )
+            if (imageUrls.isNotEmpty()) {
+                CarouselItem(
+                    imageRes = imageUrls.getOrElse(activeIndex) { "" },
+                    title = "Health Tip #${activeIndex + 1}",
+                    description = "Stay active and eat well!",
+                    onClick = {}
+                )
+            } else {
+                Text("Loading images...", modifier = Modifier.align(Alignment.Center))
+            }
         }
 
         // Indicator for active image
@@ -174,212 +188,21 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 IndicatorDot(isActive = index == activeIndex)
             }
         }
-
-        //Indicator BMI
-
-        Row (modifier = Modifier.constrainAs(boxindi){
-            top.linkTo(indicator.bottom)
-            start.linkTo(startGuideline)
-            end.linkTo(endGuideline)
-        }){
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
-            ){
-                when (loginState) {
-                    is LoginState.Loading -> {
-                    }
-                    is LoginState.Success -> {
-                        val weights = wv
-                        Column(modifier = Modifier.align(Alignment.Center)) {
-                            Text(text = "$weights",
-                                fontSize = 45.sp,
-                                fontWeight = FontWeight.Bold,
-                                )
-                            Text(text = "KG",
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,
-                                )
-                        }
-
-                    }
-                    else -> {
-                    }
-                }
-
-            }
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
-            ){
-                when (loginState) {
-                    is LoginState.Loading -> {
-                    }
-                    is LoginState.Success -> {
-                        val heights = hv
-                        Column(modifier = Modifier.align(Alignment.Center)) {
-                            Text(text = "$heights",
-                                fontSize = 45.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(text = "CM",
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-                    }
-                    else -> {
-                    }
-                }
-            }
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
-            ){
-                when (loginState) {
-                    is LoginState.Loading -> {
-                    }
-                    is LoginState.Success -> {
-                        val calories = cv
-                        Column(modifier = Modifier.align(Alignment.Center)) {
-                            Text(text = "$calories",
-                                fontSize = 45.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(text = "KKal",
-                                fontSize = 25.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
-
-        //name table
-        Row (modifier = Modifier.constrainAs(label){
-            top.linkTo(boxindi.bottom)
-            start.linkTo(startGuideline)
-            end.linkTo(endGuideline)
-        }){
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp,30.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#00AA16")))
-            ){
-                Text(text = "Weight",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
-                )
-
-            }
-
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp,30.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#00AA16")))
-            ){
-                Text(text = "Height",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
-                )
-
-            }
-
-            Box(modifier = Modifier
-                .padding(10.dp, 5.dp)
-                .size(100.dp,30.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(android.graphics.Color.parseColor("#00AA16")))
-            ){
-                Text(text = "Calorie",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.align(Alignment.Center),
-                    color = Color.White
-                )
-
-            }
-
-
-        }
-
-
-        Box(modifier = Modifier
-            .padding(0.dp, 10.dp)
-            .size(260.dp, 100.dp)
-            .clip(RoundedCornerShape(10.dp))
-            .constrainAs(bmi) {
-                top.linkTo(label.bottom)
-                start.linkTo(startGuideline)
-                end.linkTo(endGuideline)
-            }
-            .background(Color(android.graphics.Color.parseColor("#C9E4EF")))
-        ){
-            Row (modifier = Modifier.align(Alignment.CenterStart)){
-                Image(painter = painterResource(id = R.drawable.bmi_icon), contentDescription = "",
-                    modifier = Modifier.size(130.dp))
-
-//                Spacer(modifier = Modifier.width(10.dp))
-
-                when (loginState) {
-                    is LoginState.Loading -> {
-                    }
-                    is LoginState.Success -> {
-                        val bmis = bv
-                        Text(text = "$bmis BMI",
-                            fontSize = 30.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(0.dp,30.dp)
-                        )
-                    }
-                    else -> {
-                    }
-                }
-
-
-            }
-
-        }
-
-
-
     }
-
-
 }
 
 @Composable
-fun CarouselItem(imageRes: Any, title: String, description: String, onClick: () -> Unit) {
+fun CarouselItem(imageRes: String, title: String, description: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
-            .width(330.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.LightGray)
+            .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
             .padding(8.dp)
             .clickable(onClick = onClick)
     ) {
-        val painter = if (imageRes is Int) {
-            painterResource(imageRes)
-        } else {
-            rememberImagePainter(imageRes)
-        }
-        Image(
-            painter = painter,
+        AsyncImage(
+            model = imageRes,
             contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
@@ -393,6 +216,7 @@ fun CarouselItem(imageRes: Any, title: String, description: String, onClick: () 
         Text(text = description, fontSize = 12.sp, color = Color.Gray)
     }
 }
+
 
 @Composable
 fun IndicatorDot(isActive: Boolean) {

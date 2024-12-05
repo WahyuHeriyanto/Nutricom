@@ -63,6 +63,7 @@ actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
                     }
                 }
                 viewModelTwo.updateImage(imageList)
+                Log.e("OutputImage", "Image link : $imageList")
             }
             .addOnFailureListener { exception ->
                 // Tangani jika ada kegagalan
