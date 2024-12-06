@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -63,7 +64,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
 
     ConstraintLayout {
-        val (title, text, boxCarousel, carousel, indicator) = createRefs()
+        val (title, text, boxCarousel, carousel, indicator, contentBox) = createRefs()
 
         val topGuideline = createGuidelineFromTop(0.02f)
         val startGuideline = createGuidelineFromStart(0.1f)
@@ -126,14 +127,17 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 .padding(0.dp, 10.dp)
         )
 
-        Box(modifier = Modifier.fillMaxWidth()
-            .constrainAs(boxCarousel){
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .constrainAs(boxCarousel) {
                 top.linkTo(text.bottom)
             }
             .fillMaxWidth()
             .height(250.dp)
             .background(Color(android.graphics.Color.parseColor("#DCEFC9")))
         )
+
+
 
 
         // Carousel Content
@@ -188,6 +192,18 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 IndicatorDot(isActive = index == activeIndex)
             }
         }
+
+        //Content Box
+        Box(modifier = Modifier.fillMaxWidth()
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(40.dp))
+            .constrainAs(contentBox){
+                top.linkTo(boxCarousel.bottom)
+            }
+            .background(Color.Red)
+        )
+
+
     }
 }
 
