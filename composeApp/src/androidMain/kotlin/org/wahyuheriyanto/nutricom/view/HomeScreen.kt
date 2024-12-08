@@ -1,12 +1,11 @@
 package org.wahyuheriyanto.nutricom.view
 
 
-import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
@@ -39,6 +39,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -52,6 +53,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import kotlinx.coroutines.delay
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.view.widget.LineChart
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
@@ -74,7 +76,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
 
     ConstraintLayout {
-        val (title, text, boxCarousel, carousel, indicator, contentBox, bmiBox) = createRefs()
+        val (title, text, boxCarousel, carousel, indicator, contentBox, bmiBox, caloriesBox, gridBox) = createRefs()
 
         val topGuideline = createGuidelineFromTop(0.02f)
         val startGuideline = createGuidelineFromStart(0.1f)
@@ -176,7 +178,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
                 }
-                .width(300.dp)
+                .width(350.dp)
                 .height(180.dp)
                 .background(Color.Transparent)
                 .pointerInput(Unit) {
@@ -234,14 +236,63 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
         //BMI Box Content
         Box(modifier = Modifier
             .width(350.dp)
-            .constrainAs(bmiBox){
+            .constrainAs(bmiBox) {
                 top.linkTo(boxCarousel.bottom)
                 start.linkTo(startGuideline)
                 end.linkTo(endGuideline)
 
 
             }
-            .fillMaxWidth()
+            .height(250.dp)
+            .background(Color.White)
+            .background(brush = shimmerBrush)
+            .clip(RoundedCornerShape(30.dp))
+            .border(
+                width = 2.dp, // Ketebalan garis
+                color = Color.Gray.copy(alpha = 0.5f), // Warna garis tipis abu-abu
+                shape = RoundedCornerShape(30.dp) // Bentuk rounded mengikuti box
+            )
+
+            .drawBehind {
+                // Custom warna shadow bagian bawah
+                drawRect(
+                    color = Color.Gray.copy(alpha = 0.2f), // Warna shadow abu-abu tipis
+                    topLeft = Offset(0f, size.height - 8.dp.toPx()), // Posisi shadow di bawah
+                    size = Size(size.width, 20.dp.toPx()) // Ketebalan shadow
+                )
+            },
+            contentAlignment = Alignment.Center
+
+        ){
+            Row (horizontalArrangement = Arrangement.Center, // Menempatkan Column di tengah Row
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .width(280.dp)
+                    .height(280.dp)){
+                Column {
+                    LineChart(width = 150, height = 150)
+                    Text(text = "Normal Weight")
+                }
+                Spacer(modifier = Modifier.width(55.dp))
+
+                Column {
+                    Text(text = "Weight")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(text = "Height")
+                }
+            }
+
+        }
+
+        //Calories Box
+        Box(modifier = Modifier
+            .width(350.dp)
+            .constrainAs(caloriesBox) {
+                top.linkTo(bmiBox.bottom)
+                start.linkTo(startGuideline)
+                end.linkTo(endGuideline)
+            }
+            .padding(top = 20.dp)
             .height(200.dp)
             .background(Color.White)
             .background(brush = shimmerBrush)
@@ -260,6 +311,27 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     size = Size(size.width, 20.dp.toPx()) // Ketebalan shadow
                 )
             }
+
+        )
+
+        //Grid Content
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .constrainAs(gridBox) {
+                top.linkTo(caloriesBox.bottom)
+                start.linkTo(startGuideline)
+                end.linkTo(endGuideline)
+            }
+            .padding(top = 40.dp)
+            .height(300.dp)
+            .background(Color.White)
+            .border(
+                width = 2.dp, // Ketebalan garis
+                color = Color.Gray.copy(alpha = 0.5f), // Warna garis tipis abu-abu
+
+            )
+
+
 
         )
 
@@ -311,4 +383,14 @@ fun HomePreview(){
         HomeScreen(viewModel = AuthViewModel(), viewModelTwo = DataViewModel())
     }
 }
+
+@Preview (heightDp = 1200)
+@Composable
+
+fun LongPreview(){
+    Surface(modifier = Modifier.fillMaxSize()){
+        HomeScreen(viewModel = AuthViewModel(), viewModelTwo = DataViewModel())
+    }
+}
+
 
