@@ -1,17 +1,13 @@
 package org.wahyuheriyanto.nutricom.view
 
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -37,23 +33,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import kotlinx.coroutines.delay
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.widget.CarouselItem
@@ -72,18 +61,16 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     val name by viewModel.userName.collectAsState()
     val wv by viewModelTwo.weight.collectAsState()
     val hv by viewModelTwo.height.collectAsState()
-
     var shimmerOffset by remember { mutableStateOf(0f) }
-
     val datas = listOf(18f, 18.5f, 17.8f, 21.2f)
     val dates = listOf("22", "23", "24", "25")
-
 
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
     fetchImageUrls(viewModelTwo = viewModelTwo)
     // Scroll State
     val scrollState = rememberScrollState()
 
+    //Scroll Box
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -95,7 +82,6 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             val topGuideline = createGuidelineFromTop(0.005f)
             val startGuideline = createGuidelineFromStart(0.1f)
             val endGuideline = createGuidelineFromEnd(0.1f)
-            val bottomGuideline = createGuidelineFromBottom(0f)
 
             // Carousel image resources
             val images = listOf(
@@ -117,7 +103,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                 }
             }
 
-            // Animasi shimmer
+            // Animation shimmer
             LaunchedEffect(Unit) {
                 while (true) {
                     shimmerOffset += 0.1f
@@ -339,7 +325,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     end.linkTo(endGuideline)
                 }
                 .padding(top = 20.dp)
-                .height(200.dp)
+                .height(250.dp)
                 .background(Color.White)
                 .background(brush = shimmerBrush)
                 .clip(RoundedCornerShape(30.dp))
@@ -358,7 +344,26 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     )
                 }
 
-            )
+            ){
+                Row (horizontalArrangement = Arrangement.Center, // Menempatkan Column di tengah Row
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .width(300.dp)
+                        .height(280.dp)){
+                    Column (horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(text = "Intake Calories")
+                        Spacer(modifier = Modifier.height(20.dp))
+                        LineChart(width = 120, height = 120, data = datas, date = dates)
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    Column (horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(text = "Output Calories")
+                        Spacer(modifier = Modifier.height(20.dp))
+                        LineChart(width = 120, height = 120, data = datas, date = dates)
+                    }
+                }
+            }
 
             //Grid Content
             Box(modifier = Modifier
@@ -379,7 +384,51 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
 
 
-            )
+            ){
+
+                // Grid Layout
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    // Row pertama
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        repeat(2) { // Dua box di baris pertama
+                            Box(
+                                modifier = Modifier
+                                    .size(120.dp) // Ukuran box
+                                    .background(Color.LightGray)
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Gray.copy(alpha = 0.5f), // Warna stroke tipis
+                                    )
+                            )
+                        }
+                    }
+
+                    // Row kedua
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        repeat(2) { // Dua box di baris kedua
+                            Box(
+                                modifier = Modifier
+                                    .size(120.dp) // Ukuran box
+                                    .background(Color.LightGray)
+                                    .border(
+                                        width = 1.dp,
+                                        color = Color.Gray.copy(alpha = 0.5f), // Warna stroke tipis
+                                    )
+                            )
+                        }
+                    }
+                }
+
+            }
 
 
 
