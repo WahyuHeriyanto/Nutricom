@@ -15,14 +15,14 @@ import androidx.compose.ui.unit.dp
 
 
     @Composable
-    fun LineChart( width : Int, height : Int ){
+    fun LineChart( width : Int, height : Int, data : List<Float>, date : List<String>){
         Box(modifier = Modifier.width(width.dp)
             .height(height.dp)
         ){
             // Data untuk grafik
-            val data = listOf(500f, 850f, 1200f, 1355f)
-            val dates = listOf("22", "23", "24", "25")
-            val maxY = 2000f // Batas maksimum skala Y
+            val datas = data
+            val dates = date
+            val maxY = 45f // Batas maksimum skala Y
 
 
 
@@ -40,7 +40,7 @@ import androidx.compose.ui.unit.dp
                 val graphHeight = canvasHeight - marginY
 
                 // Skala untuk data
-                val stepX = graphWidth / (data.size - 1)
+                val stepX = graphWidth / (datas.size - 1)
                 val scaleY = graphHeight / maxY
 
                 // Sumbu X dan Y
@@ -58,7 +58,7 @@ import androidx.compose.ui.unit.dp
                 )
 
                 // Titik-titik data
-                val points = data.mapIndexed { index, value ->
+                val points = datas.mapIndexed { index, value ->
                     Offset(
                         x = marginX + index * stepX,
                         y = canvasHeight - marginY - (value * scaleY)
@@ -96,7 +96,8 @@ import androidx.compose.ui.unit.dp
                 }
 
                 // Label sumbu Y
-                listOf(0, 500, 1000, 1500, 2000).forEach { label ->
+                //listOf(0, 500, 1000, 1500, 2000)
+                listOf(0, 10, 20, 30, 40).forEach { label ->
                     val yOffset = canvasHeight - marginY - (label * scaleY)
                     drawContext.canvas.nativeCanvas.apply {
                         drawText(
