@@ -11,3 +11,11 @@ data class DataItem(
 data class UidItem(
     var uid:String = ""
 )
+
+data class Article(
+    val title: String = "",
+    val author: String = "",
+    val content: String = "",
+    val imageUrl: String = "",
+    val timestamp: Long = 0L
+)

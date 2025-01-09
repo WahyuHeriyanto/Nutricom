@@ -94,7 +94,8 @@ fun MainScreen(viewModel: AuthViewModel) {
     }
 
     // Navigasi sesuai dengan kondisi uidCredentials
-    NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
+    NavHost(navController, startDestination = "login") {
+//        NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
         composable("login") {
             LoginScreen(viewModel, onLoginSuccess = {
                 navController.navigate("home") {

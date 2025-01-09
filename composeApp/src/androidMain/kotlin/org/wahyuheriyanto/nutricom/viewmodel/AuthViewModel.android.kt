@@ -1,8 +1,6 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
-import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.GoogleAuthProvider
@@ -10,12 +8,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.wahyuheriyanto.nutricom.data.DataStoreUtils
-import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
@@ -24,7 +18,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
             val authResult = FirebaseAuth.getInstance()
                 .signInWithEmailAndPassword(email, password)
                 .await()
-            // Jika login berhasil
+
             val user = authResult.user
             user?.let { currentUser ->
                 val uid = currentUser.uid

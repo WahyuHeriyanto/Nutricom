@@ -9,3 +9,6 @@ actual fun performData(
 
 actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
 }
+
+actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
+}

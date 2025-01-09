@@ -134,49 +134,14 @@ fun NavigationBar(viewModel: AuthViewModel,
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Image(painter = painterResource(id = R.drawable.nutricom_logo_small),
-                    contentDescription = "",
-                    modifier = Modifier.size(90.dp)) },
+                title = {
+                        //taruh icon strip 3
+                },
                 backgroundColor = Color.White,
                 actions = {
-                    IconButton(onClick = onTopBarActionClick,
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .padding(0.dp, 0.dp)
-                            .width(150.dp)
-                            .height(35.dp)
-                            .background(Color(android.graphics.Color.parseColor("#DCEFC9")))) {
 
-                        Row (modifier = Modifier.clickable {
-                            navController.navigate("wallet") // Navigate to WalletScreen when clicked
-                        }) {
-                            Icon(painter = painterResource(id = R.drawable.wallet_icon), contentDescription = "",
-                                modifier = Modifier.size(20.dp))
-                            Spacer(modifier = Modifier.width(10.dp))
-                            when (loginState) {
-                        is LoginState.Loading -> {
-
-                        }
-                        is LoginState.Success -> {
-                            val points = point
-                            Text(
-                                text = "$points pts",
-                                fontSize = 18.sp,
-
-                            )
-                            Log.e("CekPoint","Point 2 : $points")
-                        }
-                        else -> {
-                            // Idle state
-                        }
-                    }
-
-
-                        }
-
-                    }
                     IconButton(onClick = onTopBarActionClick ) {
-                        Icon(painter = painterResource(id = R.drawable.notification_icon), contentDescription = "",
+                        Icon(painter = painterResource(id = R.drawable.bell_icon), contentDescription = "",
                             modifier = Modifier.size(30.dp))
                     }
                 }
