@@ -19,3 +19,7 @@ data class Article(
     val imageUrl: String = "",
     val timestamp: Long = 0L
 )
+
+data class RecommenderItem(
+    val sentence: String = ""
+)

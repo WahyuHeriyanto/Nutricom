@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.model.Article
+import org.wahyuheriyanto.nutricom.model.RecommenderItem
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     CoroutineScope(Dispatchers.IO).launch {
@@ -102,45 +103,24 @@ actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
     }
 }
 
-//actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
-//    CoroutineScope(Dispatchers.IO).launch {
-//        val storageRef = FirebaseStorage.getInstance().reference.child("images")
-//        val firestore = FirebaseFirestore.getInstance()
-//        val imageList = mutableListOf<String>()
-//        val imageList2 = mutableListOf<String>()
-//        val imageList3 = mutableListOf<String>()
-//        val imageList4 = mutableListOf<String>()
-//        val imageList5 = mutableListOf<Long>()
-//
-//        firestore.collection("articles") // Misalnya, koleksi tempat Anda menyimpan referensi gambar
-//            .get()
-//            .addOnSuccessListener { documents ->
-//                for (document in documents) {
-//                    val title = document.getString("title") ?: ""
-//                    val author = document.getString("author") ?: ""
-//                    val content = document.getString("content") ?: ""
-//                    val imageUrl = document.getString("imageUrl") ?: ""
-////                    val timestamp = document.getLong("timestamp") ?: 0L // Dapatkan URL gambar
-//                    if (imageUrl != null) {
-//                        imageList.add(title)
-//                        imageList2.add(author)
-//                        imageList3.add(content)
-//                        imageList4.add(imageUrl)
-////                        imageList5.add(timestamp)
-//                    }
-//                }
-//                Log.e("CekList","$imageList" )
-//                Log.e("CekList","$imageList2" )
-//                Log.e("CekList","$imageList3" )
-//                Log.e("CekList","$imageList4" )
-////                Log.e("CekList","$imageList5" )
-//
-//                viewModelTwo.updateImage(imageList)
-//                Log.e("OutputImage", "Image link : $imageList")
-//            }
-//            .addOnFailureListener { exception ->
-//                // Tangani jika ada kegagalan
-//            }
-//    }
-//}
+actual fun fetchRecommender(viewModelTwo: DataViewModel){
+    CoroutineScope(Dispatchers.IO).launch {
+        val firestore = FirebaseFirestore.getInstance()
+
+        firestore.collection("recommendations")
+            .get()
+            .addOnSuccessListener { document ->
+                val recommenderList = document.map {doc ->
+                    RecommenderItem(
+                        sentence = doc.getString("sentence") ?: ""
+                    )
+                }
+                viewModelTwo.updateRecommender(recommenderList)
+            }
+            .addOnFailureListener { exception ->
+
+            }
+
+    }
+}
 

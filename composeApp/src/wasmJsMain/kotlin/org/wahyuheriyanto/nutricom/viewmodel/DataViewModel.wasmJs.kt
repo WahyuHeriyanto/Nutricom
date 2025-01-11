@@ -13,3 +13,6 @@ actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
 
 actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
 }
+
+actual fun fetchRecommender(viewModelTwo: DataViewModel) {
+}

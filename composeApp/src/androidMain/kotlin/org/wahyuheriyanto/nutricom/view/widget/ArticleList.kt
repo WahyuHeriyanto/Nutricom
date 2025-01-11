@@ -24,35 +24,27 @@ import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.model.Article
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 
-//@Composable
-//fun ArticleList(viewModel: DataViewModel, onArticleClick: (Article) -> Unit) {
-//    val articles = viewModel.articles.collectAsState().value
-//
-//    LazyColumn(
-//        modifier = Modifier.fillMaxSize(),
-//        contentPadding = PaddingValues(16.dp),
-//        verticalArrangement = Arrangement.spacedBy(8.dp)
-//    ) {
-//        items(articles.size) { index ->
-//            val article = articles[index]
-//            ArticleItem(article = article, onClick = { onArticleClick(article) })
-//        }
-//    }
-//}
 
 @Composable
-fun CobaLazyColumn() {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        item { Text(text = "Coba 1") }
-        item { Text(text = "Coba 2") }
+fun ArticleLoading(){
+    Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))
+        .height(96.dp)
+        .background(color = Color.LightGray)
+        .shimmerLoadingAnimation()
+    ){
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .background(color = Color.LightGray)
+                .shimmerLoadingAnimation()
+        ){
+
+        }
     }
 }
+
+
 
 @Composable
 fun ArticleItem(article: Article) {
