@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,13 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import org.wahyuheriyanto.nutricom.R
-import org.wahyuheriyanto.nutricom.view.widget.ArticleItem
-import org.wahyuheriyanto.nutricom.view.widget.ArticleLoading
-import org.wahyuheriyanto.nutricom.view.widget.RecList
+import org.wahyuheriyanto.nutricom.view.components.ArticleItem
+import org.wahyuheriyanto.nutricom.view.components.ArticleLoading
+import org.wahyuheriyanto.nutricom.view.components.RecList
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
@@ -43,7 +45,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.fetchRecommender
 @Composable
 fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
-    val loginState by viewModel.loginState.collectAsState()
+    val loginState: LoginState by viewModel.loginState.collectAsState()
     val name by viewModel.userName.collectAsState()
     val recommendation by viewModelTwo.recommenders.collectAsState()
     val articles by viewModelTwo.articles.collectAsState()
@@ -325,5 +327,14 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
             }
 
         }
+    }
+}
+
+@Preview
+@Composable
+
+fun PreviewScreen(){
+    Surface (modifier = Modifier.fillMaxSize()){
+        HomeScreen(viewModel = AuthViewModel(), viewModelTwo = DataViewModel())
     }
 }

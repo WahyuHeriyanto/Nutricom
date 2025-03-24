@@ -20,6 +20,12 @@ data class Article(
     val timestamp: Long = 0L
 )
 
+data class ScreeningItem(
+    val imageUrl: String = "",
+    val date: String = "",
+    val type: String = ""
+)
+
 data class RecommenderItem(
     val sentence: String = ""
 )

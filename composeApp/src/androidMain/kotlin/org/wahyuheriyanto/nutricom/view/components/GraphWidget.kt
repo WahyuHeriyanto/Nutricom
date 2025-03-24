@@ -1,4 +1,4 @@
-package org.wahyuheriyanto.nutricom.view.widget
+package org.wahyuheriyanto.nutricom.view.components
 
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas

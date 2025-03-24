@@ -9,6 +9,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.model.Article
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
+import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     CoroutineScope(Dispatchers.IO).launch {
@@ -124,3 +126,54 @@ actual fun fetchRecommender(viewModelTwo: DataViewModel){
     }
 }
 
+actual fun fetchScreningResult(viewModelTwo: DataViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        Log.e("CekList","Pass 1")
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("screening")
+//            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+//            .limit(5)
+            .get()
+            .addOnSuccessListener { documents ->
+                val screeningList = documents.map { doc ->
+                    ScreeningItem(
+                        type = doc.getString("type") ?: "",
+                        date = doc.getString("date") ?: "",
+                        imageUrl = doc.getString("imageUrl") ?: "",
+//                        timestamp = doc.getLong("timestamp") ?: 0L
+                    )
+                }
+                Log.e("tesscreen","$screeningList")
+                viewModelTwo.updateScreening(screeningList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+    }
+}
+
+actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        Log.e("CekList","Pass 1")
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("articles")
+            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
+                val articleList = documents.map { doc ->
+                    Article(
+                        title = doc.getString("title") ?: "",
+                        author = doc.getString("author") ?: "",
+                        content = doc.getString("content") ?: "",
+                        imageUrl = doc.getString("imageUrl") ?: "",
+//                        timestamp = doc.getLong("timestamp") ?: 0L
+                    )
+                }
+//                Log.e("CekList","$articleList")
+                viewModelTwo.updateArticle(articleList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+    }
+}

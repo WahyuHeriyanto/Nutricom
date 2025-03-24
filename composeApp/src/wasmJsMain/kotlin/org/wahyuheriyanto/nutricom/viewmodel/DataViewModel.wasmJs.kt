@@ -16,3 +16,9 @@ actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
 
 actual fun fetchRecommender(viewModelTwo: DataViewModel) {
 }
+
+actual fun fetchScreningResult(viewModelTwo: DataViewModel) {
+}
+
+actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
+}

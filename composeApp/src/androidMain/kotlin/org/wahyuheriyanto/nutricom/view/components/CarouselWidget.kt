@@ -1,4 +1,4 @@
-package org.wahyuheriyanto.nutricom.view.widget
+package org.wahyuheriyanto.nutricom.view.components
 
 
 import androidx.compose.foundation.background
