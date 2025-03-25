@@ -2,6 +2,7 @@ package org.wahyuheriyanto.nutricom.view
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import org.jetbrains.compose.resources.imageResource
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.CustomCircularProgressBar
@@ -38,7 +40,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 
 @Composable
-fun NutrisiScreen(viewModel: AuthViewModel) {
+fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController) {
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val scrollState = rememberScrollState()
     Column (modifier = Modifier
@@ -77,7 +79,11 @@ fun NutrisiScreen(viewModel: AuthViewModel) {
                 }
                 ,contentAlignment = Alignment.Center){
 
-                Row {
+                Row (
+                    Modifier.clickable {
+                        navController.navigate("scanScreen")
+                    }
+                ){
                     Image(painter = painterResource(id = R.drawable.scan_icon), contentDescription = ""
                     , modifier = Modifier.size(30.dp))
                     Spacer(modifier = Modifier.width(10.dp))

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,9 +42,11 @@ import org.wahyuheriyanto.nutricom.model.LoginItem
 import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
+@ExperimentalGetImage
 @Composable
 fun MainScreen(viewModel: AuthViewModel) {
     val context = LocalContext.current
@@ -107,7 +110,7 @@ fun MainScreen(viewModel: AuthViewModel) {
         }
 
         composable("home") {
-            NavigationBar(viewModel = viewModel)
+            NavigationBar(viewModel = viewModel, viewModelThree = ScanViewModel())
         }
 
         composable("register") {

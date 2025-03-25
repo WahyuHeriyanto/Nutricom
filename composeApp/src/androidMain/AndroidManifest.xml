@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <queries>
+        <package android:name="com.google.android.gms"/>
+<!--        <intent>-->
+<!--            <action android:name="android.media.action.IMAGE_CAPTURE"/>-->
+<!--        </intent>-->
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,6 +34,9 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+        <meta-data
+            android:name="androidx.camera.camera2.Camera2Config"
+            android:value="androidx.camera.camera2.impl.Camera2ConfigDefault"/>
     </application>
 
 </manifest>

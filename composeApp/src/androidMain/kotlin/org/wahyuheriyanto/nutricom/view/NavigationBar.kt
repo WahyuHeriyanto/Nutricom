@@ -2,6 +2,7 @@ package org.wahyuheriyanto.nutricom.view
 
 import android.app.Application
 import android.util.Log
+import androidx.camera.core.ExperimentalGetImage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -52,10 +53,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.view.screens.ScanScreen
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.HealthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 
 
 private fun navigateToRoute(route: String, navController: NavController) {
@@ -96,8 +99,10 @@ fun BottomNavigationBar(navController: NavController) {
 
 
 
+@ExperimentalGetImage
 @Composable
 fun NavigationBar(viewModel: AuthViewModel,
+                  viewModelThree : ScanViewModel,
     onTopBarActionClick: () -> Unit = {},
     onBottomNavItemSelected: (String) -> Unit = {},
             content: @Composable (PaddingValues) -> Unit ={}
@@ -162,10 +167,13 @@ fun NavigationBar(viewModel: AuthViewModel,
             ) {
                 composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                 composable("activity") { ScreeningScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                composable("market") { NutrisiScreen(viewModel = viewModel) }
+                composable("market") { NutrisiScreen(viewModel = viewModel,navController) }
                 composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                composable("scanScreen") { ScanScreen(navController, viewModelThree) }
+                composable("result") { ResultScreen(navController, viewModelThree) }
                 composable("wallet"){ WalletScreen()}
-                composable("schedule"){ ScheduleScreen()}
+                composable("schedule"){ ScheduleScreen()
+                }
 
 
 
@@ -179,12 +187,13 @@ fun NavigationBar(viewModel: AuthViewModel,
     )
 }
 
+@ExperimentalGetImage
 @Preview
 @Composable
 
 fun NavPreview(){
     Surface (modifier = Modifier.fillMaxSize()){
-        NavigationBar(viewModel = AuthViewModel()) {
+        NavigationBar(viewModel = AuthViewModel(), viewModelThree = ScanViewModel()) {
             
         }
     }
