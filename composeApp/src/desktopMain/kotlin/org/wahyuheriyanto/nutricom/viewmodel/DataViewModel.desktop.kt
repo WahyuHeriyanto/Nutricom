@@ -21,3 +21,6 @@ actual fun fetchScreningResult(viewModelTwo: DataViewModel) {
 
 actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
 }
+
+actual fun fetchNutricions(viewModelTwo: DataViewModel) {
+}

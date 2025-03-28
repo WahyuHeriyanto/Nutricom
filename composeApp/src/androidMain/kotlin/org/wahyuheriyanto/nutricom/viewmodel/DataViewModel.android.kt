@@ -2,29 +2,29 @@ package org.wahyuheriyanto.nutricom.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.wahyuheriyanto.nutricom.model.Article
+import org.wahyuheriyanto.nutricom.model.Nutricions
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.model.ScreeningItem
 import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     CoroutineScope(Dispatchers.IO).launch {
         try {
-
-            val currentuid = viewModel.uid.value
-            Log.e("CekPointWeight", "Point : $currentuid")
-            currentuid?.let { currentUser ->
+            Log.e("CekUidSekarang", "Point : $userId")
+            userId?.let { currentUser ->
                 val uids = currentUser
                 val firestore = FirebaseFirestore.getInstance()
                 firestore.collection("datas").document(uids).get()
                     .addOnSuccessListener { document ->
-
-                        Log.e("CekPointWeight", "Point : $uids")
+                        Log.e("CekUidSekarang", "Point : $uids")
                         val weightValue = document.getLong("weight") ?: 0L
                         val heightValue = document.getLong("height") ?: 0L
                         val calorieValue = document.getLong("calorie") ?: 0L
@@ -32,7 +32,6 @@ actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
                         when {
                             weightValue != 0L -> {
                                 viewModelTwo.updateData(weightValue,heightValue,calorieValue,bmiValue)
-                                Log.e("CekPointWeight", "Point : $weightValue")
                             }
                             else -> {
                                 Log.e("Errorkukuku","Belum keisi")
@@ -176,4 +175,29 @@ actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
                 // Handle failure
             }
     }
+}
+
+actual fun fetchNutricions(viewModelTwo: DataViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        Log.e("CekList","Pass 1")
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("nutricions")
+            .get()
+            .addOnSuccessListener { documents ->
+                val nutricionList = documents.map { doc ->
+                    Nutricions(
+                        calories = doc.getLong("kalori") ?: 0L,
+                        proteins = doc.getLong("protein") ?: 0L,
+                        fat = doc.getLong("lemak") ?: 0L,
+                        carbo = doc.getLong("karbohidrat") ?: 0L,
+                    )
+                }
+//                Log.e("CekList","$articleList")
+                viewModelTwo.updateNutricion(nutricionList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+    }
+
 }

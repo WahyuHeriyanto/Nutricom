@@ -43,11 +43,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -103,6 +105,7 @@ fun BottomNavigationBar(navController: NavController) {
 @Composable
 fun NavigationBar(viewModel: AuthViewModel,
                   viewModelThree : ScanViewModel,
+                  navController: NavController,
     onTopBarActionClick: () -> Unit = {},
     onBottomNavItemSelected: (String) -> Unit = {},
             content: @Composable (PaddingValues) -> Unit ={}
@@ -111,90 +114,75 @@ fun NavigationBar(viewModel: AuthViewModel,
 
 
     val loginState by viewModel.loginState.collectAsState()
-    val point by viewModel.points.collectAsState()
-    val navController = rememberNavController()
 
-    LaunchedEffect(loginState){
-        Log.e("cekIsi","Penasaran : $point")
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val navController = rememberNavController() as NavHostController
 
-        when (loginState) {
-            is LoginState.Success -> {
-                Log.e("cekIsi","point ini wkwkwk : $point")
-
-            }
-            is LoginState.Error -> {
-                Log.e("Error","Belum keisi")
-
-            }
-            is LoginState.Loading -> {
-
-            }
-            LoginState.Idle -> {
-                Log.e("Errorku","Belum keisi kocak")
-            }
-        }
-
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                        //taruh icon strip 3
-                },
-                backgroundColor = Color.White,
-                actions = {
-
-                    IconButton(onClick = onTopBarActionClick ) {
-                        Icon(painter = painterResource(id = R.drawable.bell_icon), contentDescription = "",
-                            modifier = Modifier.size(30.dp))
+    if (loginState is LoginState.Success) {
+        Scaffold(
+            topBar = {
+                if (currentRoute !in listOf("login", "scanScreen", "result")) { // Hide TopAppBar on login screen
+                    TopAppBar(
+                        title = { /* Your title */ },
+                        backgroundColor = Color.White,
+                        actions = {
+                            IconButton(onClick = onTopBarActionClick) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.bell_icon),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(30.dp)
+                                )
+                            }
+                        }
+                    )
+                }
+            },
+            bottomBar = {
+                if (currentRoute !in listOf("login", "scanScreen", "result")) {
+                    BottomNavigationBar(navController = navController)
+                }
+            },
+            drawerContent = {
+                if (currentRoute != "login") { // Hide drawer on login screen
+                    SideDrawer(navController = navController,viewModel)
+                }
+            },
+            content = {
+                    innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = "home",
+                    Modifier.padding(innerPadding)
+                ) {
+//                composable("login"){ LoginScreen(viewModel = viewModel, onLoginSuccess = { /*TODO*/ }) {}}
+                    composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("activity") { ScreeningScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("market") { NutrisiScreen(viewModel = viewModel,navController, viewModelTwo = DataViewModel()) }
+                    composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("scanScreen") { ScanScreen(navController, viewModelThree) }
+                    composable("result") { ResultScreen(navController, viewModelThree) }
+                    composable("wallet"){ WalletScreen()}
+                    composable("schedule"){ ScheduleScreen()
                     }
                 }
-            )
-        },
-        bottomBar = {
-            BottomNavigationBar(navController = navController)
-        },
-        drawerContent = {
-            SideDrawer(navController = navController)
-        },
-        content = {
-                innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "home",
-                Modifier.padding(innerPadding)
-            ) {
-                composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                composable("activity") { ScreeningScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                composable("market") { NutrisiScreen(viewModel = viewModel,navController) }
-                composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                composable("scanScreen") { ScanScreen(navController, viewModelThree) }
-                composable("result") { ResultScreen(navController, viewModelThree) }
-                composable("wallet"){ WalletScreen()}
-                composable("schedule"){ ScheduleScreen()
-                }
 
-
-
-                //buat sidedrawer
-//                composable("option1") { OptionScreen1() }
-//                composable("option2") { OptionScreen2() }
-//                composable("option3") { OptionScreen3() }
             }
+        )
 
-        }
-    )
-}
-
-@ExperimentalGetImage
-@Preview
-@Composable
-
-fun NavPreview(){
-    Surface (modifier = Modifier.fillMaxSize()){
-        NavigationBar(viewModel = AuthViewModel(), viewModelThree = ScanViewModel()) {
-            
-        }
     }
+
+
 }
+
+//@ExperimentalGetImage
+//@Preview
+//@Composable
+//
+//fun NavPreview(){
+//    Surface (modifier = Modifier.fillMaxSize()){
+//        NavigationBar(viewModel = AuthViewModel(), viewModelThree = ScanViewModel()) {
+//
+//        }
+//    }
+//}

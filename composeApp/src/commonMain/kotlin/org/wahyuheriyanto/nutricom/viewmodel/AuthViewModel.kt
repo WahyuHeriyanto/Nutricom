@@ -1,19 +1,10 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.wahyuheriyanto.nutricom.model.DataItem
 import org.wahyuheriyanto.nutricom.model.LoginItem
-import org.wahyuheriyanto.nutricom.model.UidItem
 import org.wahyuheriyanto.nutricom.model.UserItem
 
 // Kelas AuthViewModel
@@ -31,6 +22,7 @@ class AuthViewModel : ViewModel() {
     private val _email = MutableStateFlow("")
     private val _phone = MutableStateFlow("")
     private val _date = MutableStateFlow("")
+    private val _gender = MutableStateFlow("")
 
     val points: StateFlow<Long> = _points
     val fullName: StateFlow<String> = _fullName
@@ -38,6 +30,7 @@ class AuthViewModel : ViewModel() {
     val email: StateFlow<String> = _email
     val phone: StateFlow<String> = _phone
     val date: StateFlow<String> = _date
+    val gender: StateFlow<String> = _gender
 
 
 
@@ -60,6 +53,7 @@ class AuthViewModel : ViewModel() {
             userItem.fullName,
             userItem.userName,
             userItem.phoneNumber,
+            userItem.gender,
             userItem.dateOfBirth) // Kirim instance viewModel saat memanggil fungsi
     }
 
@@ -95,10 +89,12 @@ class AuthViewModel : ViewModel() {
 // Deklarasi expect untuk fungsi login dan register di luar kelas
 expect fun performLogin(viewModel: AuthViewModel, email: String, password: String)
 
-expect fun performRegister(viewModel: AuthViewModel, email: String, password: String, name :String, user : String, phone : String, birth : String)
+expect fun performRegister(viewModel: AuthViewModel, email: String, password: String, name :String, user : String, phone : String, gender:String, birth : String)
 
 
 expect fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String)
+
+expect fun performLogout(viewModel: AuthViewModel)
 
 // CommonMain: Define the expect function for Google Sign-In
 

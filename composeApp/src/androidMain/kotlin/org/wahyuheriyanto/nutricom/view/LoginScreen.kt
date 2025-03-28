@@ -1,5 +1,6 @@
 package org.wahyuheriyanto.nutricom.view
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,7 +36,10 @@ import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.data.DataStoreUtils
 import org.wahyuheriyanto.nutricom.model.LoginItem
@@ -46,6 +50,8 @@ import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
+
+@SuppressLint("CoroutineCreationDuringComposition")
 @ExperimentalGetImage
 @Composable
 fun MainScreen(viewModel: AuthViewModel) {
@@ -67,42 +73,26 @@ fun MainScreen(viewModel: AuthViewModel) {
     }
 
     // Melakukan login hanya jika uidCredentials sudah ada dan hanya sekali
-//    LaunchedEffect(uidCredentials) {
-//        if (!uidCredentials.isNullOrEmpty()) {
-//            performData(viewModel = viewModel, viewModelTwo = DataViewModel())
-//            Log.e("cekpokok", "Memanggil login sekali saja")
-//        }
-//    }
-
-    // Menangani hasil login untuk navigasi
-    LaunchedEffect(loginState) {
-        when (loginState) {
-            is LoginState.Success -> {
-                DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
-                navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }
-                }
-                Log.e("CekPoint", "Login berhasil, navigasi ke home")
-            }
-            is LoginState.Error -> {
-                Log.e("cekpokok", "Terjadi error saat login")
-            }
-            is LoginState.Loading -> {
-                Log.e("cekpokok", "Sedang loading login")
-            }
-            LoginState.Idle -> {
-                Log.e("cekpokok", "Idle")
-            }
+    LaunchedEffect(uidCredentials) {
+        if (!uidCredentials.isNullOrEmpty()) {
+            performData(viewModel = viewModel, viewModelTwo = DataViewModel())
+            Log.e("cekpokok", "Memanggil login sekali saja")
         }
     }
 
+    Log.e("cekkredensi"," log 1: $uidCredentials")
+    Log.e("cekkredensi","log 1: $loginState")
+
+
     // Navigasi sesuai dengan kondisi uidCredentials
-    NavHost(navController, startDestination = "login") {
+    NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home" ) {
+        Log.e("cekkredensi"," log 2: $uidCredentials")
+        Log.e("cekkredensi","log 2: $loginState")
 //        NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
         composable("login") {
             LoginScreen(viewModel, onLoginSuccess = {
                 navController.navigate("home") {
-                    popUpTo("login") { inclusive = true }
+                    popUpTo(0) { inclusive = true }
                 }
             }, onSignUpClick = {
                 navController.navigate("register")
@@ -110,7 +100,7 @@ fun MainScreen(viewModel: AuthViewModel) {
         }
 
         composable("home") {
-            NavigationBar(viewModel = viewModel, viewModelThree = ScanViewModel())
+            NavigationBar(viewModel = viewModel, viewModelThree = ScanViewModel(), navController = navController)
         }
 
         composable("register") {
@@ -119,9 +109,6 @@ fun MainScreen(viewModel: AuthViewModel) {
         }
     }
 }
-
-
-
 
 @Composable
 fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
@@ -144,6 +131,10 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
 
 
     val activity = context as? Activity
+
+
+    Log.e("cekkredensi"," log 3: $uidCredentials")
+    Log.e("cekkredensi","log 3: $loginState")
 
     // Email validation function
     fun validateEmail(input: String): String? {
@@ -200,21 +191,10 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
 
     // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
-        when (loginState) {
-            is LoginState.Success -> {
-                DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
-                onLoginSuccess()  // Pindah ke HomeScreen
-                Log.e("CekPoint","lewat")
-
-            }
-            is LoginState.Error -> {
-                showErrorDialog = true
-
-            }
-            is LoginState.Loading -> {
-            }
-            LoginState.Idle -> {
-            }
+        if (loginState is LoginState.Success && uidCredentials.isNullOrEmpty()) {
+            DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
+            onLoginSuccess()  // Pindah ke HomeScreen
+            Log.e("CekPoint", "lewat")
         }
     }
 
@@ -268,7 +248,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
-                val (progress, googlesign, rememberme, textOne, textTwo, emailCon, passCon, loginCon, registerText) = createRefs()
+                val (googlesign, rememberme,textTwo, emailCon, passCon, loginCon, registerText, warningCon) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
                 val endGuideline = createGuidelineFromEnd(0.4f)
@@ -296,7 +276,10 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     Text(
                         text = it,
                         color = Color.Red,
-                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                        modifier = Modifier.constrainAs(warningCon){
+                            start.linkTo(emailCon.start)
+                            bottom.linkTo(emailCon.top)
+                        }
                     )
                 }
 
@@ -360,12 +343,14 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 }
 
                 Button(
-                    onClick = { viewModel.login(LoginItem(email,password))
+                    onClick = {
+                        viewModel.login(LoginItem(email,password))
                         if (checked) {
                             // Save email and password when the user logs in
                             coroutineScope.launch {
                                 DataStoreUtils.saveCredentials(context, email, password)
                                 Log.d("DataStoreUtils", "Saved email: $email, password: $password")
+                                Log.e("tesyuk","$uidCredentials")
                             }
                         }
                               },
@@ -444,27 +429,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     )
 
                 }
-
-
-//                Box(modifier = Modifier.constrainAs(progress){
-//                    start.linkTo(startGuideline)
-//                    end.linkTo(endGuideline)
-//                    bottom.linkTo(emailCon.top)
-//                }){
-////                    when (loginState) {
-////                        is LoginState.Loading -> {
-////                            CircularProgressIndicator()
-////                        }
-////                        is LoginState.Error -> {
-////                            Text((loginState as LoginState.Error).message, color = Color.Red)
-////                        }
-////                        else -> {
-////                            // Idle state
-////                        }
-////                    }
-//                }
-
-
             }
             // Show AlertDialog for login error
             if (showErrorDialog) {

@@ -40,6 +40,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchLastestArticle
 import org.wahyuheriyanto.nutricom.viewmodel.fetchRecommender
+import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
 @Composable
@@ -47,9 +48,12 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
 
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val name by viewModel.userName.collectAsState()
+    val weight_val by viewModelTwo.height_value.collectAsState()
+    val height_val by viewModelTwo.weight_value.collectAsState()
     val recommendation by viewModelTwo.recommenders.collectAsState()
     val articles by viewModelTwo.articles.collectAsState()
     val scrollState = rememberScrollState()
+    performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
 
     fetchLastestArticle(viewModelTwo = viewModelTwo)
     fetchRecommender(viewModelTwo = viewModelTwo)
@@ -172,15 +176,24 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                             color = Color(android.graphics.Color.parseColor("#737373")))
                         Spacer(modifier = Modifier.height(5.dp))
                         Row (verticalAlignment = Alignment.Bottom){
-                            Text(text = "54 ",
-                                fontFamily = FontFamily(
-                                    Font(
-                                        resId = R.font.inter_medium,
-                                        weight = FontWeight.Medium
+
+                            when (loginState) {
+                                is LoginState.Loading -> { }
+                                is LoginState.Success -> {
+                                    val weights = weight_val.toString()
+                                    Text(text = weights,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                resId = R.font.inter_medium,
+                                                weight = FontWeight.Medium
+                                            )
+                                        ),
+                                        fontSize = 24.sp,
+                                        color = Color(android.graphics.Color.parseColor("#00AA16"))
                                     )
-                                ),
-                                fontSize = 24.sp,
-                                color = Color(android.graphics.Color.parseColor("#00AA16")))
+                                }
+                                else -> { }
+                            }
 
                             Text(text = "Kg",
                                 fontFamily = FontFamily(
@@ -205,16 +218,24 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                             color = Color(android.graphics.Color.parseColor("#737373")))
                         Spacer(modifier = Modifier.height(5.dp))
                         Row (verticalAlignment = Alignment.Bottom){
-                            Text(text = "170 ",
-                                fontFamily = FontFamily(
-                                    Font(
-                                        resId = R.font.inter_medium,
-                                        weight = FontWeight.Medium
-                                    )
-                                ),
-                                fontSize = 24.sp,
-                                color = Color(android.graphics.Color.parseColor("#00AA16")))
 
+                            when (loginState) {
+                                is LoginState.Loading -> { }
+                                is LoginState.Success -> {
+                                    val heights = height_val.toString()
+                                    Text(text = heights,
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                resId = R.font.inter_medium,
+                                                weight = FontWeight.Medium
+                                            )
+                                        ),
+                                        fontSize = 24.sp,
+                                        color = Color(android.graphics.Color.parseColor("#00AA16")))
+
+                                }
+                                else -> { }
+                            }
                             Text(text = "Cm",
                                 fontFamily = FontFamily(
                                     Font(

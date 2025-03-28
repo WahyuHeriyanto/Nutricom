@@ -6,6 +6,7 @@ data class UserItem(
     val fullName: String = "",
     val userName: String = "",
     val phoneNumber: String = "",
+    val gender:String = "",
     val dateOfBirth: String = "",
     val point: Int = 0
 

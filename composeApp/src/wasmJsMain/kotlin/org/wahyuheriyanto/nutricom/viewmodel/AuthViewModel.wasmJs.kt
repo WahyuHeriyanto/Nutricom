@@ -17,6 +17,7 @@ actual fun performGoogleSignIn(
 ) {
 }
 
+
 actual fun performRegister(
     viewModel: AuthViewModel,
     email: String,
@@ -24,6 +25,10 @@ actual fun performRegister(
     name: String,
     user: String,
     phone: String,
+    gender: String,
     birth: String
 ) {
+}
+
+actual fun performLogout(viewModel: AuthViewModel) {
 }

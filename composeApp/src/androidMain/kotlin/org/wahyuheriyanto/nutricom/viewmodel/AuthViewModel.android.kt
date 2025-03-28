@@ -10,7 +10,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.wahyuheriyanto.nutricom.model.UserItem
 
 actual fun performLogin(viewModel: AuthViewModel, email: String, password: String) {
     CoroutineScope(Dispatchers.IO).launch {
@@ -33,7 +32,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                         val dateValue = document.getString("dateOfBirth") ?: ""
 
                         when {
-                            pointsValue != 0L -> {
+                            nameValue != "" -> {
                                 viewModel.setLoginState(LoginState.Success("Login successful!"))
                                 viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
                                 viewModel.setUidCurrent(uid)
@@ -68,6 +67,7 @@ actual fun performRegister(viewModel: AuthViewModel,
                            name :String,
                            user : String,
                            phone : String,
+                           gender : String,
                            birth : String) {
     CoroutineScope(Dispatchers.IO).launch {
         try {
@@ -77,22 +77,28 @@ actual fun performRegister(viewModel: AuthViewModel,
 
             val users = authResult.user
 
-            val point: Int = UserItem().point
-
-
               // Jika registrasi berhasil
             if (users != null) {
                 // Data pengguna yang akan disimpan di Firestore
                 val userData = hashMapOf(
                     "email" to email,
-                    "password" to password,
-                    "fullName" to name,       // Data dari input user
+                    "fullName" to name,
                     "userName" to user,
                     "phoneNumber" to phone,
                     "dateOfBirth" to birth,
-                    "point" to point // Pertimbangkan hashing
+                    "gender" to gender
                 )
-
+                val healthData = hashMapOf(
+                    "height" to 0L,
+                    "weight" to 0L,
+                    "bmi" to 0L
+                )
+                val nutricionData = hashMapOf(
+                    "kalori" to 0L,
+                    "glukosa" to 0L,
+                    "lemak" to 0L,
+                    "natrium" to 0L
+                )
                 // Simpan data ke Firestore
                 FirebaseFirestore.getInstance()
                     .collection("users")
@@ -100,16 +106,24 @@ actual fun performRegister(viewModel: AuthViewModel,
                     .set(userData)
                     .await()
 
+                FirebaseFirestore.getInstance()
+                    .collection("datas")
+                    .document(users.uid)
+                    .set(healthData)
+                    .await()
 
+                FirebaseFirestore.getInstance()
+                    .collection("nutricions")
+                    .document(users.uid)
+                    .set(nutricionData)
+                    .await()
 
                 viewModel.setLoginState(LoginState.Success("Registration successful!"))
             } else {
                 Log.e("ErrorRegis","Masih error")
             }
 
-
         } catch (e: Exception) {
-            // Jika registrasi gagal
             viewModel.setLoginState(LoginState.Error("Registration failed"))
         }
     }
@@ -122,8 +136,51 @@ actual fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String) {
     val credential = GoogleAuthProvider.getCredential(idToken, null)
     CoroutineScope(Dispatchers.IO).launch {
         try {
-            FirebaseAuth.getInstance().signInWithCredential(credential).await()
-            viewModel.setLoginState(LoginState.Success("Login successful!"))
+            val authResult = FirebaseAuth.getInstance().signInWithCredential(credential).await()
+            val user = authResult.user
+            if (user != null) {
+                val userId = user.uid
+                val name = user.displayName ?: "Unknown"
+                val email = user.email ?: "No Email"
+
+                // Cek apakah data pengguna sudah ada di Firestore
+                val firestore = FirebaseFirestore.getInstance()
+                val userDoc = firestore.collection("users").document(userId).get().await()
+
+                if (!userDoc.exists()) {
+                    // Jika belum ada, buat data baru
+                    val userData = hashMapOf(
+                        "email" to email,
+                        "fullName" to name,
+                        "userName" to "",
+                        "phoneNumber" to "",
+                        "dateOfBirth" to "",
+                        "gender" to ""
+                    )
+
+                    val healthData = hashMapOf(
+                        "height" to 0L,
+                        "weight" to 0L,
+                        "bmi" to 0L
+                    )
+
+                    val nutricionData = hashMapOf(
+                        "kalori" to 0L,
+                        "glukosa" to 0L,
+                        "lemak" to 0L,
+                        "natrium" to 0L
+                    )
+
+                    // Simpan data ke Firestore
+                    firestore.collection("users").document(userId).set(userData).await()
+                    firestore.collection("datas").document(userId).set(healthData).await()
+                    firestore.collection("nutricions").document(userId).set(nutricionData).await()
+                }
+
+                viewModel.setLoginState(LoginState.Success("Login successful!"))
+            } else {
+                viewModel.setLoginState(LoginState.Error("Google Sign-In failed"))
+            }
         } catch (e: Exception) {
             viewModel.setLoginState(LoginState.Error("Login failed: ${e.message}"))
         }
@@ -131,3 +188,14 @@ actual fun performGoogleSignIn(viewModel: AuthViewModel, idToken: String) {
 }
 
 
+actual fun performLogout(viewModel: AuthViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val uid = ""
+            viewModel.setLoginState(LoginState.Idle)
+            viewModel.setUidCurrent(uid)
+        } catch (e: Exception){
+            Log.e("logout","gagal logout")
+        }
+    }
+}

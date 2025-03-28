@@ -2,6 +2,9 @@ package org.wahyuheriyanto.nutricom.view
 
 
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,14 +34,52 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.data.DataStoreUtils
+import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.performLogout
+
+fun performingLogout(navController: NavController, context: Context, viewModel: AuthViewModel) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            val auth = FirebaseAuth.getInstance()
+            auth.signOut()
+
+            val googleSignInClient = GoogleSignIn.getClient(
+                context,
+                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+            )
+            googleSignInClient.signOut().await()
+
+            DataStoreUtils.clearLoginCredentials(context)
+            viewModel.setLoginState(LoginState.Idle)
+            withContext(Dispatchers.Main) {
+                DataStoreUtils.clearLoginCredentials(context)
+                viewModel.setLoginState(LoginState.Idle)
+//                DataStoreUtils.clearLoginCredentials(context)
+                delay(3000) // Beri waktu untuk memastikan DataStore benar-benar terhapus
+                navController.navigate("login") {
+                    popUpTo(0) { inclusive = true }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("LogoutError", "Logout failed: ${e.message}")
+        }
+    }
+}
 
 @Composable
-fun SideDrawer(navController: NavController) {
+fun SideDrawer(navController: NavController, viewModel: AuthViewModel) {
     val context = LocalContext.current
     Column(
         modifier = Modifier
@@ -102,11 +143,7 @@ fun SideDrawer(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable(onClick = {
-//                    navController.navigate("login") // Arahkan ke layar login setelah logout
-                    // Hapus UID dari DataStore
-                    CoroutineScope(Dispatchers.IO).launch {
-                        DataStoreUtils.clearLoginCredentials(context)
-                    }
+                    performingLogout(navController, context, viewModel)
                 })
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -120,6 +157,7 @@ fun SideDrawer(navController: NavController) {
             Text(text = "Logout", fontSize = 16.sp)
         }
     }
+
 }
 
 @Composable

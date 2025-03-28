@@ -26,6 +26,13 @@ data class ScreeningItem(
     val type: String = ""
 )
 
+data class Nutricions(
+    val calories: Long = 0L,
+    val proteins: Long = 0L,
+    val fat: Long = 0L,
+    val carbo: Long = 0L
+)
+
 data class RecommenderItem(
     val sentence: String = ""
 )

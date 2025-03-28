@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,12 +38,24 @@ import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.CustomCircularProgressBar
 import org.wahyuheriyanto.nutricom.view.components.CustomProgressBar
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.fetchNutricions
+import org.wahyuheriyanto.nutricom.viewmodel.fetchScreningResult
 
 @Composable
-fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController) {
+fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewModelTwo: DataViewModel) {
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val scrollState = rememberScrollState()
+    val nutricionCal by viewModelTwo.nutri.collectAsState()
+
+    fetchNutricions(viewModelTwo = viewModelTwo)
+
+    LaunchedEffect(Unit) {
+        fetchNutricions(viewModelTwo)
+    }
+
+
     Column (modifier = Modifier
         .fillMaxSize()
         .verticalScroll(scrollState)
