@@ -29,3 +29,4 @@ actual fun performRegister(
 
 actual fun performLogout(viewModel: AuthViewModel) {
 }
+

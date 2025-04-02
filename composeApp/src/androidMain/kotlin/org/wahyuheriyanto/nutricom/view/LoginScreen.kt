@@ -38,6 +38,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.wahyuheriyanto.nutricom.R
@@ -48,7 +49,7 @@ import org.wahyuheriyanto.nutricom.model.UserItem
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.performData
-
+import org.wahyuheriyanto.nutricom.viewmodel.performDataLogin
 
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -57,37 +58,54 @@ import org.wahyuheriyanto.nutricom.viewmodel.performData
 fun MainScreen(viewModel: AuthViewModel) {
     val context = LocalContext.current
     val navController = rememberNavController()
-    val uidCredentials by DataStoreUtils.getLoginCredentials(context).collectAsState(initial = null)
     val savedCredentials by DataStoreUtils.getCredentials(context).collectAsState(initial = Pair(null, null))
     var email by remember { mutableStateOf(savedCredentials.first ?: "") }
     var password by remember { mutableStateOf(savedCredentials.second ?: "") }
     val loginState by viewModel.loginState.collectAsState()
+    var isLoading by remember { mutableStateOf(true) }
+    var uidCredentials by remember { mutableStateOf<String?>(null) }
 
-    Log.e("cekpokok", "Cek nilai : $uidCredentials")
+    LaunchedEffect(Unit) {
+        Log.e("MainScreen", "SplashScreen mulai (4 detik)")
+        delay(4000)
+        DataStoreUtils.getLoginCredentials(context).collect { uid ->
+            Log.e("MainScreen", "UID Loaded dari DataStore: $uid")
+            uidCredentials = uid
+            performDataLogin(viewModel, viewModelTwo = DataViewModel(),uidCredentials)
+            isLoading = false
+        }
+    }
+
+
+    // Tampilkan SplashScreen selama loading
+    if (isLoading) {
+        Log.e("MainScreen", "Menampilkan SplashScreen")
+        SplashScreen()
+        return
+    }
 
     // Mengisi email dan password dari DataStore jika tersedia
     LaunchedEffect(savedCredentials) {
+        Log.e("cekjalur","jalur 1")
         savedCredentials.first?.let { email = it }
         savedCredentials.second?.let { password = it }
-        Log.d("DataStoreUtils", "Loaded saved email: ${savedCredentials.first}, password: ${savedCredentials.second}")
     }
 
     // Melakukan login hanya jika uidCredentials sudah ada dan hanya sekali
     LaunchedEffect(uidCredentials) {
         if (!uidCredentials.isNullOrEmpty()) {
+            Log.e("cekjalur","jalur 2")
             performData(viewModel = viewModel, viewModelTwo = DataViewModel())
-            Log.e("cekpokok", "Memanggil login sekali saja")
+            navController.navigate("home") {
+                popUpTo(0) { inclusive = true }
+            }
         }
     }
-
-    Log.e("cekkredensi"," log 1: $uidCredentials")
-    Log.e("cekkredensi","log 1: $loginState")
 
 
     // Navigasi sesuai dengan kondisi uidCredentials
     NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home" ) {
-        Log.e("cekkredensi"," log 2: $uidCredentials")
-        Log.e("cekkredensi","log 2: $loginState")
+            Log.e("cekjalur","jalur 3")
 //        NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
         composable("login") {
             LoginScreen(viewModel, onLoginSuccess = {
@@ -128,13 +146,9 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
     var passwordError by remember { mutableStateOf<String?>(null) }
     var passwordVisible by remember { mutableStateOf(false) } // State untuk visibility password
 
-
+    Log.e("cekjalur","jalur 4")
 
     val activity = context as? Activity
-
-
-    Log.e("cekkredensi"," log 3: $uidCredentials")
-    Log.e("cekkredensi","log 3: $loginState")
 
     // Email validation function
     fun validateEmail(input: String): String? {
@@ -186,18 +200,18 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
     LaunchedEffect(savedCredentials) {
         savedCredentials.first?.let { email = it }
         savedCredentials.second?.let { password = it }
-        Log.d("DataStoreUtils", "Loaded saved email: ${savedCredentials.first}, password: ${savedCredentials.second}")
+        Log.e("cekjalur","jalur 5")
+
     }
 
     // LaunchedEffect untuk memantau perubahan loginState
     LaunchedEffect(loginState) {
         if (loginState is LoginState.Success && uidCredentials.isNullOrEmpty()) {
+            Log.e("cekjalur","jalur 6")
             DataStoreUtils.saveLoginCredentials(context, viewModel.uid.value)
             onLoginSuccess()  // Pindah ke HomeScreen
-            Log.e("CekPoint", "lewat")
         }
     }
-
 
 
     Image(
@@ -248,6 +262,7 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                 .background(Color(android.graphics.Color.parseColor("#00AA16")))
         ) {
             ConstraintLayout {
+                Log.e("cekjalur","jalur 7")
                 val (googlesign, rememberme,textTwo, emailCon, passCon, loginCon, registerText, warningCon) = createRefs()
 
                 val startGuideline = createGuidelineFromStart(0.4f)
@@ -349,8 +364,6 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                             // Save email and password when the user logs in
                             coroutineScope.launch {
                                 DataStoreUtils.saveCredentials(context, email, password)
-                                Log.d("DataStoreUtils", "Saved email: $email, password: $password")
-                                Log.e("tesyuk","$uidCredentials")
                             }
                         }
                               },

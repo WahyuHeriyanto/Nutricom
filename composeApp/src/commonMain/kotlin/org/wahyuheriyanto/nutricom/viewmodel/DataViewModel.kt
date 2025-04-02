@@ -15,11 +15,26 @@ class DataViewModel :ViewModel(){
     private val _calorie = MutableStateFlow(0L)
     private val _bmi = MutableStateFlow(0L)
 
+    //Nutrisi
+    private val _calories = MutableStateFlow(0L)
+    private val _sugars = MutableStateFlow(0L)
+    private val _fat = MutableStateFlow(0L)
+    private val _saturatedFat = MutableStateFlow(0L)
+    private val _salt = MutableStateFlow(0L)
+    private val _cholesterol = MutableStateFlow(0L)
 
     val weight_value: StateFlow<Long> = _weight
     val height_value: StateFlow<Long> = _height
     val calorie: StateFlow<Long> = _calorie
     val bmi: StateFlow<Long> = _bmi
+
+    //nutrisi
+    val calories: StateFlow<Long> = _calories
+    val sugars: StateFlow<Long> = _sugars
+    val fat: StateFlow<Long> = _fat
+    val saturatedFat: StateFlow<Long> = _saturatedFat
+    val salt: StateFlow<Long> = _salt
+    val cholesterol: StateFlow<Long> = _cholesterol
 
 
     private val _imageUrls = MutableStateFlow<List<String>>(emptyList())
@@ -65,13 +80,21 @@ class DataViewModel :ViewModel(){
         _screeningResults.value = newScreen
     }
 
-    fun updateNutricion(newNutricion: List<Nutricions>){
-        _nutricions.value = newNutricion
+    fun updateNutricion(newCalories:Long, newSugar:Long, newFat:Long, newSaturatedFat:Long,
+                        newSalt:Long, newCholesterol:Long){
+        _calories.value = newCalories
+        _sugars.value = newSugar
+        _fat.value = newFat
+        _saturatedFat.value = newSaturatedFat
+        _salt.value = newSalt
+        _cholesterol.value = newCholesterol
     }
 
 }
 
 expect fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel)
+
+expect fun performDataLogin(viewModel: AuthViewModel, viewModelTwo: DataViewModel, uid:String?)
 
 expect fun fetchImageUrls(viewModelTwo: DataViewModel)
 

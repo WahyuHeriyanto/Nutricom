@@ -24,3 +24,11 @@ actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
 
 actual fun fetchNutricions(viewModelTwo: DataViewModel) {
 }
+
+
+actual fun performDataLogin(
+    viewModel: AuthViewModel,
+    viewModelTwo: DataViewModel,
+    uid: String?
+) {
+}

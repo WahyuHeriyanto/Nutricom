@@ -17,15 +17,12 @@ import org.wahyuheriyanto.nutricom.R
 
 @Composable
 fun SplashScreen(){
-
     ConstraintLayout {
         val logo = createRef()
-
         val startGuideline = createGuidelineFromStart(0.3f)
         val endGuideline = createGuidelineFromEnd(0.3f)
         val topGuideline = createGuidelineFromTop(0.4f)
         val bottomGuideline = createGuidelineFromBottom(0.4f)
-
         Image(painter = painterResource(id = R.drawable.logo_nutricom),
             contentDescription = null,
             modifier = Modifier.size(200.dp)
@@ -34,14 +31,8 @@ fun SplashScreen(){
                 bottom.linkTo(bottomGuideline)
                 start.linkTo(startGuideline)
                 end.linkTo(endGuideline)
-
             })
-
-
-
-
     }
-
 }
 
 

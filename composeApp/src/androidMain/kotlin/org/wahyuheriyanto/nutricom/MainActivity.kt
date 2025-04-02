@@ -28,29 +28,32 @@ import com.google.android.gms.common.api.ApiException
 import org.wahyuheriyanto.nutricom.viewmodel.performGoogleSignIn
 
 
+//class MainActivity : ComponentActivity() {
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        setContent {
+//            SplashScreen() }
+//        Handler().postDelayed({
+//                setContent {
+//                    Surface {
+//                        val viewModel: AuthViewModel = viewModel()
+//                        MainScreen(viewModel)
+//                    }
+//                }
+//        }, 4000)
+//    }
+//}
+
 class MainActivity : ComponentActivity() {
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
         setContent {
-            SplashScreen()
+            Surface {
+                val viewModel: AuthViewModel = viewModel()
+                MainScreen(viewModel)
+            }
         }
-        Handler().postDelayed({
-                setContent {
-                    Surface {
-                        val viewModel: AuthViewModel = viewModel()
-                        MainScreen(viewModel)
-
-                    }
-                }
-        }, 4000)
     }
-
-
-
 }
 
 

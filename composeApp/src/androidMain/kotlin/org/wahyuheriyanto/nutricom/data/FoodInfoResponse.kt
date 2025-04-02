@@ -8,12 +8,15 @@ data class FoodInfoResponse(
 
 data class ProductInfo(
     @SerializedName("product_name") val productName: String?,
-    @SerializedName("nutriments") val nutriments: Nutrients?
+    @SerializedName("nutriments") val nutriments: Nutrients?,
+    @SerializedName("code") val code: String?
 )
 
 data class Nutrients(
-    @SerializedName("energy-kcal_100g") val calories: Double?,
-    @SerializedName("proteins_100g") val proteins: Double?,
-    @SerializedName("fat_100g") val fat: Double?,
-    @SerializedName("carbohydrates_100g") val carbohydrates: Double?
+    @SerializedName("energy-kcal_serving") val calories: Double?,
+    @SerializedName("sugars_serving") val sugars: Double?,
+    @SerializedName("fat_serving") val fat: Double?,
+    @SerializedName("salt_serving") val salt: Double?,
+    @SerializedName("cholesterol_serving") val cholesterol: Double?,
+    @SerializedName("saturated-fat_serving") val saturatedFat: Double?
 )

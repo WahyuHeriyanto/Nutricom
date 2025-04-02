@@ -39,20 +39,31 @@ import org.wahyuheriyanto.nutricom.view.components.CustomCircularProgressBar
 import org.wahyuheriyanto.nutricom.view.components.CustomProgressBar
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchNutricions
 import org.wahyuheriyanto.nutricom.viewmodel.fetchScreningResult
 
 @Composable
-fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewModelTwo: DataViewModel) {
+fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewModelTwo: DataViewModel,
+                  viewModelThree: FoodViewModel) {
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val scrollState = rememberScrollState()
-    val nutricionCal by viewModelTwo.nutri.collectAsState()
+    val calories by viewModelTwo.calories.collectAsState()
+    val glukosa by viewModelTwo.sugars.collectAsState()
+    val fat by viewModelTwo.fat.collectAsState()
+    val saturatedFat by viewModelTwo.saturatedFat.collectAsState()
+    val natrium by viewModelTwo.salt.collectAsState()
+    val cholesterol by viewModelTwo.cholesterol.collectAsState()
+
+    val maxIntake by viewModelThree.maxDailyIntake.collectAsState()
 
     fetchNutricions(viewModelTwo = viewModelTwo)
+    viewModelThree.calculateMaxDailyIntake()
 
     LaunchedEffect(Unit) {
         fetchNutricions(viewModelTwo)
+        viewModelThree.calculateMaxDailyIntake()
     }
 
 
@@ -67,13 +78,12 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
             val endGuideline = createGuidelineFromEnd(0.1f)
             val (picture, button, content) = createRefs()
             
-            Image( painter = painterResource(id = R.drawable.green_box_signin),
+            Image( painter = painterResource(id = R.drawable.scan),
                 contentDescription = "",
                 modifier = Modifier
                     .width(320.dp)
                     .height(180.dp)
                     .clip(RoundedCornerShape(20.dp))
-                    .background(color = Color.Green)
                     .constrainAs(picture) {
                         top.linkTo(parent.top)
                         start.linkTo(startGuideline)
@@ -84,7 +94,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
                 .width(140.dp)
                 .height(40.dp)
                 .clip(RoundedCornerShape(20.dp))
-                .background(color = Color.Green)
+                .background(color = Color(0xFF00AA16))
                 .constrainAs(button) {
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
@@ -106,7 +116,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
 
             Box(modifier = Modifier
                 .width(320.dp)
-                .height(420.dp)
+                .height(520.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
                 .padding(horizontal = 20.dp, vertical = 20.dp)
@@ -130,7 +140,26 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
                             ),
                                 fontSize = 15.sp,
                                 color = Color(android.graphics.Color.parseColor("#737373")))
-                            Text(text = "1053 / 2100kKal", fontSize = 15.sp)
+                            when (loginState) {
+                                is LoginState.Loading -> { }
+                                is LoginState.Success -> {
+                                    val calorie = calories.toString()
+                                    val maxCalories = maxIntake["kalori"]?.toInt()
+                                    androidx.compose.material.Text(
+                                        text = "$calorie / $maxCalories kkal",
+                                        fontFamily = FontFamily(
+                                            Font(
+                                                resId = R.font.inter_medium,
+                                                weight = FontWeight.Medium
+                                            )
+                                        ),
+                                        fontSize = 15.sp,
+                                        color = Color(android.graphics.Color.parseColor("#00AA16"))
+                                    )
+
+                                }
+                                else -> { }
+                            }
                         }
                     }
                     Spacer(modifier = Modifier.height(15.dp))
@@ -146,33 +175,82 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
 
                     //Isi nutrisi
                     Spacer(modifier = Modifier.height(20.dp))
-                    Row {
-                        Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
-                            modifier = Modifier.size(60.dp))
-                        Spacer(modifier = Modifier.width(15.dp))
-                        CustomProgressBar(labelName = "Glukosa", current = 12, max = 48)
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row {
-                        Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
-                            modifier = Modifier.size(60.dp))
-                        Spacer(modifier = Modifier.width(15.dp))
-                        CustomProgressBar(labelName = "Lemak", current = 12, max = 48)
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row {
-                        Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
-                            modifier = Modifier.size(60.dp))
-                        Spacer(modifier = Modifier.width(15.dp))
-                        CustomProgressBar(labelName = "Natrium", current = 12, max = 48)
+                    when (loginState) {
+                        is LoginState.Loading -> { }
+                        is LoginState.Success -> {
+                            val sugar = glukosa.toInt()
+                            Row {
+                                Image(painter = painterResource(id = R.drawable.sugar), contentDescription = "",
+                                    modifier = Modifier.size(60.dp))
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomProgressBar(labelName = "Glukosa", current = sugar, max = maxIntake["glukosa"])
+                            }
+
+                        }
+                        else -> { }
                     }
 
+                    Spacer(modifier = Modifier.height(10.dp))
+                    when (loginState) {
+                        is LoginState.Loading -> { }
+                        is LoginState.Success -> {
+                            val fatValue = fat.toInt()
+                            Row {
+                                Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
+                                    modifier = Modifier.size(60.dp))
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomProgressBar(labelName = "Lemak", current = fatValue, max = maxIntake["lemak"])
+                            }
+
+                        }
+                        else -> { }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    when (loginState) {
+                        is LoginState.Loading -> { }
+                        is LoginState.Success -> {
+                            val satFatValue = saturatedFat.toInt()
+                            Row {
+                                Image(painter = painterResource(id = R.drawable.jenuh), contentDescription = "",
+                                    modifier = Modifier.size(60.dp))
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomProgressBar(labelName = "Lemak Jenuh", current = satFatValue, max = maxIntake["lemakJenuh"])
+                            }
+                        }
+                        else -> { }
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    when (loginState) {
+                        is LoginState.Loading -> { }
+                        is LoginState.Success -> {
+                            val salt = natrium.toInt()
+                            Row {
+                                Image(painter = painterResource(id = R.drawable.garam), contentDescription = "",
+                                    modifier = Modifier.size(60.dp))
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomProgressBar(labelName = "Natrium", current = salt, max = maxIntake["natrium"])
+                            }
+                        }
+                        else -> { }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    when (loginState) {
+                        is LoginState.Loading -> { }
+                        is LoginState.Success -> {
+                            val chole = cholesterol.toInt()
+                            Row {
+                                Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
+                                    modifier = Modifier.size(60.dp))
+                                Spacer(modifier = Modifier.width(15.dp))
+                                CustomProgressBar(labelName = "Kolesterol", current = chole, max = maxIntake["kolesterol"])
+                            }
+                        }
+                        else -> { }
+                    }
 
                 }
             }
-
-
         }
     }
-    
 }

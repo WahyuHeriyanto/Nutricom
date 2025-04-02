@@ -26,9 +26,10 @@ import org.wahyuheriyanto.nutricom.R
 fun CustomProgressBar(
     labelName: String,
     current: Int,
-    max: Int
+    max: Double?
 ) {
-    val progress = current.toFloat() / max.toFloat()
+    val safeMax = max ?: 1.0
+    val progress = current.toFloat() / safeMax.toFloat()
     val progressPercentage = (progress * 100).toInt()
 
     val (color, label) = when {
@@ -74,5 +75,5 @@ fun CustomProgressBar(
 
 @Composable
 fun ProgressBarView() {
-    CustomProgressBar(labelName = "Lemak", current = 110, max = 150) // Ganti nilai sesuai kebutuhan
+    CustomProgressBar(labelName = "Lemak", current = 110, max = 150.0) // Ganti nilai sesuai kebutuhan
 }

@@ -30,7 +30,10 @@ data class Nutricions(
     val calories: Long = 0L,
     val proteins: Long = 0L,
     val fat: Long = 0L,
-    val carbo: Long = 0L
+    val carbo: Long = 0L,
+    val saturatedFat:Long = 0L,
+    val salt:Long = 0L,
+    val cholesterol:Long = 0L
 )
 
 data class RecommenderItem(

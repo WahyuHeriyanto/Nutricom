@@ -48,8 +48,8 @@ actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
 
     }
     }
-
 }
+
 
 actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
     CoroutineScope(Dispatchers.IO).launch {
@@ -178,26 +178,73 @@ actual fun fetchAllArticle(viewModelTwo: DataViewModel) {
 }
 
 actual fun fetchNutricions(viewModelTwo: DataViewModel) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     CoroutineScope(Dispatchers.IO).launch {
-        Log.e("CekList","Pass 1")
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.collection("nutricions")
-            .get()
-            .addOnSuccessListener { documents ->
-                val nutricionList = documents.map { doc ->
-                    Nutricions(
-                        calories = doc.getLong("kalori") ?: 0L,
-                        proteins = doc.getLong("protein") ?: 0L,
-                        fat = doc.getLong("lemak") ?: 0L,
-                        carbo = doc.getLong("karbohidrat") ?: 0L,
-                    )
-                }
-//                Log.e("CekList","$articleList")
-                viewModelTwo.updateNutricion(nutricionList)
+        try {
+            userId?.let { currentUser ->
+                val uids = currentUser
+                val firestore = FirebaseFirestore.getInstance()
+                firestore.collection("nutricions").document(uids).get()
+                    .addOnSuccessListener { doc ->
+                        val calories = doc.getLong("kalori") ?: 0L
+                        val fat = doc.getLong("lemak") ?: 0L
+                        val salt = doc.getLong("natrium") ?: 0L
+                        val saturatedFat = doc.getLong("lemakJenuh") ?: 0L
+                        val cholesterol = doc.getLong("kolesterol") ?: 0L
+                        val sugars = doc.getLong("glukosa")?: 0L
+                        when {
+                            calories != 0L -> {
+                                viewModelTwo.updateNutricion(calories,sugars,fat,saturatedFat,salt,cholesterol)
+                            }
+                            else -> {
+                                Log.e("Errorkukuku","Belum keisi")
+                            }
+                        }
+                    }
+
             }
-            .addOnFailureListener { exception ->
-                // Handle failure
-            }
+
+        }catch(e : Exception){
+            Log.e("uid","belum dapet uid")
+
+        }
     }
 
+
+}
+
+actual fun performDataLogin(
+    viewModel: AuthViewModel,
+    viewModelTwo: DataViewModel,
+    uid: String?
+) {
+    CoroutineScope(Dispatchers.IO).launch {
+        try {
+            Log.e("cekisiuid","$uid")
+            uid?.let { currentUser ->
+                val uids = currentUser
+                Log.e("cekisiuid","$uids")
+                val firestore = FirebaseFirestore.getInstance()
+                firestore.collection("datas").document(uids).get()
+                    .addOnSuccessListener { document ->
+                        val weightValue = document.getLong("weight") ?: 0L
+                        val heightValue = document.getLong("height") ?: 0L
+                        val calorieValue = document.getLong("calorie") ?: 0L
+                        val bmiValue = document.getLong("bmi") ?: 0L
+                        when {
+                            weightValue != 0L -> {
+                                Log.e("cekisiuid","weight value $weightValue $heightValue")
+                                viewModelTwo.updateData(weightValue,heightValue,calorieValue,bmiValue)
+                            }
+                            else -> {
+                                Log.e("Errorkukuku","Belum keisi")
+                            }
+                        }
+                    }
+            }
+        }catch(e : Exception){
+            Log.e("uid","belum dapet uid")
+
+        }
+    }
 }

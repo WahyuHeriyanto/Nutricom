@@ -58,6 +58,7 @@ import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.screens.ScanScreen
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.HealthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
@@ -118,8 +119,6 @@ fun NavigationBar(viewModel: AuthViewModel,
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val navController = rememberNavController() as NavHostController
-
-    if (loginState is LoginState.Success) {
         Scaffold(
             topBar = {
                 if (currentRoute !in listOf("login", "scanScreen", "result")) { // Hide TopAppBar on login screen
@@ -158,10 +157,10 @@ fun NavigationBar(viewModel: AuthViewModel,
 //                composable("login"){ LoginScreen(viewModel = viewModel, onLoginSuccess = { /*TODO*/ }) {}}
                     composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                     composable("activity") { ScreeningScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                    composable("market") { NutrisiScreen(viewModel = viewModel,navController, viewModelTwo = DataViewModel()) }
+                    composable("market") { NutrisiScreen(viewModel = viewModel,navController, viewModelTwo = DataViewModel(), viewModelThree = FoodViewModel()) }
                     composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                     composable("scanScreen") { ScanScreen(navController, viewModelThree) }
-                    composable("result") { ResultScreen(navController, viewModelThree) }
+                    composable("result") { ResultScreen(navController, viewModelThree, viewModelTwo = FoodViewModel()) }
                     composable("wallet"){ WalletScreen()}
                     composable("schedule"){ ScheduleScreen()
                     }
@@ -169,20 +168,4 @@ fun NavigationBar(viewModel: AuthViewModel,
 
             }
         )
-
-    }
-
-
 }
-
-//@ExperimentalGetImage
-//@Preview
-//@Composable
-//
-//fun NavPreview(){
-//    Surface (modifier = Modifier.fillMaxSize()){
-//        NavigationBar(viewModel = AuthViewModel(), viewModelThree = ScanViewModel()) {
-//
-//        }
-//    }
-//}
