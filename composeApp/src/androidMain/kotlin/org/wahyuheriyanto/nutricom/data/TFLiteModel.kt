@@ -17,7 +17,7 @@ class TFLiteModel(context: Context) {
 
     @Throws(IOException::class)
     private fun loadModelFile(context: Context): MappedByteBuffer {
-        val fileDescriptor = context.assets.openFd("diabetes_detect.tflite")
+        val fileDescriptor = context.assets.openFd("diabetes_model.tflite")
         val inputStream = FileInputStream(fileDescriptor.fileDescriptor)
         val fileChannel = inputStream.channel
         val startOffset = fileDescriptor.startOffset

@@ -156,11 +156,15 @@ fun NavigationBar(viewModel: AuthViewModel,
                 ) {
 //                composable("login"){ LoginScreen(viewModel = viewModel, onLoginSuccess = { /*TODO*/ }) {}}
                     composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
-                    composable("activity") { ScreeningScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("activity") { ScreeningScreen(navController,viewModel = viewModel, viewModelTwo = DataViewModel()) }
                     composable("market") { NutrisiScreen(viewModel = viewModel,navController, viewModelTwo = DataViewModel(), viewModelThree = FoodViewModel()) }
                     composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
                     composable("scanScreen") { ScanScreen(navController, viewModelThree) }
                     composable("result") { ResultScreen(navController, viewModelThree, viewModelTwo = FoodViewModel()) }
+                    composable("diabetesScreen"){
+                        DiabetesScreen()
+                    }
+                    composable("cardioScreen"){ CardioScreen()}
                     composable("wallet"){ WalletScreen()}
                     composable("schedule"){ ScheduleScreen()
                     }

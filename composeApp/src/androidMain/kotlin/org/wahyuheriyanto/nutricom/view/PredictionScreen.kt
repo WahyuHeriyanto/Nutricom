@@ -130,12 +130,12 @@ fun PredictionScreen(viewModel: PredictionViewModel = viewModel()) {
             Text("Predict")
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Tampilkan hasil prediksi dalam bentuk grafik
-        prediction?.let {
-            CustomLineChart(data = it)
-        }
+//        Spacer(modifier = Modifier.height(16.dp))
+//
+//        // Tampilkan hasil prediksi dalam bentuk grafik
+//        prediction?.let {
+//            CustomLineChart(data = it)
+//        }
     }
 }
 

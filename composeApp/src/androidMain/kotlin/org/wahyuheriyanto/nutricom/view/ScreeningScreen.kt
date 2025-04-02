@@ -3,6 +3,7 @@ package org.wahyuheriyanto.nutricom.view
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 import org.wahyuheriyanto.nutricom.view.components.ScreeningLoading
@@ -41,8 +43,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchScreningResult
 
 @Composable
-
-fun ScreeningScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel){
+fun ScreeningScreen(navController: NavController, viewModel: AuthViewModel, viewModelTwo : DataViewModel){
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val scrollState = rememberScrollState()
     val screeningResults by viewModelTwo.screeningResults.collectAsState()
@@ -102,6 +103,9 @@ fun ScreeningScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel){
                     .size(80.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(color = Color.White)
+                    .clickable {
+                        navController.navigate("diabetesScreen")
+                    }
                     ,contentAlignment = Alignment.Center
                 ){
                     Column (
@@ -128,6 +132,9 @@ fun ScreeningScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel){
                     .size(80.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(color = Color.White)
+                    .clickable {
+                        navController.navigate("cardioScreen")
+                    }
                     ,contentAlignment = Alignment.Center
                 ){
                     Column (
