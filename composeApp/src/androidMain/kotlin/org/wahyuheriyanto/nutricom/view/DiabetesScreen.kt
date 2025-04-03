@@ -1,6 +1,7 @@
 package org.wahyuheriyanto.nutricom.view
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,12 +21,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 
 @Composable
-fun DiabetesScreen() {
+fun DiabetesScreen(navController: NavController) {
     val context = LocalContext.current
     val viewModel: DiabetesViewModel = viewModel(factory = DiabetesViewModelFactory(context))
     var gender by remember { mutableStateOf("") }
@@ -63,7 +65,6 @@ fun DiabetesScreen() {
             alignment = Alignment.Center
         )
         Spacer(modifier = Modifier.height(15.dp))
-
         Text(
             text = "Prediksi Diabetes",
             fontFamily = FontFamily(
@@ -80,12 +81,12 @@ fun DiabetesScreen() {
         CustomTextField("Age", age, KeyboardType.Number) { age = it }
         CustomTextField("Hypertension (0: No, 1: Yes)", hypertension, KeyboardType.Number) { hypertension = it }
         CustomTextField("Heart Disease (0: No, 1: Yes)", heartDisease, KeyboardType.Number) { heartDisease = it }
-        CustomTextField("Smoking History (1-4)", smokingHistory, KeyboardType.Number) { smokingHistory = it }
+        CustomTextField("Smoking History ('never': 0, 'former': 1, 'current': 2, 'ever': 3, 'No Info': 4, 'not current':5)", smokingHistory, KeyboardType.Number) { smokingHistory = it }
         CustomTextField("BMI", bmi, KeyboardType.Decimal) { bmi = it }
         CustomTextField("HbA1c Level", hbA1c, KeyboardType.Decimal) { hbA1c = it }
         CustomTextField("Blood Glucose Level", bloodGlucose, KeyboardType.Number) { bloodGlucose = it }
 
-        Row(horizontalArrangement = Arrangement.Center){
+        Row(verticalAlignment = Alignment.CenterVertically){
             Button(
                 onClick = {
                     viewModel.predictDiabetes(
@@ -105,7 +106,9 @@ fun DiabetesScreen() {
             }
             Spacer(modifier = Modifier.width(20.dp))
 
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(top = 16.dp)) {
+            Button(onClick = {
+                navController.navigate("resultPredictScreen")
+            }, modifier = Modifier.padding(top = 16.dp)) {
                 Text(text = "Rekomendasi")
             }
         }

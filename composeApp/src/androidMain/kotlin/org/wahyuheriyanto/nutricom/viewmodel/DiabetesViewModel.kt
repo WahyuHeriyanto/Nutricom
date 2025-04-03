@@ -44,19 +44,20 @@ class DiabetesViewModel(context: Context) : ViewModel() {
         viewModelScope.launch {
             val input = arrayOf(floatArrayOf(
                 gender.toFloat(),
-                normalize(age.toFloat(), 0f, 1f),
+                normalize(age.toFloat(), 0.08f, 80.0f),
                 hypertension.toFloat(),
                 heartDisease.toFloat(),
                 smokingHistory.toFloat(),
-                normalize(bmi, 0f, 1f),
-                normalize(hbA1c, 0f, 1f),
-                normalize(bloodGlucose.toFloat(), 0f, 1f)
+                normalize(bmi, 10.01f, 95.69f),
+                normalize(hbA1c, 3.5f, 9.0f),
+                normalize(bloodGlucose.toFloat(), 80f, 300f)
             ))
             val output = Array(1) { FloatArray(1) }
             Log.e("cekinterpreter"," satu : $interpreter")
             try {
-                Log.e("cekinterpreter","dua : $interpreter")
+                Log.e("cekinterpreter","input : ${input.size}")
                 interpreter?.run(input, output)
+                Log.e("cekinterpreter","Output : $output")
                 _prediction.value = if (output[0][0] > 0.5) 1 else 0
             } catch (e: Exception) {
                 Log.e("DiabetesViewModel", "Error saat menjalankan model: ${e.localizedMessage}")

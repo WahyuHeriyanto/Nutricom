@@ -162,9 +162,10 @@ fun NavigationBar(viewModel: AuthViewModel,
                     composable("scanScreen") { ScanScreen(navController, viewModelThree) }
                     composable("result") { ResultScreen(navController, viewModelThree, viewModelTwo = FoodViewModel()) }
                     composable("diabetesScreen"){
-                        DiabetesScreen()
+                        DiabetesScreen(navController)
                     }
                     composable("cardioScreen"){ CardioScreen()}
+                    composable("resultPredictScreen"){ ResultPredictScreen(navController)}
                     composable("wallet"){ WalletScreen()}
                     composable("schedule"){ ScheduleScreen()
                     }
