@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.ArticleItem
 import org.wahyuheriyanto.nutricom.view.components.ArticleLoading
@@ -44,7 +45,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.performData
 
 
 @Composable
-fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
+fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navController: NavController) {
 
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val name by viewModel.userName.collectAsState()
@@ -334,7 +335,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
                     }
                     is LoginState.Success -> {
                         articles.forEach { article ->
-                            ArticleItem(article = article)
+                            ArticleItem(article = article, navController = navController)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
@@ -351,11 +352,11 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel) {
     }
 }
 
-@Preview
-@Composable
-
-fun PreviewScreen(){
-    Surface (modifier = Modifier.fillMaxSize()){
-        HomeScreen(viewModel = AuthViewModel(), viewModelTwo = DataViewModel())
-    }
-}
+//@Preview
+//@Composable
+//
+//fun PreviewScreen(){
+//    Surface (modifier = Modifier.fillMaxSize()){
+//        HomeScreen(viewModel = AuthViewModel(), viewModelTwo = DataViewModel())
+//    }
+//}

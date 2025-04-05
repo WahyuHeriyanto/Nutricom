@@ -87,23 +87,34 @@ fun DiabetesScreen(navController: NavController) {
         CustomTextField("Blood Glucose Level", bloodGlucose, KeyboardType.Number) { bloodGlucose = it }
 
         Row(verticalAlignment = Alignment.CenterVertically){
+//            Button(
+//                onClick = {
+//                    viewModel.predictDiabetes(
+//                        gender.toIntOrNull() ?: 0,
+//                        age.toIntOrNull() ?: 0,
+//                        hypertension.toIntOrNull() ?: 0,
+//                        heartDisease.toIntOrNull() ?: 0,
+//                        smokingHistory.toIntOrNull() ?: 1,
+//                        bmi.toFloatOrNull() ?: 0f,
+//                        hbA1c.toFloatOrNull() ?: 0f,
+//                        bloodGlucose.toIntOrNull() ?: 0
+//                    )
+//                },
+//                modifier = Modifier.padding(top = 16.dp)
+//            ) {
+//                Text("Prediksi")
+//            }
+
             Button(
                 onClick = {
-                    viewModel.predictDiabetes(
-                        gender.toIntOrNull() ?: 0,
-                        age.toIntOrNull() ?: 0,
-                        hypertension.toIntOrNull() ?: 0,
-                        heartDisease.toIntOrNull() ?: 0,
-                        smokingHistory.toIntOrNull() ?: 1,
-                        bmi.toFloatOrNull() ?: 0f,
-                        hbA1c.toFloatOrNull() ?: 0f,
-                        bloodGlucose.toIntOrNull() ?: 0
-                    )
+                    navController.navigate("predictLoadingScreen/${gender}/${age}/${hypertension}/${heartDisease}/${smokingHistory}/${bmi}/${hbA1c}/${bloodGlucose}")
                 },
                 modifier = Modifier.padding(top = 16.dp)
             ) {
                 Text("Prediksi")
             }
+
+
             Spacer(modifier = Modifier.width(20.dp))
 
             Button(onClick = {

@@ -1,7 +1,9 @@
 package org.wahyuheriyanto.nutricom.view.components
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -13,6 +15,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.model.Article
 
@@ -39,10 +42,20 @@ fun ArticleLoading(){
 
 
 @Composable
-fun ArticleItem(article: Article) {
+fun ArticleItem(article: Article, navController: NavController) {
 
         Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))
             .background(color = Color.White)
+            .clickable {
+                val encodedTitle = Uri.encode(article.title)
+                val encodedAuthor = Uri.encode(article.author)
+                val encodedContent = Uri.encode(article.content)
+                val encodedImageUrl = Uri.encode(article.imageUrl)
+
+                navController.navigate(
+                    "articleDetailScreen/$encodedTitle/$encodedAuthor/$encodedContent/$encodedImageUrl"
+                )
+            }
             )
         {
             Row(

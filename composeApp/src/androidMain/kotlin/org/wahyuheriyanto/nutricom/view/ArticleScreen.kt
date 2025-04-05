@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.model.Article
 import org.wahyuheriyanto.nutricom.view.components.ArticleItem
 import org.wahyuheriyanto.nutricom.view.components.ArticleLoading
@@ -41,7 +42,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchAllArticle
 @Composable
-fun ArticleScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel) {
+fun ArticleScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel, navController: NavController) {
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val scrollState = rememberScrollState()
     val articleContent by viewModelTwo.articles.collectAsState()
@@ -146,9 +147,10 @@ fun ArticleScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel) {
                         }
                         is LoginState.Success -> {
                             filteredArticles.forEach { article ->
-                                ArticleItem(article = article)
+                                ArticleItem(article = article, navController = navController)
                                 Spacer(modifier = Modifier.height(8.dp))
                             }
+
                         }
                         else -> {
                             repeat(articleContent.size) {

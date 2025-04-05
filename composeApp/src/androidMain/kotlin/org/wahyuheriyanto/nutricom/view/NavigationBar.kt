@@ -48,16 +48,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.view.screens.ScanScreen
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.HealthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
@@ -118,6 +123,9 @@ fun NavigationBar(viewModel: AuthViewModel,
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val context = LocalContext.current
+    val diabetesViewModel: DiabetesViewModel = viewModel(factory = DiabetesViewModelFactory(context))
+
     val navController = rememberNavController() as NavHostController
         Scaffold(
             topBar = {
@@ -155,17 +163,67 @@ fun NavigationBar(viewModel: AuthViewModel,
                     Modifier.padding(innerPadding)
                 ) {
 //                composable("login"){ LoginScreen(viewModel = viewModel, onLoginSuccess = { /*TODO*/ }) {}}
-                    composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("home") { HomeScreen(viewModel = viewModel, viewModelTwo = DataViewModel(),navController) }
                     composable("activity") { ScreeningScreen(navController,viewModel = viewModel, viewModelTwo = DataViewModel()) }
                     composable("market") { NutrisiScreen(viewModel = viewModel,navController, viewModelTwo = DataViewModel(), viewModelThree = FoodViewModel()) }
-                    composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel()) }
+                    composable("community") { ArticleScreen(viewModel = viewModel, viewModelTwo = DataViewModel(),navController) }
                     composable("scanScreen") { ScanScreen(navController, viewModelThree) }
                     composable("result") { ResultScreen(navController, viewModelThree, viewModelTwo = FoodViewModel()) }
                     composable("diabetesScreen"){
                         DiabetesScreen(navController)
                     }
+                    composable(
+                        route = "predictLoadingScreen/{gender}/{age}/{hypertension}/{heartDisease}/{smokingHistory}/{bmi}/{hbA1c}/{bloodGlucose}",
+                        arguments = listOf(
+                            navArgument("gender") { type = NavType.IntType },
+                            navArgument("age") { type = NavType.IntType },
+                            navArgument("hypertension") { type = NavType.IntType },
+                            navArgument("heartDisease") { type = NavType.IntType },
+                            navArgument("smokingHistory") { type = NavType.IntType },
+                            navArgument("bmi") { type = NavType.FloatType },
+                            navArgument("hbA1c") { type = NavType.FloatType },
+                            navArgument("bloodGlucose") { type = NavType.IntType }
+                        )
+                    ) { backStackEntry ->
+                        PredictLoadingScreen(
+                            navController = navController,
+                            viewModel = diabetesViewModel,
+                            gender = backStackEntry.arguments?.getInt("gender") ?: 0,
+                            age = backStackEntry.arguments?.getInt("age") ?: 0,
+                            hypertension = backStackEntry.arguments?.getInt("hypertension") ?: 0,
+                            heartDisease = backStackEntry.arguments?.getInt("heartDisease") ?: 0,
+                            smokingHistory = backStackEntry.arguments?.getInt("smokingHistory") ?: 0,
+                            bmi = backStackEntry.arguments?.getFloat("bmi") ?: 0f,
+                            hbA1c = backStackEntry.arguments?.getFloat("hbA1c") ?: 0f,
+                            bloodGlucose = backStackEntry.arguments?.getInt("bloodGlucose") ?: 0
+                        )
+                    }
+
+
                     composable("cardioScreen"){ CardioScreen()}
-                    composable("resultPredictScreen"){ ResultPredictScreen(navController)}
+                    composable("resultPredictScreen") {
+                        ResultPredictScreen(
+                            navController = navController,
+                            viewModel = diabetesViewModel // Pakai ViewModel yang sama
+                        )
+                    }
+                    composable(
+                        "articleDetailScreen/{title}/{author}/{content}/{imageUrl}",
+                        arguments = listOf(
+                            navArgument("title") { type = NavType.StringType },
+                            navArgument("author") { type = NavType.StringType },
+                            navArgument("content") { type = NavType.StringType },
+                            navArgument("imageUrl") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val title = backStackEntry.arguments?.getString("title") ?: ""
+                        val author = backStackEntry.arguments?.getString("author") ?: ""
+                        val content = backStackEntry.arguments?.getString("content") ?: ""
+                        val imageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
+
+                        ArticleDetailScreen(title, author, content, imageUrl)
+                    }
+
                     composable("wallet"){ WalletScreen()}
                     composable("schedule"){ ScheduleScreen()
                     }

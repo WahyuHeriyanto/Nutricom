@@ -1,5 +1,6 @@
 package org.wahyuheriyanto.nutricom.view
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -20,23 +21,40 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
+import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 
 @Composable
-fun ResultPredictScreen(navController: NavController){
+fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewModel){
     val scrollState = rememberScrollState()
     val horizonScrollState = rememberScrollState()
+    val context = LocalContext.current
+    val prediction by viewModel.prediction.collectAsState()
+
+    Log.e("cekprediksi","satu $prediction")
+
+    val imageRes = when (prediction) {
+        1 -> R.drawable.gula
+        0 -> R.drawable.green_box_signin
+        else -> R.drawable.scan // default jika belum ada hasil
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +80,7 @@ fun ResultPredictScreen(navController: NavController){
             .background(color = Color(android.graphics.Color.parseColor("#D2D2D2"))),
         ){
             Column (modifier = Modifier.padding(30.dp)){
-                Image(painter = painterResource(id = R.drawable.scan),
+                Image(painter = painterResource(id = imageRes),
                     contentDescription = "",
                     modifier = Modifier
                         .width(300.dp)
