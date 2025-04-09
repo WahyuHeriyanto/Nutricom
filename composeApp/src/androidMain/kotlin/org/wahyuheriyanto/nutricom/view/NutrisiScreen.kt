@@ -60,10 +60,12 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
 
     fetchNutricions(viewModelTwo = viewModelTwo)
     viewModelThree.calculateMaxDailyIntake()
+    FoodViewModel().calculateNutricion()
 
     LaunchedEffect(Unit) {
         fetchNutricions(viewModelTwo)
         viewModelThree.calculateMaxDailyIntake()
+        FoodViewModel().calculateNutricion()
     }
 
 
@@ -124,6 +126,9 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
                     top.linkTo(button.bottom, margin = 20.dp)
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
+                }
+                .clickable {
+                    navController.navigate("nutrisiDetail")
                 }
             ){
                 Column {

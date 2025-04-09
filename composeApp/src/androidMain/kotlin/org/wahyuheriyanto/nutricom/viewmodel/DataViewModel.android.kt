@@ -12,6 +12,7 @@ import org.wahyuheriyanto.nutricom.model.Article
 import org.wahyuheriyanto.nutricom.model.Nutricions
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.view.components.ConsumtionItem
 import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
@@ -105,14 +106,17 @@ actual fun fetchLastestArticle(viewModelTwo: DataViewModel) {
 }
 
 actual fun fetchRecommender(viewModelTwo: DataViewModel){
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     CoroutineScope(Dispatchers.IO).launch {
         val firestore = FirebaseFirestore.getInstance()
 
-        firestore.collection("recommendations")
+        firestore.collection("recommendations").document(userId)
+            .collection("active")
             .get()
             .addOnSuccessListener { document ->
                 val recommenderList = document.map {doc ->
                     RecommenderItem(
+                        imageUrl = doc.getString("sentence") ?: "",
                         sentence = doc.getString("sentence") ?: ""
                     )
                 }
@@ -121,7 +125,6 @@ actual fun fetchRecommender(viewModelTwo: DataViewModel){
             .addOnFailureListener { exception ->
 
             }
-
     }
 }
 
@@ -248,3 +251,62 @@ actual fun performDataLogin(
         }
     }
 }
+
+actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    CoroutineScope(Dispatchers.IO).launch {
+        Log.e("CekList","Pass 1")
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("consume")
+            .document(userId)
+            .collection("food")
+//            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+//            .limit(5)
+            .get()
+            .addOnSuccessListener { documents ->
+                val consumeList = documents.map { doc ->
+                    org.wahyuheriyanto.nutricom.model.ConsumtionItem(
+                        imageUrl = doc.getString("barcode") ?: "",
+                        name = doc.getString("name")?: "",
+                        calories = doc.getLong("calories")?: 0L,
+                        cholesterol = doc.getLong("cholesterol")?: 0L,
+                        fat = doc.getLong("fat")?:0L,
+                        saturatedFat = doc.getLong("saturatedFat")?: 0L,
+                        sugars = doc.getLong("sugars")?: 0L
+
+                        )
+                }
+                Log.e("tesscreen","$consumeList")
+                viewModelTwo.updateConsumtion(consumeList)
+            }
+            .addOnFailureListener { exception ->
+                // Handle failure
+            }
+    }
+}
+
+actual fun deleteConsumtion(viewModelTwo: DataViewModel, itemName: String) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    CoroutineScope(Dispatchers.IO).launch {
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("consume")
+            .document(userId)
+            .collection("food")
+            .whereEqualTo("name", itemName)
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    firestore.collection("consume")
+                        .document(userId)
+                        .collection("food")
+                        .document(document.id)
+                        .delete()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("DeleteItem", "Error deleting item: $e")
+            }
+    }
+
+}
+

@@ -172,6 +172,11 @@ fun NavigationBar(viewModel: AuthViewModel,
                     composable("diabetesScreen"){
                         DiabetesScreen(navController)
                     }
+                    composable("nutrisiDetail"){ NutrisiDetailScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        viewModelTwo = DataViewModel()
+                    )}
                     composable(
                         route = "predictLoadingScreen/{gender}/{age}/{hypertension}/{heartDisease}/{smokingHistory}/{bmi}/{hbA1c}/{bloodGlucose}",
                         arguments = listOf(

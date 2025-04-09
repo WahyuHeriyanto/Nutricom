@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.wahyuheriyanto.nutricom.model.Article
+import org.wahyuheriyanto.nutricom.model.ConsumtionItem
 import org.wahyuheriyanto.nutricom.model.Nutricions
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.model.ScreeningItem
@@ -41,6 +42,7 @@ class DataViewModel :ViewModel(){
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     private val _recommenders = MutableStateFlow<List<RecommenderItem>>(emptyList())
     private val _screeningResults = MutableStateFlow<List<ScreeningItem>>(emptyList())
+    private val _consumtion = MutableStateFlow<List<ConsumtionItem>>(emptyList())
     private val _nutricions = MutableStateFlow<List<Nutricions>>(emptyList())
 
 
@@ -48,6 +50,7 @@ class DataViewModel :ViewModel(){
     val articles: StateFlow<List<Article>> = _articles
     val recommenders: StateFlow<List<RecommenderItem>> = _recommenders
     val screeningResults : StateFlow<List<ScreeningItem>> = _screeningResults
+    val consumtion : StateFlow<List<ConsumtionItem>> = _consumtion
     val nutri : StateFlow<List<Nutricions>> = _nutricions
 
     fun updateData(newWeight: Long,
@@ -90,6 +93,10 @@ class DataViewModel :ViewModel(){
         _cholesterol.value = newCholesterol
     }
 
+    fun updateConsumtion(newConsume: List<ConsumtionItem>){
+        _consumtion.value = newConsume
+    }
+
 }
 
 expect fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel)
@@ -107,3 +114,7 @@ expect fun fetchRecommender(viewModelTwo: DataViewModel)
 expect fun fetchScreningResult(viewModelTwo: DataViewModel)
 
 expect fun fetchNutricions(viewModelTwo: DataViewModel)
+
+expect fun fetchConsumtion(viewModelTwo: DataViewModel)
+
+expect fun deleteConsumtion(viewModelTwo: DataViewModel, itemName: String)

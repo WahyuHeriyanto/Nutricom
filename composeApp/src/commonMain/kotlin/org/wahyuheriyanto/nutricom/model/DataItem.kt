@@ -37,5 +37,18 @@ data class Nutricions(
 )
 
 data class RecommenderItem(
+    val imageUrl: String ="",
     val sentence: String = ""
+)
+
+data class ConsumtionItem(
+    val imageUrl: String = "",
+    val barcode: String ="",
+    val name: String = "",
+    val calories: Long = 0L,
+    val cholesterol: Long = 0L,
+    val fat:Long = 0L,
+    val saturatedFat: Long = 0L,
+    val sugars: Long =0L,
+    val timestamp: Long = 0L
 )

@@ -204,7 +204,8 @@ fun ScreeningScreen(navController: NavController, viewModel: AuthViewModel, view
 
 
 
-                }
+
+            }
             }
         }
     }

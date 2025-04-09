@@ -33,3 +33,12 @@ actual fun performDataLogin(
     uid: String?
 ) {
 }
+
+actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
+}
+
+actual fun deleteConsumtion(
+    viewModelTwo: DataViewModel,
+    itemName: String
+) {
+}

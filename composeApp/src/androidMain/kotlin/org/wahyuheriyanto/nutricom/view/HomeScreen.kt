@@ -35,7 +35,7 @@ import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.ArticleItem
 import org.wahyuheriyanto.nutricom.view.components.ArticleLoading
-import org.wahyuheriyanto.nutricom.view.components.RecList
+import org.wahyuheriyanto.nutricom.view.components.RecListActive
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
@@ -275,7 +275,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
                         color = Color(android.graphics.Color.parseColor("#000000")))
                     Spacer(modifier = Modifier.height(15.dp))
                     recommendation.forEach { rec ->
-                        RecList(recItem = rec)
+                        RecListActive(recItem = rec)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }
