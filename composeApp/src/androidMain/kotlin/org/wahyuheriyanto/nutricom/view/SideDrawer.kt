@@ -124,8 +124,8 @@ fun SideDrawer(navController: NavController, viewModel: AuthViewModel) {
         // Options buttons
         DrawerOption(
             iconResId = R.drawable.profile_icon,
-            label = "My Account",
-            onClick = { navController.navigate("Option 1") }
+            label = "Data Diri Saya",
+            onClick = { navController.navigate("dataDiri") }
         )
 
         DrawerOption(

@@ -12,6 +12,7 @@ import org.wahyuheriyanto.nutricom.model.Article
 import org.wahyuheriyanto.nutricom.model.Nutricions
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.model.UserProfile
 import org.wahyuheriyanto.nutricom.view.components.ConsumtionItem
 import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 
@@ -318,4 +319,59 @@ fun deleteRecommenderItem( itemId: String) {
         .collection("active").document(itemId)
         .delete()
 }
+
+fun fetchUserProfile(onResult: (UserProfile) -> Unit) {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val firestore = FirebaseFirestore.getInstance()
+
+    firestore.collection("users").document(uid).get()
+        .addOnSuccessListener { userDoc ->
+            firestore.collection("datas").document(uid).get()
+                .addOnSuccessListener { dataDoc ->
+                    val profile = UserProfile(
+                        imageUrl = userDoc.getString("imageUrl") ?: "",
+                        fullName = userDoc.getString("fullName") ?: "",
+                        userName = userDoc.getString("userName") ?: "",
+                        gender = userDoc.getString("gender") ?: "",
+                        email = userDoc.getString("email") ?: "",
+                        dateOfBirth = userDoc.getString("dateOfBirth") ?: "",
+                        phoneNumber = userDoc.getString("phoneNumber") ?: "",
+                        age = (dataDoc.getLong("age") ?: 0).toString(),
+                        weight = (dataDoc.getLong("weight") ?: 0).toString(),
+                        height = (dataDoc.getLong("height") ?: 0).toString(),
+                        smokingHistory = (dataDoc.getLong("smokingHistory") ?: 0).toString(),
+                        alcoholConsume = (dataDoc.getLong("alcoholConsume") ?: 0).toString(),
+                    )
+                    onResult(profile)
+                }
+        }
+}
+
+fun updateUserProfile(profile: UserProfile, onSuccess: () -> Unit) {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val firestore = FirebaseFirestore.getInstance()
+
+    val userUpdate = mapOf(
+        "imageUrl" to profile.imageUrl,
+        "fullName" to profile.fullName,
+        "userName" to profile.userName,
+        "gender" to profile.gender,
+        "email" to profile.email,
+        "dateOfBirth" to profile.dateOfBirth,
+        "phoneNumber" to profile.phoneNumber
+    )
+
+    val dataUpdate = mapOf(
+        "age" to profile.age.toLong(),
+        "weight" to profile.weight.toLong(),
+        "height" to profile.height.toLong(),
+        "smokingHistory" to profile.smokingHistory.toLong(),
+        "alcoholConsume" to profile.alcoholConsume.toLong()
+    )
+
+    firestore.collection("users").document(uid).update(userUpdate)
+    firestore.collection("datas").document(uid).update(dataUpdate)
+        .addOnSuccessListener { onSuccess() }
+}
+
 

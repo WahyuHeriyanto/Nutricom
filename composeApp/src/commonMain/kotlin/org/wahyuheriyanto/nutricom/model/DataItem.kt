@@ -53,3 +53,18 @@ data class ConsumtionItem(
     val sugars: Long =0L,
     val timestamp: Long = 0L
 )
+
+data class UserProfile(
+    val imageUrl: String = "",
+    val fullName: String = "",
+    val userName: String = "",
+    val gender: String = "",
+    val email: String = "",
+    val dateOfBirth: String = "",
+    val phoneNumber: String = "",
+    val age: String = "",
+    val weight: String = "",
+    val height: String = "",
+    val smokingHistory: String = "",
+    val alcoholConsume: String = ""
+)

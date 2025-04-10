@@ -173,6 +173,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                     composable("diabetesScreen"){
                         DiabetesScreen(navController)
                     }
+                    composable("dataDiri"){ DataDiriScreen(navController = navController)}
                     composable("recommendationList"){ RecommendationScreen(
                         navController = navController,
                         viewModel = viewModel,
