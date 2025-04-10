@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,11 +38,83 @@ import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.deleteRecommenderItem
 
 @Composable
+fun RecListActive(recItem: RecommenderItem, viewModel: DataViewModel){
+    var checked by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
-fun RecListActive(recItem: RecommenderItem){
-    var checked by remember { mutableStateOf(true) }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Konfirmasi") },
+            text = { Text("Apakah anda telah menyelesaikan aktivitas ini?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    checked = true
+                    showDialog = false
+                    deleteRecommenderItem(recItem.id)
+
+                    // Hapus dari list lokal
+                    viewModel.updateRecommender(
+                        viewModel.recommenders.value.filterNot { it.id == recItem.id }
+                    )
+                }) {
+                    Text("Ya")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("Tidak")
+                }
+            }
+        )
+    }
+
+    if (!checked) {
+        Row(
+            modifier = Modifier
+                .width(270.dp)
+                .background(color = Color.Transparent)
+                .drawBehind {
+                    val borderSize = 2.dp.toPx()
+                    drawLine(
+                        color = Color(android.graphics.Color.parseColor("#D9D9D9")),
+                        start = Offset(0f, size.height),
+                        end = Offset(size.width, size.height),
+                        strokeWidth = borderSize
+                    )
+                },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = recItem.sentence,
+                fontFamily = FontFamily(
+                    Font(
+                        resId = R.font.inter_medium,
+                        weight = FontWeight.Medium
+                    )
+                ),
+                fontSize = 12.sp,
+                color = Color.Black,
+                modifier = Modifier.width(220.dp)
+            )
+
+            Checkbox(
+                checked = checked,
+                onCheckedChange = {
+                    if (!checked) {
+                        showDialog = true
+                    }
+                }
+            )
+        }
+    }
 
     Row (modifier = Modifier
         .width(270.dp)

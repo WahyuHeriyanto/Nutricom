@@ -116,6 +116,7 @@ actual fun fetchRecommender(viewModelTwo: DataViewModel){
             .addOnSuccessListener { document ->
                 val recommenderList = document.map {doc ->
                     RecommenderItem(
+                        id = doc.id,
                         imageUrl = doc.getString("sentence") ?: "",
                         sentence = doc.getString("sentence") ?: ""
                     )
@@ -308,5 +309,13 @@ actual fun deleteConsumtion(viewModelTwo: DataViewModel, itemName: String) {
             }
     }
 
+}
+
+fun deleteRecommenderItem( itemId: String) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val firestore = FirebaseFirestore.getInstance()
+    firestore.collection("recommendations").document(userId)
+        .collection("active").document(itemId)
+        .delete()
 }
 

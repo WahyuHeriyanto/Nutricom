@@ -1,6 +1,8 @@
 package org.wahyuheriyanto.nutricom.view
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -54,6 +56,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
     val recommendation by viewModelTwo.recommenders.collectAsState()
     val articles by viewModelTwo.articles.collectAsState()
     val scrollState = rememberScrollState()
+    val columnScrollState = rememberScrollState()
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
 
     fetchLastestArticle(viewModelTwo = viewModelTwo)
@@ -256,11 +259,15 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
                 .height(260.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color.White)
+                .verticalScroll(columnScrollState)
                 .padding(horizontal = 20.dp, vertical = 20.dp)
                 .constrainAs(recBox) {
                     top.linkTo(indicatorBox.bottom, margin = 20.dp)
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
+                }
+                .clickable {
+                    navController.navigate("recommendationList")
                 }
             ) {
                 Column{
@@ -275,7 +282,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
                         color = Color(android.graphics.Color.parseColor("#000000")))
                     Spacer(modifier = Modifier.height(15.dp))
                     recommendation.forEach { rec ->
-                        RecListActive(recItem = rec)
+                        RecListActive(recItem = rec, viewModel = viewModelTwo)
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                 }

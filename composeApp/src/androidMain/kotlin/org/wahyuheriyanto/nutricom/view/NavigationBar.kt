@@ -110,6 +110,7 @@ fun BottomNavigationBar(navController: NavController) {
 @ExperimentalGetImage
 @Composable
 fun NavigationBar(viewModel: AuthViewModel,
+                  viewModelTwo: DataViewModel,
                   viewModelThree : ScanViewModel,
                   navController: NavController,
     onTopBarActionClick: () -> Unit = {},
@@ -172,6 +173,11 @@ fun NavigationBar(viewModel: AuthViewModel,
                     composable("diabetesScreen"){
                         DiabetesScreen(navController)
                     }
+                    composable("recommendationList"){ RecommendationScreen(
+                        navController = navController,
+                        viewModel = viewModel,
+                        viewModelTwo = viewModelTwo
+                    )}
                     composable("nutrisiDetail"){ NutrisiDetailScreen(
                         navController = navController,
                         viewModel = viewModel,

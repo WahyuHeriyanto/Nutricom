@@ -118,7 +118,7 @@ fun MainScreen(viewModel: AuthViewModel) {
         }
 
         composable("home") {
-            NavigationBar(viewModel = viewModel, viewModelThree = ScanViewModel(), navController = navController)
+            NavigationBar(viewModel = viewModel, viewModelTwo = DataViewModel(), viewModelThree = ScanViewModel(), navController = navController)
         }
 
         composable("register") {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,17 +24,26 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.components.RecListActive
+import org.wahyuheriyanto.nutricom.view.components.RecommenderActive
 import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
 import org.wahyuheriyanto.nutricom.view.components.ScreeningLoading
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.fetchNutricions
+import org.wahyuheriyanto.nutricom.viewmodel.fetchRecommender
 
 @Composable
 fun RecommendationScreen(navController: NavController, viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val recommenderResults by viewModelTwo.recommenders.collectAsState()
+    val recommendation by viewModelTwo.recommenders.collectAsState()
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(Unit) {
+        fetchRecommender(viewModelTwo)
+    }
 
     Column (modifier = Modifier
         .fillMaxSize()
@@ -65,6 +75,7 @@ fun RecommendationScreen(navController: NavController, viewModel: AuthViewModel,
             color = Color.Black
         )
         Spacer(modifier = Modifier.height(10.dp))
+
         when (loginState) {
             is LoginState.Loading -> {
                 Log.e("tesscreen","masih loading")
@@ -76,7 +87,8 @@ fun RecommendationScreen(navController: NavController, viewModel: AuthViewModel,
             is LoginState.Success -> {
                 Log.e("tesscreen","sudah sukses")
                 recommenderResults.forEach { recommender->
-                    RecListActive(recItem = recommender)
+                    Log.e("aduh","$recommender")
+                    RecommenderActive(recItem = recommender)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -88,40 +100,5 @@ fun RecommendationScreen(navController: NavController, viewModel: AuthViewModel,
             }
         }
 
-        Spacer(modifier = Modifier.height(15.dp))
-        Text(
-            text = "Semua Aktivitas Kesehatan",
-            fontFamily = FontFamily(
-                Font(
-                    resId = R.font.inter_medium,
-                    weight = FontWeight.Medium
-                )
-            ),
-            fontSize = 16.sp,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        when (loginState) {
-            is LoginState.Loading -> {
-                Log.e("tesscreen","masih loading")
-                repeat(recommenderResults.size) {
-                    ScreeningLoading()
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-            is LoginState.Success -> {
-                Log.e("tesscreen","sudah sukses")
-                recommenderResults.forEach { recommender->
-                    RecListActive(recItem = recommender)
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-            else -> {
-                repeat(recommenderResults.size) {
-                    ScreeningLoading()
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-            }
-        }
     }
 }

@@ -37,6 +37,7 @@ data class Nutricions(
 )
 
 data class RecommenderItem(
+    val id: String = "",
     val imageUrl: String ="",
     val sentence: String = ""
 )
