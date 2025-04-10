@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import androidx.navigation.compose.NavHost
@@ -104,11 +105,13 @@ fun MainScreen(viewModel: AuthViewModel) {
 
 
     // Navigasi sesuai dengan kondisi uidCredentials
-    NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home" ) {
+    NavHost(navController,
+        startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home" )
+    {
             Log.e("cekjalur","jalur 3")
 //        NavHost(navController, startDestination = if (uidCredentials.isNullOrEmpty()) "login" else "home") {
         composable("login") {
-            LoginScreen(viewModel, onLoginSuccess = {
+            LoginScreen(navController,viewModel, onLoginSuccess = {
                 navController.navigate("home") {
                     popUpTo(0) { inclusive = true }
                 }
@@ -125,11 +128,16 @@ fun MainScreen(viewModel: AuthViewModel) {
             RegisterScreen(viewModel = AuthViewModel()) {
             }
         }
+        composable("ubahSandi") {
+            UbahSandiScreen(navController = navController)
+        }
+
+
     }
 }
 
 @Composable
-fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
+fun LoginScreen(navController: NavController, viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
     val context = LocalContext.current
     val loginState by viewModel.loginState.collectAsState()
     val savedCredentials by DataStoreUtils.getCredentials(context).collectAsState(initial = Pair(null, null))
@@ -352,7 +360,10 @@ fun LoginScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit, onSignUpCl
                     )
                     Spacer(modifier = Modifier.width(30.dp))
                     Text("Forgot Password"
-                        , color = Color.White
+                        , color = Color.White,
+                        modifier = Modifier.clickable {
+                            navController.navigate("ubahSandi")
+                        }
                     )
 
                 }
