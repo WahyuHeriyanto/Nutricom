@@ -3,11 +3,11 @@ package org.wahyuheriyanto.nutricom.viewmodel
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import org.wahyuheriyanto.nutricom.model.Article
-import org.wahyuheriyanto.nutricom.model.ConsumtionItem
-import org.wahyuheriyanto.nutricom.model.Nutricions
-import org.wahyuheriyanto.nutricom.model.RecommenderItem
-import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.Article
+import org.wahyuheriyanto.nutricom.data.model.ConsumtionItem
+import org.wahyuheriyanto.nutricom.data.model.Nutricions
+import org.wahyuheriyanto.nutricom.data.model.RecommenderItem
+import org.wahyuheriyanto.nutricom.data.model.ScreeningItem
 
 class DataViewModel :ViewModel(){
 

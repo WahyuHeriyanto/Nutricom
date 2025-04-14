@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -71,9 +70,4 @@ fun CustomProgressBar(
             )
         }
     }
-}
-
-@Composable
-fun ProgressBarView() {
-    CustomProgressBar(labelName = "Lemak", current = 110, max = 150.0) // Ganti nilai sesuai kebutuhan
 }

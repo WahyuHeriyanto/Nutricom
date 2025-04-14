@@ -24,7 +24,7 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                 val firestore = FirebaseFirestore.getInstance()
                 firestore.collection("users").document(uid).get()
                     .addOnSuccessListener { document ->
-                        val pointsValue = document.getLong("point") ?: 0L
+                        val statusNewMember = document.getBoolean("newUser") ?: false
                         val nameValue = document.getString("userName") ?: ""
                         val fullNameValue = document.getString("fullName")?: ""
                         val emailValue = document.getString("email")?: ""
@@ -34,10 +34,8 @@ actual fun performLogin(viewModel: AuthViewModel, email: String, password: Strin
                         when {
                             nameValue != "" -> {
                                 viewModel.setLoginState(LoginState.Success("Login successful!"))
-                                viewModel.updatePoints(pointsValue,fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
+                                viewModel.updateData(statusNewMember, fullNameValue,nameValue,emailValue,phoneValue,dateValue) // Perbarui points di ViewModel
                                 viewModel.setUidCurrent(uid)
-                                Log.e("CekPoint", "Point : $pointsValue")
-                                Log.e("cekpokok", "benarsekali")
 
                             }
                             else -> {
@@ -86,7 +84,8 @@ actual fun performRegister(viewModel: AuthViewModel,
                     "userName" to user,
                     "phoneNumber" to phone,
                     "dateOfBirth" to birth,
-                    "gender" to gender
+                    "gender" to gender,
+                    "newUser" to true
                 )
                 val healthData = hashMapOf(
                     "height" to 0L,

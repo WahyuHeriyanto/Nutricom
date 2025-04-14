@@ -30,9 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.R
-import org.wahyuheriyanto.nutricom.model.Article
-import org.wahyuheriyanto.nutricom.model.ConsumtionItem
-import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.ConsumtionItem
 
 
 @Composable

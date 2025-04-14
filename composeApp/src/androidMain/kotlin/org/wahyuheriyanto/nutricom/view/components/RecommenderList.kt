@@ -36,8 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.R
-import org.wahyuheriyanto.nutricom.model.RecommenderItem
-import org.wahyuheriyanto.nutricom.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.deleteRecommenderItem
 
@@ -56,8 +55,6 @@ fun RecListActive(recItem: RecommenderItem, viewModel: DataViewModel){
                     checked = true
                     showDialog = false
                     deleteRecommenderItem(recItem.id)
-
-                    // Hapus dari list lokal
                     viewModel.updateRecommender(
                         viewModel.recommenders.value.filterNot { it.id == recItem.id }
                     )
@@ -114,43 +111,6 @@ fun RecListActive(recItem: RecommenderItem, viewModel: DataViewModel){
                 }
             )
         }
-    }
-
-    Row (modifier = Modifier
-        .width(270.dp)
-        .background(color = Color.Transparent)
-        .drawBehind {
-            val borderSize = 2.dp.toPx()
-            drawLine(
-                color = Color(android.graphics.Color.parseColor("#D9D9D9")),
-                start = Offset(0f, size.height),
-                end = Offset(size.width, size.height),
-                strokeWidth = borderSize
-            )
-
-        },
-        horizontalArrangement = Arrangement.SpaceBetween, // Elemen kiri dan kanan berjauhan
-        verticalAlignment = Alignment.CenterVertically)
-    {
-        Text(
-            text = recItem.sentence,
-            fontFamily = FontFamily(
-                Font(
-                    resId = R.font.inter_medium,
-                    weight = FontWeight.Medium
-                )
-            ),
-            fontSize = 12.sp,
-            color = Color.Black,
-            modifier = Modifier.width(220.dp)
-        )
-
-        Checkbox(
-            checked = checked,
-            onCheckedChange = { checked = it }
-        )
-
-
     }
 }
 
@@ -210,6 +170,5 @@ fun RecommenderActive(recItem: RecommenderItem) {
                 )
             }
         }
-
     }
 }

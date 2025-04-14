@@ -1,20 +1,17 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.wahyuheriyanto.nutricom.model.Article
-import org.wahyuheriyanto.nutricom.model.Nutricions
-import org.wahyuheriyanto.nutricom.model.RecommenderItem
-import org.wahyuheriyanto.nutricom.model.ScreeningItem
-import org.wahyuheriyanto.nutricom.model.UserProfile
-import org.wahyuheriyanto.nutricom.view.components.ConsumtionItem
-import org.wahyuheriyanto.nutricom.view.components.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.Article
+import org.wahyuheriyanto.nutricom.data.model.ConsumtionItem
+import org.wahyuheriyanto.nutricom.data.model.RecommenderItem
+import org.wahyuheriyanto.nutricom.data.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.UserProfile
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
@@ -267,7 +264,7 @@ actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
             .get()
             .addOnSuccessListener { documents ->
                 val consumeList = documents.map { doc ->
-                    org.wahyuheriyanto.nutricom.model.ConsumtionItem(
+                    ConsumtionItem(
                         imageUrl = doc.getString("barcode") ?: "",
                         name = doc.getString("name")?: "",
                         calories = doc.getLong("calories")?: 0L,

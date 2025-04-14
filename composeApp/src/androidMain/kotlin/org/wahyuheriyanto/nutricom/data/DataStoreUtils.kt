@@ -1,8 +1,6 @@
 package org.wahyuheriyanto.nutricom.data
 
-// Create a file DataStoreUtils.kt
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -26,21 +24,18 @@ object DataStoreUtils {
     }
 
     //Preparing
-
     suspend fun saveLoginCredentials(context: Context, uid: String) {
         context.dataStore.edit { prefs ->
             prefs[UID_KEY] = uid
         }
     }
 
-    // Fungsi untuk menghapus UID dari DataStore saat logout
     suspend fun clearLoginCredentials(context: Context) {
         context.dataStore.edit { prefs ->
             prefs.remove(UID_KEY)
         }
     }
 
-    // Retrieve saved email and password
     fun getCredentials(context: Context): Flow<Pair<String?, String?>> {
         return context.dataStore.data.map { prefs ->
             Pair(prefs[EMAIL_KEY], prefs[PASSWORD_KEY])

@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import org.wahyuheriyanto.nutricom.model.LoginItem
-import org.wahyuheriyanto.nutricom.model.UserItem
+import org.wahyuheriyanto.nutricom.data.model.LoginItem
+import org.wahyuheriyanto.nutricom.data.model.UserItem
 
 // Kelas AuthViewModel
 class AuthViewModel : ViewModel() {
@@ -16,21 +16,21 @@ class AuthViewModel : ViewModel() {
     val uid: StateFlow<String> = _uid
 
 
-    private val _points = MutableStateFlow(0L) // StateFlow untuk nilai points
     private val _fullName = MutableStateFlow("")
     private val _userName = MutableStateFlow("")
     private val _email = MutableStateFlow("")
     private val _phone = MutableStateFlow("")
     private val _date = MutableStateFlow("")
     private val _gender = MutableStateFlow("")
+    private val _status = MutableStateFlow(false)
 
-    val points: StateFlow<Long> = _points
     val fullName: StateFlow<String> = _fullName
     val userName: StateFlow<String> = _userName
     val email: StateFlow<String> = _email
     val phone: StateFlow<String> = _phone
     val date: StateFlow<String> = _date
     val gender: StateFlow<String> = _gender
+    val statusLogin: StateFlow<Boolean> = _status
 
 
 
@@ -45,7 +45,7 @@ class AuthViewModel : ViewModel() {
     }
 
 
-    fun register(userItem : UserItem ) {
+    fun register(userItem : UserItem) {
         _loginState.update { LoginState.Loading }
         performRegister(this,
             userItem.email,
@@ -66,21 +66,18 @@ class AuthViewModel : ViewModel() {
         _uid.value = currentUid
     }
 
-
-
-    fun updatePoints(newPoints: Long,
-                     newFullName: String,
-                     newUserName: String,
-                     newEmail: String,
-                     newPhone: String,
-                     newDate: String)
-    {
-        _points.value = newPoints
-        _fullName.value = newFullName
-        _userName.value = newUserName
-        _email.value = newEmail
-        _phone.value = newPhone
-        _date.value = newDate
+    fun updateData(loginStatus : Boolean,
+                   fullNameValue : String,
+                   nameValue : String,
+                   emailValue: String,
+                   phoneValue: String,
+                   dateValue: String){
+        _status.value = loginStatus
+        _fullName.value = fullNameValue
+        _userName.value = nameValue
+        _email.value = emailValue
+        _phone.value = phoneValue
+        _date.value = dateValue
     }
 
 

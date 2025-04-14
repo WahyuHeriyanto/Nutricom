@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
-import org.wahyuheriyanto.nutricom.model.Article
+import org.wahyuheriyanto.nutricom.data.model.Article
 
 
 @Composable
