@@ -371,4 +371,55 @@ fun updateUserProfile(profile: UserProfile, onSuccess: () -> Unit) {
         .addOnSuccessListener { onSuccess() }
 }
 
+fun submitScreening(inputs: List<Float>) {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val firestore = FirebaseFirestore.getInstance()
+
+    if (inputs.size < 7) return
+
+    val age = inputs[0]
+    val weight = inputs[1]
+    val height = inputs[2]
+    val smokingHistory = inputs[3]
+    val alcoholConsume = inputs[4]
+    val heartDisease = inputs[5]
+    val activity = inputs[6]
+
+    val heightMeter = height / 100f
+    val bmi = if (heightMeter != 0f) weight / (heightMeter * heightMeter) else 0f
+
+    val userUpdate = mapOf(
+        "age" to age,
+        "weight" to weight,
+        "height" to height,
+        "smokingHistory" to smokingHistory,
+        "alcoholConsume" to alcoholConsume,
+        "heartDisease" to heartDisease,
+        "activity" to activity,
+        "bmi" to bmi
+    )
+    val status = mapOf(
+        "newUser" to false
+    )
+
+    firestore.collection("datas")
+        .document(uid)
+        .set(userUpdate)
+        .addOnSuccessListener {
+            Log.d("Screening", "Data berhasil disimpan")
+        }
+        .addOnFailureListener {
+            Log.e("Screening", "Gagal menyimpan data: ${it.message}")
+        }
+    firestore.collection("users")
+        .document(uid)
+        .update(status)
+        .addOnSuccessListener {
+            Log.d("Screening", "Data berhasil disimpan")
+        }
+        .addOnFailureListener {
+            Log.e("Screening", "Gagal menyimpan data: ${it.message}")
+        }
+}
+
 

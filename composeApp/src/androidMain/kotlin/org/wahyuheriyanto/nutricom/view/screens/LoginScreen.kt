@@ -183,12 +183,6 @@ fun LoginScreen(navController: NavController, viewModel: AuthViewModel, onLoginS
         }
     } // LaunchedEffect for LoginState condition
 
-//    Image(
-//        painter = painterResource(R.drawable.background_login),
-//        contentDescription = null,
-//        modifier = Modifier.fillMaxSize(),
-//        contentScale = ContentScale.Crop
-//    ) // Login page background
     ConstraintLayout {
         val (logo, title, loginBox) = createRefs()
         val backStartGuideline = createGuidelineFromStart(0.2f)

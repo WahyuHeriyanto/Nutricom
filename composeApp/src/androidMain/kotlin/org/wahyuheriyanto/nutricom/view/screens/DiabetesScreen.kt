@@ -1,16 +1,19 @@
 package org.wahyuheriyanto.nutricom.view.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -24,6 +27,8 @@ import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 
 @Composable
 fun DiabetesScreen(navController: NavController) {
@@ -43,7 +48,10 @@ fun DiabetesScreen(navController: NavController) {
 
     Column(modifier = Modifier
         .padding(16.dp)
-        .verticalScroll(scrollState)) {
+        .fillMaxSize()
+        .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally){
         Text(
             text = "Screening Resiko Diabetes",
             fontFamily = FontFamily(
@@ -56,7 +64,7 @@ fun DiabetesScreen(navController: NavController) {
             color = androidx.compose.ui.graphics.Color.Black
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Image(painter = painterResource(id = R.drawable.scan), contentDescription ="",
+        Image(painter = painterResource(id = R.drawable.diabetes_pictures), contentDescription ="",
             modifier = Modifier
                 .width(320.dp)
                 .height(180.dp)
@@ -64,35 +72,70 @@ fun DiabetesScreen(navController: NavController) {
             alignment = Alignment.Center
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Text(
-            text = "Prediksi Diabetes",
-            fontFamily = FontFamily(
-                Font(
-                    resId = R.font.inter_semibold,
-                    weight = FontWeight.Bold
-                )
-            ),
-            fontSize = 20.sp,
-            color = androidx.compose.ui.graphics.Color.Black
+
+        Box(modifier = Modifier.fillMaxWidth()){
+            Text(
+                text = "Masukan data kesehatan anda",
+                fontFamily = FontFamily(
+                    Font(
+                        resId = R.font.inter_medium,
+                        weight = FontWeight.Medium
+                    )
+                ),
+                fontSize = 18.sp,
+                color = androidx.compose.ui.graphics.Color.Black
+            )
+        }
+        CustomDropdownField(
+            label = "Gender",
+            options = listOf("Perempuan" to "0", "Laki-Laki" to "1"),
+            selectedValue = gender,
+            onValueChange = { gender = it }
         )
 
-        CustomTextField("Gender (0: Female, 1: Male)", gender) { gender = it }
         CustomTextField("Age", age, KeyboardType.Number) { age = it }
-        CustomTextField("Hypertension (0: No, 1: Yes)", hypertension, KeyboardType.Number) { hypertension = it }
-        CustomTextField("Heart Disease (0: No, 1: Yes)", heartDisease, KeyboardType.Number) { heartDisease = it }
-        CustomTextField("Smoking History ('never': 0, 'former': 1, 'current': 2, 'ever': 3, 'No Info': 4, 'not current':5)", smokingHistory, KeyboardType.Number) { smokingHistory = it }
+        CustomDropdownField(
+            label = "Hypertension",
+            options = listOf("Tidak" to "0", "Ya" to "1"),
+            selectedValue = hypertension,
+            onValueChange = { hypertension = it }
+        )
+        CustomDropdownField(
+            label = "Heart Disease",
+            options = listOf("Tidak" to "0", "Ya" to "1"),
+            selectedValue = heartDisease,
+            onValueChange = { heartDisease = it }
+        )
+        CustomDropdownField(
+            label = "Smoking History",
+            options = listOf(
+                "Tidak Pernah" to "0",
+                "Mantan Perokok Aktif" to "1",
+                "Perokok, aktif saat ini" to "2",
+                "Pernah Merokok" to "3",
+                "Lainnya" to "4",
+                "Perokok, sedang tidak merokok" to "5"
+            ),
+            selectedValue = smokingHistory,
+            onValueChange = { smokingHistory = it }
+        )
         CustomTextField("BMI", bmi, KeyboardType.Decimal) { bmi = it }
         CustomTextField("HbA1c Level", hbA1c, KeyboardType.Decimal) { hbA1c = it }
         CustomTextField("Blood Glucose Level", bloodGlucose, KeyboardType.Number) { bloodGlucose = it }
 
-        Row(verticalAlignment = Alignment.CenterVertically){
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center){
+
             Button(
                 onClick = {
                     navController.navigate("predictLoadingScreen/${gender}/${age}/${hypertension}/${heartDisease}/${smokingHistory}/${bmi}/${hbA1c}/${bloodGlucose}")
                 },
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
             ) {
-                Text("Prediksi")
+                Text("Prediksi", color = Color.White)
             }
 
 
@@ -100,8 +143,11 @@ fun DiabetesScreen(navController: NavController) {
 
             Button(onClick = {
                 navController.navigate("resultPredictScreen")
-            }, modifier = Modifier.padding(top = 16.dp)) {
-                Text(text = "Rekomendasi")
+            }, modifier = Modifier
+                .padding(top = 16.dp)
+                .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))) {
+                Text(text = "Rekomendasi",color = Color.White)
             }
         }
 
@@ -132,4 +178,49 @@ fun CustomTextField(
             .padding(top = 8.dp)
     )
 }
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun CustomDropdownField(
+    label: String,
+    options: List<Pair<String, String>>, // Text shown, actual value
+    selectedValue: String,
+    onValueChange: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val selectedLabel = options.find { it.second == selectedValue }?.first ?: ""
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+    ) {
+        OutlinedTextField(
+            value = selectedLabel,
+            onValueChange = {},
+            readOnly = true,
+            label = { Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            options.forEach { (display, value) ->
+                DropdownMenuItem(
+                    onClick = {
+                        onValueChange(value)
+                        expanded = false
+                    }
+                ) {
+                    Text(display)
+                }
+            }
+        }
+    }
+}
+
 

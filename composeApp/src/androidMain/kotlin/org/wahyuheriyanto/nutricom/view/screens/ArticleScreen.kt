@@ -19,6 +19,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -106,16 +107,20 @@ fun ArticleScreen(viewModel: AuthViewModel, viewModelTwo : DataViewModel, navCon
                         backgroundColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent
-                    )
-                )
-                if (searchQuery.isNotEmpty()) {
-                    IconButton(onClick = {
-                        searchQuery = ""
-                        filteredArticles = articleContent
-                    }) {
-                        Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
+                    ),
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = {
+                                searchQuery = ""
+                                filteredArticles = articleContent
+                            }) {
+                                Icon(Icons.Default.Close, contentDescription = "Clear")
+                            }
+                        } else {
+                            Icon(Icons.Default.Search, contentDescription = "Search")
+                        }
                     }
-                }
+                )
             }
 
             Column(

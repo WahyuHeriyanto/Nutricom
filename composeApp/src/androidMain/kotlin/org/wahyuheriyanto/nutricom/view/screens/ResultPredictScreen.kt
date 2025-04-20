@@ -49,9 +49,9 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
     Log.e("cekprediksi","satu $prediction")
 
     val imageRes = when (prediction) {
-        1 -> R.drawable.gula
-        0 -> R.drawable.green_box_signin
-        else -> R.drawable.scan // default jika belum ada hasil
+        1 -> R.drawable.berpotensi_diabetes
+        0 -> R.drawable.tidak_diabetes
+        else -> R.drawable.green_box_signin // default jika belum ada hasil
     }
 
     val rekomendasiList = if (prediction == 1) listOf(

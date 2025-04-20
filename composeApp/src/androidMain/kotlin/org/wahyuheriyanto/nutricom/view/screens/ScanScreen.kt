@@ -60,6 +60,7 @@ fun ScanScreen(navController: NavController, viewModel2: ScanViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Spacer(modifier = Modifier.height(10.dp))
         Text(text = "Arahkan kamera ke barcode", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
 

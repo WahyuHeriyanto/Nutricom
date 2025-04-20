@@ -92,7 +92,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
             Box(modifier = Modifier
                 .width(140.dp)
                 .height(40.dp)
-                .clip(RoundedCornerShape(20.dp))
+//                .clip(RoundedCornerShape(20.dp))
                 .background(color = Color(0xFF00AA16))
                 .constrainAs(button) {
                     start.linkTo(startGuideline)
@@ -198,7 +198,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
                         is LoginState.Success -> {
                             val fatValue = fat.toInt()
                             Row {
-                                Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
+                                Image(painter = painterResource(id = R.drawable.lemak), contentDescription = "",
                                     modifier = Modifier.size(60.dp))
                                 Spacer(modifier = Modifier.width(15.dp))
                                 CustomProgressBar(labelName = "Lemak", current = fatValue, max = maxIntake["lemak"])
@@ -242,7 +242,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
                         is LoginState.Success -> {
                             val chole = cholesterol.toInt()
                             Row {
-                                Image(painter = painterResource(id = R.drawable.green_box_signin), contentDescription = "",
+                                Image(painter = painterResource(id = R.drawable.kolesterol), contentDescription = "",
                                     modifier = Modifier.size(60.dp))
                                 Spacer(modifier = Modifier.width(15.dp))
                                 CustomProgressBar(labelName = "Kolesterol", current = chole, max = maxIntake["kolesterol"])

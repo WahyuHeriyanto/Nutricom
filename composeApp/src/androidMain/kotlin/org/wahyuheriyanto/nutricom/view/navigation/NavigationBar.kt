@@ -203,7 +203,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                         viewModelTwo = DataViewModel()
                     )
                     }
-                    composable("newScreening"){ NewScreeningScreen()}
+                    composable("newScreening"){ NewScreeningScreen(navController)}
                     composable(
                         route = "predictLoadingScreen/{gender}/{age}/{hypertension}/{heartDisease}/{smokingHistory}/{bmi}/{hbA1c}/{bloodGlucose}",
                         arguments = listOf(
