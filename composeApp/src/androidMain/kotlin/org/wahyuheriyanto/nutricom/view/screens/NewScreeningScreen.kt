@@ -31,28 +31,28 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
-import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.submitScreening
 
 @Composable
 fun NewScreeningScreen(navController: NavController) {
     val context = LocalContext.current
     var currentStep by remember { mutableStateOf(0) }
-    val inputValues = remember { mutableStateListOf("", "", "", "", "", "", "") }
+    val inputValues = remember { mutableStateListOf("", "", "", "", "", "", "", "") }
     val placeholderList = listOf(
         "Masukkan usia",
         "Masukkan berat badan",
         "Masukkan tinggi badan",
         "Riwayat merokok (0-4)",
         "Konsumsi alkohol (0 atau 1)",
-        "Riwayat penyakit jantung (0 atau 1)",
+        "Riwayat penyakit jantung/kardiovaskular (0 atau 1)",
+        "Riwayat penyakit diabetes (0 atau 1)",
         "Aktivitas harian (1.2 - 1.9)"
     )
 
     val imageList = listOf(
         R.drawable.diabetes_pictures, R.drawable.garam, R.drawable.gula,
         R.drawable.jenuh, R.drawable.kolesterol, R.drawable.lemak,
-        R.drawable.scan, R.drawable.tidak_diabetes
+        R.drawable.scan, R.drawable.tidak_berpotensi_diabetes
     )
 
     Column(
@@ -86,7 +86,7 @@ fun NewScreeningScreen(navController: NavController) {
                 color = Color.Blue,
                 modifier = Modifier.clickable {
                     inputValues[currentStep] = "0"
-                    if (currentStep < 6) currentStep++ else {
+                    if (currentStep < 7) currentStep++ else {
                         submitScreening(inputValues.map { it.toFloatOrNull() ?: 0f })
                     }
                 }
@@ -117,7 +117,7 @@ fun NewScreeningScreen(navController: NavController) {
             }
 
             Button(onClick = {
-                if (currentStep < 6) {
+                if (currentStep < 7) {
                     currentStep++
                 } else {
                     submitScreening(inputValues.map { it.toFloatOrNull() ?: 0f })

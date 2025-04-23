@@ -1,6 +1,6 @@
 package org.wahyuheriyanto.nutricom.view.screens
 
-import android.util.Log
+
 import android.widget.Toast
 import coil.compose.AsyncImage
 import androidx.compose.foundation.Image
@@ -39,21 +39,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
-import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 
 @Composable
-fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewModel, dataPredictViewModel : DataPredictViewModel){
+fun ResultPredictScreenCardio(navController: NavController, viewModel: CardioViewModel, dataPredictViewModel : DataPredictViewModel){
     val scrollState = rememberScrollState()
     val context = LocalContext.current
-    val prediction by viewModel.prediction.collectAsState(initial = -1)
-//    Log.e("cekForce","lewat hasil udah mau ditampilin")
-//
-    Log.e("cekprediksi","satu $prediction")
+    val prediction by viewModel.prediction.collectAsState()
 
     val imageRes = when (prediction) {
-        1 -> R.drawable.berpotensi_diabetes
-        0 -> R.drawable.tidak_berpotensi_diabetes
+        1 -> R.drawable.gula
+        0 -> R.drawable.kolesterol
         else -> R.drawable.green_box_signin // default jika belum ada hasil
     }
 
@@ -143,13 +140,14 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
                     Button(
                         onClick = {
                             saveRecommendationsIfPredictionIsPositive(prediction)
-                            dataPredictViewModel.sendDataDiabetesToFirestore(prediction, onSuccess = {
+                            dataPredictViewModel.sendDataCardioToFirestore(prediction, onSuccess = {
                                 Toast.makeText(context, "Berhasil disimpan!", Toast.LENGTH_SHORT).show()
                                 navController.navigate("skrining")
                             },
                                 onError = {
                                     Toast.makeText(context, "Gagal: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
                                 })
+
                         },
                         modifier = Modifier.padding(top = 16.dp)
                     ) {

@@ -39,6 +39,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.wahyuheriyanto.nutricom.R
+import org.wahyuheriyanto.nutricom.view.factory.CardioViewModelFactory
 import org.wahyuheriyanto.nutricom.view.screens.ArticleDetailScreen
 import org.wahyuheriyanto.nutricom.view.screens.ArticleScreen
 import org.wahyuheriyanto.nutricom.view.screens.CardioScreen
@@ -53,10 +54,18 @@ import org.wahyuheriyanto.nutricom.view.screens.ResultPredictScreen
 import org.wahyuheriyanto.nutricom.view.screens.ResultScreen
 import org.wahyuheriyanto.nutricom.view.screens.ScreeningScreen
 import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
+import org.wahyuheriyanto.nutricom.view.screens.DetailFoodScreen
+import org.wahyuheriyanto.nutricom.view.screens.DetailScreeningScreen
 import org.wahyuheriyanto.nutricom.view.screens.NewScreeningScreen
+import org.wahyuheriyanto.nutricom.view.screens.PredictLoadingScreenCardio
+import org.wahyuheriyanto.nutricom.view.screens.ResultPredictScreenCardio
 import org.wahyuheriyanto.nutricom.view.screens.ScanScreen
+import org.wahyuheriyanto.nutricom.view.screens.UmumScreen
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DetailScreeningViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
@@ -120,7 +129,9 @@ fun NavigationBar(viewModel: AuthViewModel,
     val currentRoute = navBackStackEntry?.destination?.route
     val context = LocalContext.current
     val diabetesViewModel: DiabetesViewModel = viewModel(factory = DiabetesViewModelFactory(context))
+    val cardioViewModel: CardioViewModel = viewModel(factory = CardioViewModelFactory(context))
     val name by viewModel.fullName.collectAsState()
+    val dataPredictViewModel = DataPredictViewModel()
 
     val navController = rememberNavController() as NavHostController
         Scaffold(
@@ -188,7 +199,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                     composable("scanScreen") { ScanScreen(navController, viewModelThree) }
                     composable("result") { ResultScreen(navController, viewModelThree, viewModelTwo = FoodViewModel()) }
                     composable("diabetesScreen"){
-                        DiabetesScreen(navController)
+                        DiabetesScreen(navController, dataPredictViewModel)
                     }
                     composable("dataDiri"){ DataDiriScreen(navController = navController) }
                     composable("recommendationList"){ RecommendationScreen(
@@ -230,14 +241,57 @@ fun NavigationBar(viewModel: AuthViewModel,
                             bloodGlucose = backStackEntry.arguments?.getInt("bloodGlucose") ?: 0
                         )
                     }
+                    composable(
+                        route = "predictLoadingScreenCardio/{age}/{gender}/{height}/{weight}/{apHi}/{apLo}/{cholesterol}/{gluc}/{smoke}/{alco}/{active}",
+                        arguments = listOf(
+                            navArgument("age") { type = NavType.IntType },
+                            navArgument("gender") { type = NavType.IntType },
+                            navArgument("height") { type = NavType.IntType },
+                            navArgument("weight") { type = NavType.IntType },
+                            navArgument("apHi") { type = NavType.IntType },
+                            navArgument("apLo") { type = NavType.IntType },
+                            navArgument("cholesterol") { type = NavType.IntType },
+                            navArgument("gluc") { type = NavType.IntType },
+                            navArgument("smoke") { type = NavType.IntType },
+                            navArgument("alco") { type = NavType.IntType },
+                            navArgument("active") { type = NavType.IntType }
+                        )
+                    ) { backStackEntry ->
+                        PredictLoadingScreenCardio(
+                            navController = navController,
+                            viewModel = cardioViewModel,
+                            age = backStackEntry.arguments?.getInt("age") ?: 0,
+                            gender = backStackEntry.arguments?.getInt("gender") ?: 0,
+                            height = backStackEntry.arguments?.getInt("height") ?: 0,
+                            weight = backStackEntry.arguments?.getInt("weight") ?: 0,
+                            apHi = backStackEntry.arguments?.getInt("apHi") ?: 0,
+                            apLo = backStackEntry.arguments?.getInt("apLo") ?: 0,
+                            cholesterol = backStackEntry.arguments?.getInt("cholesterol") ?: 0,
+                            gluc = backStackEntry.arguments?.getInt("gluc") ?: 0,
+                            smoke = backStackEntry.arguments?.getInt("smoke") ?: 0,
+                            alco = backStackEntry.arguments?.getInt("alco") ?: 0,
+                            active = backStackEntry.arguments?.getInt("active") ?: 0,
+                        )
+                    }
 
 
-                    composable("cardioScreen"){ CardioScreen() }
+                    composable("cardioScreen"){ CardioScreen(navController,dataPredictViewModel) }
                     composable("resultPredictScreen") {
                         ResultPredictScreen(
                             navController = navController,
-                            viewModel = diabetesViewModel // Pakai ViewModel yang sama
+                            viewModel = diabetesViewModel,
+                            dataPredictViewModel = dataPredictViewModel
                         )
+                    }
+                    composable("resultPredictScreenCardio") {
+                        ResultPredictScreenCardio(
+                            navController = navController,
+                            viewModel = cardioViewModel,
+                            dataPredictViewModel = dataPredictViewModel
+                        )
+                    }
+                    composable("umumScreen"){
+                        UmumScreen(navController = navController, dataPredictViewModel = dataPredictViewModel)
                     }
                     composable(
                         "articleDetailScreen/{title}/{author}/{content}/{imageUrl}",
@@ -254,6 +308,51 @@ fun NavigationBar(viewModel: AuthViewModel,
                         val imageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
 
                         ArticleDetailScreen(title, author, content, imageUrl)
+                    }
+                    composable(
+                        route = "detailScreeningScreen/{type}/{id}",
+                        arguments = listOf(
+                            navArgument("type") { type = NavType.StringType },
+                            navArgument("id") { type = NavType.StringType }
+                        )
+                    ) { backStackEntry ->
+                        val type = backStackEntry.arguments?.getString("type") ?: ""
+                        val documentId = backStackEntry.arguments?.getString("id") ?: ""
+
+                        DetailScreeningScreen(
+                            viewModel = viewModel(),
+                            type = type,
+                            documentId = documentId
+                        )
+                    }
+
+                    composable(
+                        route = "detailFoodScreen/{id}/{imageUrl}/{name}/{calories}/{fat}/{saturatedFat}/{cholesterol}/{sugars}/{salt}",
+                        arguments = listOf(
+                            navArgument("id") { type = NavType.StringType },
+                            navArgument("imageUrl") { type = NavType.StringType },
+                            navArgument("name") { type = NavType.StringType },
+                            navArgument("calories") { type = NavType.StringType },
+                            navArgument("fat") { type = NavType.StringType },
+                            navArgument("saturatedFat") { type = NavType.StringType },
+                            navArgument("cholesterol") { type = NavType.StringType },
+                            navArgument("sugars") { type = NavType.StringType },
+                            navArgument("salt") { type = NavType.StringType },
+                        )
+                    ) { backStackEntry ->
+                        val id = backStackEntry.arguments?.getString("id") ?: ""
+                        val imageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
+                        val name = backStackEntry.arguments?.getString("name") ?: ""
+                        val calories = backStackEntry.arguments?.getString("calories") ?: ""
+                        val fat = backStackEntry.arguments?.getString("fat") ?: ""
+                        val saturatedFat = backStackEntry.arguments?.getString("saturatedFat") ?: ""
+                        val cholesterol = backStackEntry.arguments?.getString("cholesterol") ?: ""
+                        val sugars = backStackEntry.arguments?.getString("sugars") ?: ""
+                        val salt = backStackEntry.arguments?.getString("salt") ?: ""
+
+                        DetailFoodScreen(
+                            navController, viewModelTwo,id, imageUrl,name,calories,fat,saturatedFat,cholesterol,sugars,salt
+                        )
                     }
                 }
 

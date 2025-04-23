@@ -46,3 +46,36 @@ fun CustomCircularProgressBar(
         )
     }
 }
+
+@Composable
+fun HealthCircularProgressBar(
+    current: Float,
+    max: Float
+) {
+    val progress = current / max
+
+    val (color, label) = when {
+        current <= 18.5 -> Color.Yellow to "Underweight"
+        current > 18.5 && current < 24.9 -> Color(0xFF00AA16 )to "Normal"
+        current >= 25 && current < 29.9 -> Color.Yellow to "Overweight"
+        else -> Color.Red to "Obesitas"
+    }
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.size(85.dp)
+    ) {
+        CircularProgressIndicator(
+            progress = progress,
+            color = color,
+            strokeWidth = 6.dp,
+            modifier = Modifier.fillMaxSize()
+        )
+        Text(
+            text = label,
+            color = color,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
+    }
+}

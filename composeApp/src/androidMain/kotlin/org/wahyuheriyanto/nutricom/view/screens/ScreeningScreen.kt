@@ -78,6 +78,9 @@ fun ScreeningScreen(navController: NavController, viewModel: AuthViewModel, view
                     .size(80.dp)
                     .clip(RoundedCornerShape(20.dp))
                     .background(color = Color.White)
+                    .clickable {
+                        navController.navigate("umumScreen")
+                    }
                     ,contentAlignment = Alignment.Center
                 ){
                     Column (verticalArrangement = Arrangement.Center, // Menengahkan elemen secara vertikal
@@ -180,17 +183,14 @@ fun ScreeningScreen(navController: NavController, viewModel: AuthViewModel, view
 
                 when (loginState) {
                     is LoginState.Loading -> {
-                        Log.e("tesscreen","masih loading")
                         repeat(screeningResults.size) {
                             ScreeningLoading()
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }
                     is LoginState.Success -> {
-                        Log.e("tesscreen","sudah sukses")
                         screeningResults.forEach { screening ->
-                            ScreeningItem(screening = screening)
-                            Log.e("tesscreen","hasil : $screening")
+                            ScreeningItem(screening = screening, navController)
                             Spacer(modifier = Modifier.height(8.dp))
                         }
                     }

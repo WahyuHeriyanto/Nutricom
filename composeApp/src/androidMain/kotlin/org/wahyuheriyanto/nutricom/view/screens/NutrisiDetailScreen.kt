@@ -29,6 +29,7 @@ import org.wahyuheriyanto.nutricom.view.components.ConsumtionLoading
 import org.wahyuheriyanto.nutricom.viewmodel.AuthViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.LoginState
+import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.deleteConsumtion
 import org.wahyuheriyanto.nutricom.viewmodel.fetchConsumtion
 
@@ -76,8 +77,8 @@ fun NutrisiDetailScreen(navController: NavController, viewModel: AuthViewModel, 
                 is LoginState.Success -> {
                     Log.e("tesscreen","sudah sukses")
                     consumeResults.forEach { consum ->
-                        ConsumtionItem(consumtion = consum) {
-                            deleteConsumtion(viewModelTwo = viewModelTwo,consum.name)
+                        ConsumtionItem(consumtion = consum, navController = navController, ScanViewModel()) {
+                            deleteConsumtion(viewModelTwo = viewModelTwo,consum.id)
                         }
                         Log.e("tesscreen","hasil : $consum")
                         Spacer(modifier = Modifier.height(8.dp))

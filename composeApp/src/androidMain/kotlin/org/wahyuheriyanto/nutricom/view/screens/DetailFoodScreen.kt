@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,21 +24,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import org.wahyuheriyanto.nutricom.R
-import org.wahyuheriyanto.nutricom.viewmodel.FoodViewModel
-import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.deleteConsumtion
 
 @Composable
-fun ResultScreen(navController: NavController, viewModel: ScanViewModel
-                 , viewModelTwo: FoodViewModel) {
-    val foodInfo by viewModel.foodInfo.collectAsState()
-    val foodViewModel = viewModelTwo
+fun DetailFoodScreen(navController: NavController, viewmodel: DataViewModel, id : String, imageUrl: String, name : String, calories :String,
+                     fat : String, saturatedFat : String, cholesterol : String, sugars : String, salt : String
+) {
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -49,7 +45,7 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
         ConstraintLayout {
             val startGuideline = createGuidelineFromStart(0.1f)
             val endGuideline = createGuidelineFromEnd(0.1f)
-            val (title,content) = createRefs()
+            val (title, content) = createRefs()
 
             Text(text = "Informasi Nilai Gizi",
                 fontFamily = FontFamily(
@@ -60,7 +56,7 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                 ),
                 fontSize = 20.sp,
                 color = Color(android.graphics.Color.parseColor("#000000")),
-                modifier = Modifier.constrainAs(title){
+                modifier = Modifier.constrainAs(title) {
                     top.linkTo(parent.top, margin = 20.dp)
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
@@ -74,58 +70,39 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                     start.linkTo(startGuideline)
                     end.linkTo(endGuideline)
                 }
-                .border(width = 1.dp, color = Color.Gray))
+                .border(width = 1.dp, color = androidx.compose.ui.graphics.Color.Gray))
             {
-
-                foodInfo?.let { response ->
-                    response.product?.let { product ->
-                        Box(modifier = Modifier
-                            .width(320.dp)
-                            .height(50.dp)
-                            .background(color = Color.LightGray)
-                            .padding(10.dp)){
-                            Text(text = "Nama produk : ${product.productName ?: "Nama produk : Tidak ditemukan"}",
-                        fontFamily = FontFamily(
-                            Font(
-                                resId = R.font.inter_semibold,
-                                weight = FontWeight.SemiBold
-                            )
-                        ),
-                        fontSize = 16.sp,
-                        color = Color(android.graphics.Color.parseColor("#000000"))
-                    )
-                        }
-                        Row (modifier = Modifier
-                            .width(320.dp)
-                            .height(270.dp)){
-                            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(25.dp)) {
-                                //Kalori
-                                Text(text = "Total Kalori",
-                                    fontFamily = FontFamily(
-                                        Font(
-                                            resId = R.font.inter_medium,
-                                            weight = FontWeight.Medium
-                                        )
-                                    ),
-                                    fontSize = 16.sp,
-                                    color = Color(android.graphics.Color.parseColor("#000000"))
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.calories ?: "Tidak tersedia"} kkal",
+                        Box(
+                            modifier = Modifier
+                                .width(320.dp)
+                                .height(50.dp)
+                                .background(color = androidx.compose.ui.graphics.Color.LightGray)
+                                .padding(10.dp)
+                        ) {
+                            Text(
+                                text = "Nama produk : ${name ?: "Nama produk : Tidak ditemukan"}",
                                 fontFamily = FontFamily(
                                     Font(
-                                        resId = R.font.inter_medium,
-                                        weight = FontWeight.Medium
+                                        resId = R.font.inter_semibold,
+                                        weight = FontWeight.SemiBold
                                     )
                                 ),
                                 fontSize = 16.sp,
                                 color = Color(android.graphics.Color.parseColor("#000000"))
-                                )
-                                Spacer(modifier = Modifier.height(20.dp))
-
-                                //Total Lemak
-                                Text(text = "Total Lemak",
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .width(320.dp)
+                                .height(270.dp)
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(25.dp)
+                            ) {
+                                //Kalori
+                                Text(
+                                    text = "Total Kalori",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -136,7 +113,34 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                     color = Color(android.graphics.Color.parseColor("#000000"))
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.fat ?: "Tidak tersedia"} g",
+                                Text(
+                                    text = "${calories ?: "Tidak tersedia"} kkal",
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            resId = R.font.inter_medium,
+                                            weight = FontWeight.Medium
+                                        )
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = Color(android.graphics.Color.parseColor("#000000"))
+                                )
+                                Spacer(modifier = Modifier.height(20.dp))
+
+                                //Total Lemak
+                                Text(
+                                    text = "Total Lemak",
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            resId = R.font.inter_medium,
+                                            weight = FontWeight.Medium
+                                        )
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = Color(android.graphics.Color.parseColor("#000000"))
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = "${fat ?: "Tidak tersedia"} g",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -149,7 +153,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                 Spacer(modifier = Modifier.height(20.dp))
 
                                 //Natrium
-                                Text(text = "Natrium",
+                                Text(
+                                    text = "Natrium",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -160,7 +165,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                     color = Color(android.graphics.Color.parseColor("#000000"))
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.salt ?: "Tidak tersedia"} g",
+                                Text(
+                                    text = "${salt ?: "Tidak tersedia"} g",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -173,10 +179,13 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
 
 
                             }
-                            Column(horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(25.dp)) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(25.dp)
+                            ) {
                                 //Glukosa
-                                Text(text = "Gukosa",
+                                Text(
+                                    text = "Gukosa",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -187,7 +196,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                     color = Color(android.graphics.Color.parseColor("#000000"))
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.sugars ?: "Tidak tersedia"} g",
+                                Text(
+                                    text = "${sugars ?: "Tidak tersedia"} g",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -200,7 +210,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                 Spacer(modifier = Modifier.height(20.dp))
 
                                 //Lemak Jenuh
-                                Text(text = "Lemak Jenuh",
+                                Text(
+                                    text = "Lemak Jenuh",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -211,7 +222,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                     color = Color(android.graphics.Color.parseColor("#000000"))
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.saturatedFat ?: "Tidak tersedia"} g",
+                                Text(
+                                    text = "${saturatedFat ?: "Tidak tersedia"} g",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -224,7 +236,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                 Spacer(modifier = Modifier.height(20.dp))
 
                                 //Kolesterol
-                                Text(text = "Kolesterol",
+                                Text(
+                                    text = "Kolesterol",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -235,7 +248,8 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                                     color = Color(android.graphics.Color.parseColor("#000000"))
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(text = "${product.nutriments?.cholesterol ?: "Tidak tersedia"} g",
+                                Text(
+                                    text = "${cholesterol ?: "Tidak tersedia"} g",
                                     fontFamily = FontFamily(
                                         Font(
                                             resId = R.font.inter_medium,
@@ -248,84 +262,27 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                             }
                         }
                     }
-                }
+
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Column (horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()){
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     //Tombol scan ulang
-                    Button(onClick = {
-                        viewModel.clearFoodInfo()
-                        navController.navigate("scanScreen") {
-                            popUpTo("scanScreen") { inclusive = true }
-                        }
-                    }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xFF00AA16),
-                        contentColor = Color.White,
-                        disabledBackgroundColor = Color.Gray,
-                        disabledContentColor = Color.LightGray
-                    )) {
-                        Text(text = "Scan Lagi")
+                    Button(
+                        onClick = {
+                            deleteConsumtion(viewModelTwo = viewmodel, id)
+                            navController.navigate("nutrisiDetail")
+                            }
+
+                    ) {
+                        Text(text = "Hapus")
                     }
-                    Spacer(modifier = Modifier.height(10.dp))
 
-                    Row (horizontalArrangement = Arrangement.Center){
-                        //Tombol jangan simpan
-                        Button(onClick = {
-                            viewModel.clearFoodInfo()
-
-                            navController.navigate("nutrisi") {
-                                popUpTo("nutrisi") { inclusive = true }
-                            }
-                        }, colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(0xFF00AA16),
-                                contentColor = Color.White,
-                                disabledBackgroundColor = Color.Gray,
-                                disabledContentColor = Color.LightGray
-                            )) {
-                            Text(text = "Jangan Simpan")
-                        }
-                        Spacer(modifier = Modifier.width(15.dp))
-
-                        //Tombol simpan
-                        Button(onClick = {
-                            foodInfo?.product?.let { product ->
-                                foodViewModel.addFoodEntry(
-                                    barcode = product.code ?: "Tidak tersedia",
-                                    name = product.productName ?: "Tidak ditemukan",
-                                    calories = product.nutriments?.calories ?: 0.0,
-                                    sugars = product.nutriments?.sugars ?:0.0,
-                                    cholesterol = product.nutriments?.cholesterol ?: 0.0,
-                                    fat = product.nutriments?.fat ?: 0.0,
-                                    salt = product.nutriments?.salt ?: 0.0,
-                                    saturatedFat = product.nutriments?.saturatedFat ?: 0.0
-                                )
-                            }
-                            viewModel.clearFoodInfo()
-                            navController.navigate("nutrisi") {
-                                popUpTo("nutrisi") { inclusive = true }
-                            }
-                        }, colors = ButtonDefaults.buttonColors(
-                                backgroundColor = Color(0xFF00AA16),
-                                contentColor = Color.White,
-                                disabledBackgroundColor = Color.Gray,
-                                disabledContentColor = Color.LightGray
-                            )) {
-                            Text(text = "Simpan")
-                        }
-                    }
                 }
+
             }
         }
     }
-}
-
-@Preview
-@Composable
-
-fun PreviewView(){
-    Surface(modifier = Modifier.fillMaxSize()) {
-        ResultScreen(navController = rememberNavController(), viewModel = ScanViewModel(), viewModelTwo = FoodViewModel())
-    }
-}

@@ -117,4 +117,4 @@ expect fun fetchNutricions(viewModelTwo: DataViewModel)
 
 expect fun fetchConsumtion(viewModelTwo: DataViewModel)
 
-expect fun deleteConsumtion(viewModelTwo: DataViewModel, itemName: String)
+expect fun deleteConsumtion(viewModelTwo: DataViewModel, itemId: String)

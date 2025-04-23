@@ -1,12 +1,14 @@
 package org.wahyuheriyanto.nutricom.view.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,29 +23,42 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import org.wahyuheriyanto.nutricom.view.factory.CardioViewModelFactory
+import org.wahyuheriyanto.nutricom.viewmodel.CardioInputData
+import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
 
 @Composable
-fun CardioScreen() {
+fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredictViewModel) {
     val context = LocalContext.current
-    val viewModel: DiabetesViewModel = viewModel(factory = DiabetesViewModelFactory(context))
-    var gender by remember { mutableStateOf("") }
+    val viewModel: CardioViewModel = viewModel(factory =  CardioViewModelFactory(context))
     var age by remember { mutableStateOf("") }
-    var hypertension by remember { mutableStateOf("") }
-    var heartDisease by remember { mutableStateOf("") }
-    var smokingHistory by remember { mutableStateOf("") }
-    var bmi by remember { mutableStateOf("") }
-    var hbA1c by remember { mutableStateOf("") }
-    var bloodGlucose by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var height by remember { mutableStateOf("") }
+    var weight by remember { mutableStateOf("") }
+    var apHi by remember { mutableStateOf("") }
+    var apLo by remember { mutableStateOf("") }
+    var cholesterol by remember { mutableStateOf("") }
+    var gluc by remember { mutableStateOf("") }
+    var smoke by remember { mutableStateOf("") }
+    var alco by remember { mutableStateOf("") }
+    var active by remember { mutableStateOf("") }
     val prediction by viewModel.prediction.collectAsState()
     val scrollState = rememberScrollState()
 
 
     Column(modifier = Modifier
         .padding(16.dp)
-        .verticalScroll(scrollState)) {
+        .fillMaxSize()
+        .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally){
         Text(
             text = "Screening Resiko Kardiovaskular",
             fontFamily = FontFamily(
@@ -53,10 +68,10 @@ fun CardioScreen() {
                 )
             ),
             fontSize = 22.sp,
-            color = Color.Black
+            color = androidx.compose.ui.graphics.Color.Black
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Image(painter = painterResource(id = R.drawable.scan), contentDescription ="",
+        Image(painter = painterResource(id = R.drawable.diabetes_pictures), contentDescription ="",
             modifier = Modifier
                 .width(320.dp)
                 .height(180.dp)
@@ -65,49 +80,87 @@ fun CardioScreen() {
         )
         Spacer(modifier = Modifier.height(15.dp))
 
-        Text(
-            text = "Prediksi Resiko Kardiovaskular",
-            fontFamily = FontFamily(
-                Font(
-                    resId = R.font.inter_semibold,
-                    weight = FontWeight.Bold
-                )
-            ),
-            fontSize = 20.sp,
-            color = Color.Black
+        Box(modifier = Modifier.fillMaxWidth()){
+            Text(
+                text = "Masukan data kesehatan anda",
+                fontFamily = FontFamily(
+                    Font(
+                        resId = R.font.inter_medium,
+                        weight = FontWeight.Medium
+                    )
+                ),
+                fontSize = 18.sp,
+                color = androidx.compose.ui.graphics.Color.Black
+            )
+        }
+        CustomTextField("Umur", age, KeyboardType.Decimal) { age = it }
+        CustomDropdownField(
+            label = "Jenis Kelamin",
+            options = listOf("Perempuan" to "0", "Laki-Laki" to "1"),
+            selectedValue = gender,
+            onValueChange = { gender = it }
+        )
+        CustomTextField("Tinggi Badan", height, KeyboardType.Decimal) { height = it }
+        CustomTextField("Berat Badan", weight, KeyboardType.Decimal) { weight = it }
+        CustomTextField("Tekanan Darah Sistolik (Atas) ", apHi, KeyboardType.Decimal) { apHi = it }
+        CustomTextField("Tekanan Darah Diastolik (Bawah) ", apLo, KeyboardType.Decimal) { apLo = it }
+        CustomDropdownField(
+            label = "Kadar Kolesterol",
+            options = listOf("Normal" to "0", "Tinggi" to "1", "Sangat Tinggi" to "2"),
+            selectedValue = cholesterol,
+            onValueChange = { cholesterol= it }
+        )
+        CustomDropdownField(
+            label = "Kadar Glukosa",
+            options = listOf("Normal" to "0", "Tinggi" to "1", "Sangat Tinggi" to "2"),
+            selectedValue = gluc,
+            onValueChange = { gluc = it }
+        )
+        CustomDropdownField(
+            label = "Riwayat Merokok",
+            options = listOf("Ya" to "0", "Tidak" to "1"),
+            selectedValue = smoke,
+            onValueChange = { smoke = it }
+        )
+        CustomDropdownField(
+            label = "Riwayat Konsumsi Alkohol",
+            options = listOf("Ya" to "0", "Tidak" to "1"),
+            selectedValue = alco,
+            onValueChange = { alco = it }
+        )
+        CustomDropdownField(
+            label = "Riwayat Aktivitas Fisik",
+            options = listOf("Ya" to "0", "Tidak" to "1"),
+            selectedValue = active,
+            onValueChange = { active = it }
         )
 
-        CustomTextFieldCardio("Gender (0: Female, 1: Male)", gender) { gender = it }
-        CustomTextFieldCardio("Age", age, KeyboardType.Number) { age = it }
-        CustomTextFieldCardio("Hypertension (0: No, 1: Yes)", hypertension, KeyboardType.Number) { hypertension = it }
-        CustomTextFieldCardio("Heart Disease (0: No, 1: Yes)", heartDisease, KeyboardType.Number) { heartDisease = it }
-        CustomTextFieldCardio("Smoking History (1-4)", smokingHistory, KeyboardType.Number) { smokingHistory = it }
-        CustomTextFieldCardio("BMI", bmi, KeyboardType.Decimal) { bmi = it }
-        CustomTextFieldCardio("HbA1c Level", hbA1c, KeyboardType.Decimal) { hbA1c = it }
-        CustomTextFieldCardio("Blood Glucose Level", bloodGlucose, KeyboardType.Number) { bloodGlucose = it }
+        Row(verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center){
 
-        Row(horizontalArrangement = Arrangement.Center){
             Button(
                 onClick = {
-                    viewModel.predictDiabetes(
-                        gender.toIntOrNull() ?: 0,
-                        age.toIntOrNull() ?: 0,
-                        hypertension.toIntOrNull() ?: 0,
-                        heartDisease.toIntOrNull() ?: 0,
-                        smokingHistory.toIntOrNull() ?: 1,
-                        bmi.toFloatOrNull() ?: 0f,
-                        hbA1c.toFloatOrNull() ?: 0f,
-                        bloodGlucose.toIntOrNull() ?: 0
-                    )
-                },
-                modifier = Modifier.padding(top = 16.dp)
+                    navController.navigate("predictLoadingScreenCardio/${age}/${gender}/${height}/${weight}/${apHi}/${apLo}/${cholesterol}/${gluc}/${smoke}/${alco}/${active}")
+                    dataPredictViewModel.saveInputDataCardio(CardioInputData(age.toDouble(),gender.toDouble(),height.toDouble(),weight.toDouble(),apHi.toDouble(),apLo.toDouble(), cholesterol.toDouble(),gluc.toDouble(),smoke.toDouble(),alco.toDouble(),active.toDouble()))
+                          },
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
             ) {
-                Text("Prediksi")
+                Text("Prediksi", color = Color.White)
             }
+
+
             Spacer(modifier = Modifier.width(20.dp))
 
-            Button(onClick = { /*TODO*/ }, modifier = Modifier.padding(top = 16.dp)) {
-                Text(text = "Rekomendasi")
+            Button(onClick = {
+                navController.navigate("recommendationList")
+            }, modifier = Modifier
+                .padding(top = 16.dp)
+                .background(Color.Transparent),
+                colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))) {
+                Text(text = "Rekomendasi",color = Color.White)
             }
         }
 
@@ -119,22 +172,4 @@ fun CardioScreen() {
             )
         }
     }
-}
-
-@Composable
-fun CustomTextFieldCardio(
-    label: String,
-    value: String,
-    keyboardType: KeyboardType = KeyboardType.Text,
-    onValueChange: (String) -> Unit
-) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label) },
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        modifier = Modifier
-            .fillMaxWidth()  // Perbaikan letak modifier
-            .padding(top = 8.dp)
-    )
 }

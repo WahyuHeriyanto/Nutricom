@@ -117,18 +117,6 @@ fun DataDiriScreen(navController: NavController) {
             inputField("No Telepon", profile.phoneNumber) {
                 userProfile = profile.copy(phoneNumber = it)
             }
-            inputField("Berat Badan", profile.weight) {
-                userProfile = profile.copy(weight = it)
-            }
-            inputField("Tinggi Badan", profile.height) {
-                userProfile = profile.copy(height = it)
-            }
-            inputField("Riwayat Merokok", profile.smokingHistory) {
-                userProfile = profile.copy(smokingHistory = it)
-            }
-            inputField("Riwayat Alkohol", profile.alcoholConsume) {
-                userProfile = profile.copy(alcoholConsume = it)
-            }
 
             Spacer(modifier = Modifier.height(24.dp))
             Button(

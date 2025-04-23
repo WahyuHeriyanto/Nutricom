@@ -20,20 +20,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.delay
-import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
 
 @Composable
-fun PredictLoadingScreen(
+fun PredictLoadingScreenCardio(
+    //{age}/{gender}/{height}/{weight}/{ap_hi}/{ap_lo}/{cholesterol}/{gluc}/{smoke}/{alco}/{active}
     navController: NavController,
-    viewModel: DiabetesViewModel,
-    gender: Int,
+    viewModel: CardioViewModel,
     age: Int,
-    hypertension: Int,
-    heartDisease: Int,
-    smokingHistory: Int,
-    bmi: Float,
-    hbA1c: Float,
-    bloodGlucose: Int
+    gender: Int,
+   height: Int,
+    weight: Int,
+    apHi: Int,
+    apLo: Int,
+    cholesterol: Int,
+    gluc: Int,
+    smoke: Int,
+    alco: Int,
+    active: Int
 ) {
     val prediction by viewModel.prediction.collectAsState()
     val hasNavigated = remember { mutableStateOf(false) }
@@ -41,20 +45,18 @@ fun PredictLoadingScreen(
     // Jalankan prediksi saat komposisi dimulai
     LaunchedEffect(Unit) {
         Log.d("PredictLoadingScreen", "Memulai prediksi")
-        Log.e("cekisipredict","$gender,$age, $hypertension, $heartDisease,$smokingHistory, $bmi, $hbA1c, $bloodGlucose")
-        viewModel.predictDiabetes(
-            gender, age, hypertension, heartDisease,
-            smokingHistory, bmi, hbA1c, bloodGlucose
+        viewModel.predictCardio(
+            age, gender, height, weight,
+            apHi, apLo, cholesterol, gluc, smoke, alco, active
         )
     }
 
     // Navigasi otomatis setelah hasil tersedia
     LaunchedEffect(prediction) {
         if (prediction != null && !hasNavigated.value) {
-            Log.e("cekForce","lewat hasil udah ada")
             hasNavigated.value = true
             delay(3000) // Biar animasi loading sempat tampil sebentar
-            navController.navigate("resultPredictScreen")
+            navController.navigate("resultPredictScreenCardio")
         }
     }
 

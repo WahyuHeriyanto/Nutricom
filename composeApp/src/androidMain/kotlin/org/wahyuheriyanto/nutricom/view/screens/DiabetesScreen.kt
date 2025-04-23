@@ -29,9 +29,11 @@ import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.DiabetesInputData
 
 @Composable
-fun DiabetesScreen(navController: NavController) {
+fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredictViewModel) {
     val context = LocalContext.current
     val viewModel: DiabetesViewModel = viewModel(factory = DiabetesViewModelFactory(context))
     var gender by remember { mutableStateOf("") }
@@ -109,12 +111,12 @@ fun DiabetesScreen(navController: NavController) {
         CustomDropdownField(
             label = "Smoking History",
             options = listOf(
-                "Tidak Pernah" to "0",
-                "Mantan Perokok Aktif" to "1",
+                "Tidak pernah" to "0",
+                "Mantan perokok aktif" to "1",
                 "Perokok, aktif saat ini" to "2",
-                "Pernah Merokok" to "3",
+                "Pernah merokok" to "3",
+                "Perokok, sedang tidak merokok" to "5",
                 "Lainnya" to "4",
-                "Perokok, sedang tidak merokok" to "5"
             ),
             selectedValue = smokingHistory,
             onValueChange = { smokingHistory = it }
@@ -129,7 +131,16 @@ fun DiabetesScreen(navController: NavController) {
             Button(
                 onClick = {
                     navController.navigate("predictLoadingScreen/${gender}/${age}/${hypertension}/${heartDisease}/${smokingHistory}/${bmi}/${hbA1c}/${bloodGlucose}")
-                },
+                    dataPredictViewModel.saveInputDataDiabetes(DiabetesInputData(gender.toDouble(),
+                        age.toDouble(),
+                        hypertension.toDouble(),
+                        heartDisease.toDouble(),
+                        smokingHistory.toDouble(),
+                        bmi.toDouble(),
+                        hbA1c.toDouble(),
+                        bloodGlucose.toDouble()
+                    ))
+                          },
                 modifier = Modifier
                     .padding(top = 16.dp)
                     .background(Color.Transparent),
@@ -142,7 +153,7 @@ fun DiabetesScreen(navController: NavController) {
             Spacer(modifier = Modifier.width(20.dp))
 
             Button(onClick = {
-                navController.navigate("resultPredictScreen")
+                navController.navigate("recommendationList")
             }, modifier = Modifier
                 .padding(top = 16.dp)
                 .background(Color.Transparent),

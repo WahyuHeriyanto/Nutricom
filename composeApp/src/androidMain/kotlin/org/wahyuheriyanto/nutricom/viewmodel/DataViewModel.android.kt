@@ -1,5 +1,6 @@
 package org.wahyuheriyanto.nutricom.viewmodel
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -11,6 +12,7 @@ import org.wahyuheriyanto.nutricom.data.model.Article
 import org.wahyuheriyanto.nutricom.data.model.ConsumtionItem
 import org.wahyuheriyanto.nutricom.data.model.RecommenderItem
 import org.wahyuheriyanto.nutricom.data.model.ScreeningItem
+import org.wahyuheriyanto.nutricom.data.model.UserHealth
 import org.wahyuheriyanto.nutricom.data.model.UserProfile
 
 actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
@@ -65,10 +67,8 @@ actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
                         imageList.add(imageUrl)
                     }
                 }
-//                Log.e("CekList","$imageList")
 
                 viewModelTwo.updateImage(imageList)
-//                Log.e("OutputImage", "Image link : $imageList")
             }
             .addOnFailureListener { exception ->
                 // Tangani jika ada kegagalan
@@ -128,20 +128,20 @@ actual fun fetchRecommender(viewModelTwo: DataViewModel){
 }
 
 actual fun fetchScreningResult(viewModelTwo: DataViewModel) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     CoroutineScope(Dispatchers.IO).launch {
-        Log.e("CekList","Pass 1")
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("screening")
-//            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-//            .limit(5)
+            .document(userId)
+            .collection("active")
             .get()
             .addOnSuccessListener { documents ->
                 val screeningList = documents.map { doc ->
                     ScreeningItem(
+                        id = doc.id,
                         type = doc.getString("type") ?: "",
-                        date = doc.getString("date") ?: "",
                         imageUrl = doc.getString("imageUrl") ?: "",
-//                        timestamp = doc.getLong("timestamp") ?: 0L
+                        timestamp = doc.getLong("timestamp") ?: 0L,
                     )
                 }
                 Log.e("tesscreen","$screeningList")
@@ -259,19 +259,19 @@ actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
         firestore.collection("consume")
             .document(userId)
             .collection("food")
-//            .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
-//            .limit(5)
             .get()
             .addOnSuccessListener { documents ->
                 val consumeList = documents.map { doc ->
                     ConsumtionItem(
+                        id = doc.id,
                         imageUrl = doc.getString("barcode") ?: "",
                         name = doc.getString("name")?: "",
                         calories = doc.getLong("calories")?: 0L,
                         cholesterol = doc.getLong("cholesterol")?: 0L,
                         fat = doc.getLong("fat")?:0L,
                         saturatedFat = doc.getLong("saturatedFat")?: 0L,
-                        sugars = doc.getLong("sugars")?: 0L
+                        sugars = doc.getLong("sugars")?: 0L,
+                        salt = doc.getLong("salt") ?: 0L
 
                         )
                 }
@@ -284,31 +284,39 @@ actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
     }
 }
 
-actual fun deleteConsumtion(viewModelTwo: DataViewModel, itemName: String) {
+actual fun deleteConsumtion(viewModelTwo: DataViewModel, itemId: String) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     CoroutineScope(Dispatchers.IO).launch {
         val firestore = FirebaseFirestore.getInstance()
+
         firestore.collection("consume")
             .document(userId)
             .collection("food")
-            .whereEqualTo("name", itemName)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    firestore.collection("consume")
-                        .document(userId)
-                        .collection("food")
-                        .document(document.id)
-                        .delete()
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("DeleteItem", "Error deleting item: $e")
-            }
+            .document(itemId) // ← ini dari doc.id
+            .delete()
+
+//        firestore.collection("consume")
+//            .document(userId)
+//            .collection("food")
+//            .whereEqualTo("name", itemName)
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                for (document in documents) {
+//                    firestore.collection("consume")
+//                        .document(userId)
+//                        .collection("food")
+//                        .document(document.id)
+//                        .delete()
+//                }
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e("DeleteItem", "Error deleting item: $e")
+//            }
     }
 
 }
 
+//RecListActive in RecommenderList
 fun deleteRecommenderItem( itemId: String) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val firestore = FirebaseFirestore.getInstance()
@@ -317,6 +325,7 @@ fun deleteRecommenderItem( itemId: String) {
         .delete()
 }
 
+//DataDiriScreen
 fun fetchUserProfile(onResult: (UserProfile) -> Unit) {
     val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
     val firestore = FirebaseFirestore.getInstance()
@@ -333,17 +342,14 @@ fun fetchUserProfile(onResult: (UserProfile) -> Unit) {
                         email = userDoc.getString("email") ?: "",
                         dateOfBirth = userDoc.getString("dateOfBirth") ?: "",
                         phoneNumber = userDoc.getString("phoneNumber") ?: "",
-                        age = (dataDoc.getLong("age") ?: 0).toString(),
-                        weight = (dataDoc.getLong("weight") ?: 0).toString(),
-                        height = (dataDoc.getLong("height") ?: 0).toString(),
-                        smokingHistory = (dataDoc.getLong("smokingHistory") ?: 0).toString(),
-                        alcoholConsume = (dataDoc.getLong("alcoholConsume") ?: 0).toString(),
+                        age = (dataDoc.getLong("age") ?: 0).toString()
                     )
                     onResult(profile)
                 }
         }
 }
 
+//DataDiriScreen
 fun updateUserProfile(profile: UserProfile, onSuccess: () -> Unit) {
     val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
     val firestore = FirebaseFirestore.getInstance()
@@ -360,10 +366,6 @@ fun updateUserProfile(profile: UserProfile, onSuccess: () -> Unit) {
 
     val dataUpdate = mapOf(
         "age" to profile.age.toLong(),
-        "weight" to profile.weight.toLong(),
-        "height" to profile.height.toLong(),
-        "smokingHistory" to profile.smokingHistory.toLong(),
-        "alcoholConsume" to profile.alcoholConsume.toLong()
     )
 
     firestore.collection("users").document(uid).update(userUpdate)
@@ -371,11 +373,12 @@ fun updateUserProfile(profile: UserProfile, onSuccess: () -> Unit) {
         .addOnSuccessListener { onSuccess() }
 }
 
+//First screening in NewScreeningScreen
 fun submitScreening(inputs: List<Float>) {
     val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
     val firestore = FirebaseFirestore.getInstance()
 
-    if (inputs.size < 7) return
+    if (inputs.size < 8) return
 
     val age = inputs[0]
     val weight = inputs[1]
@@ -383,7 +386,8 @@ fun submitScreening(inputs: List<Float>) {
     val smokingHistory = inputs[3]
     val alcoholConsume = inputs[4]
     val heartDisease = inputs[5]
-    val activity = inputs[6]
+    val diabetesDisease = inputs[6]
+    val activity = inputs[7]
 
     val heightMeter = height / 100f
     val bmi = if (heightMeter != 0f) weight / (heightMeter * heightMeter) else 0f
@@ -395,13 +399,14 @@ fun submitScreening(inputs: List<Float>) {
         "smokingHistory" to smokingHistory,
         "alcoholConsume" to alcoholConsume,
         "heartDisease" to heartDisease,
+        "diabetesDisease" to diabetesDisease,
         "activity" to activity,
         "bmi" to bmi
     )
     val status = mapOf(
         "newUser" to false
     )
-
+    //update kesehatan pengguna
     firestore.collection("datas")
         .document(uid)
         .set(userUpdate)
@@ -411,6 +416,7 @@ fun submitScreening(inputs: List<Float>) {
         .addOnFailureListener {
             Log.e("Screening", "Gagal menyimpan data: ${it.message}")
         }
+    //update status pengguna baru
     firestore.collection("users")
         .document(uid)
         .update(status)
@@ -420,6 +426,40 @@ fun submitScreening(inputs: List<Float>) {
         .addOnFailureListener {
             Log.e("Screening", "Gagal menyimpan data: ${it.message}")
         }
+}
+
+@SuppressLint("SuspiciousIndentation")
+fun fetchDataHealth(onResult: (UserHealth) -> Unit) {
+    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
+    val firestore = FirebaseFirestore.getInstance()
+            firestore.collection("datas")
+                .document(uid)
+                .get()
+                .addOnSuccessListener { dataDoc ->
+                    val health = UserHealth(
+                        activity =(dataDoc.getLong("activity") ?: 0) ,
+                        age = (dataDoc.getLong("age") ?: 0) ,
+                        alcoholConsume = (dataDoc.getLong("alcoholConsum") ?: 0) ,
+                        apHi = (dataDoc.getLong("apHi") ?: 0) ,
+                        apLo = (dataDoc.getLong("apLo") ?: 0) ,
+                        bmi = (dataDoc.getLong("bmi") ?: 0) ,
+                        cardio = (dataDoc.getLong("cardio") ?: 0) ,
+                        cholesterol = (dataDoc.getLong("cholesterol") ?: 0) ,
+                        diabetes = (dataDoc.getLong("diabetes") ?: 0) ,
+                        gluc = (dataDoc.getLong("gluc") ?: 0) ,
+                        hba1c = (dataDoc.getLong("hba1c") ?: 0) ,
+                        hdl = (dataDoc.getLong("hdl") ?: 0) ,
+                        heartDisease = (dataDoc.getLong("heartDisease") ?: 0) ,
+                        height = (dataDoc.getLong("height") ?: 0) ,
+                        ldl = (dataDoc.getLong("ldl") ?: 0) ,
+                        sleep = (dataDoc.getLong("sleep") ?: 0) ,
+                        smokingHistory = (dataDoc.getLong("smokingHistory") ?: 0) ,
+                        tri = (dataDoc.getLong("tri") ?: 0) ,
+                        weight = (dataDoc.getLong("weight") ?: 0) ,
+                        healthComplaint = (dataDoc.getString("healthComplaint")?: "")
+                    )
+                    onResult(health)
+                }
 }
 
 
