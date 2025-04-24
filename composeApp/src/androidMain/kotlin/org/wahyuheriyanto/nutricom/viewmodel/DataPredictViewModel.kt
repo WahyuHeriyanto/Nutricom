@@ -201,7 +201,7 @@ class DataPredictViewModel : ViewModel() {
         val dataMap = hashMapOf(
             "id" to newDocRef.id,
             "type" to "Kardiovaskular",
-            "imageUrl" to "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/diabetes_pictures.jpg?alt=media&token=ea1a095b-8105-4a64-ba88-44a2e7451fc9",
+            "imageUrl" to "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/kardiovaskular_pictures.png?alt=media&token=5b35c44c-ba17-46b7-843b-9e2c90d9e5a1",
             "age" to input.age,
             "gender" to input.gender,
             "height" to input.height,

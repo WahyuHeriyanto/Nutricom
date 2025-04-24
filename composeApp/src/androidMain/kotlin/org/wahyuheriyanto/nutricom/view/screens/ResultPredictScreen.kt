@@ -21,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -57,38 +59,55 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
         else -> R.drawable.green_box_signin // default jika belum ada hasil
     }
 
+    val status = if (prediction == 1) "beresiko Diabetes" else "tidak beresiko Diabetes"
+
     val rekomendasiList = if (prediction == 1) listOf(
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/dokter.png?alt=media&token=b6334aa9-e0db-4ea8-9b54-d7d73eaf531c",
             sentence = "Pergi ke fasilitas kesehatan terdekat dan berkonsultasi dengan dokter"
         ),
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Mengurangi konsumsi makanan tinggi gula"
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/sugar.png?alt=media&token=bbef9ce0-cca3-4572-ae2e-536246dafaed",
+            sentence = "Hindari konsumsi makanan tinggi gula"
         ),
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/workout.png?alt=media&token=acc495fd-1734-40c0-95fb-f57f8b398586",
             sentence = "Meningkatkan aktivitas fisik"
         ),
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/sleep.png?alt=media&token=bf2ef34e-e44d-4637-8264-b7fe4bf17876",
             sentence = "Waktu tidur yang berkualitas"
         ),
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/smoking.png?alt=media&token=735efd93-ffa5-48d6-b1d8-2817abd96af9",
             sentence = "Hindari rokok dan alkohol"
         ),
         RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/luka.png?alt=media&token=539f6527-ad8a-4317-8572-557511b08371",
             sentence = "Hindari luka fisik"
         )
-    ) else emptyList()
+    ) else listOf(
+        RecommendationData(
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/food.png?alt=media&token=02efb5dc-3b6d-4c4c-a48c-5df61320f6ab",
+            sentence = "Jaga pola makan yang sehat dan bergizi"
+        ),
+        RecommendationData(
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/sugar.png?alt=media&token=bbef9ce0-cca3-4572-ae2e-536246dafaed",
+            sentence = "Mengurangi konsumsi makanan dengan gula berlebih"
+        ),
+        RecommendationData(
+            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/workout.png?alt=media&token=acc495fd-1734-40c0-95fb-f57f8b398586",
+            sentence = "Rutin berolahraga"
+        )
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(20.dp)
+            .padding(20.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = "Hasil Screening",
@@ -104,7 +123,7 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier
             .width(340.dp)
-            .height(450.dp)
+            .height(520.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color = Color(android.graphics.Color.parseColor("#D2D2D2"))),
         ){
@@ -114,7 +133,20 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
                     modifier = Modifier
                         .width(300.dp)
                         .height(180.dp))
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(15.dp))
+                Text(
+                    text = "Berdasarkan pemeriksaan, anda $status. Berikut hal yang disarankan untuk anda",
+                    fontFamily = FontFamily(
+                        Font(
+                            resId = R.font.inter_semibold,
+                            weight = FontWeight.Bold
+                        )
+                    ),
+                    fontSize = 14.sp,
+                    color = Color.Black,
+                    textAlign = TextAlign.Justify
+                )
+                Spacer(modifier = Modifier.height(8.dp))
                 LazyRow(
                     modifier = Modifier
                         .width(340.dp)
@@ -142,7 +174,7 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
                     horizontalArrangement = Arrangement.Center){
                     Button(
                         onClick = {
-                            saveRecommendationsIfPredictionIsPositive(prediction)
+                            saveRecommendationsIfPredictionIsPositive(rekomendasiList)
                             dataPredictViewModel.sendDataDiabetesToFirestore(prediction, onSuccess = {
                                 Toast.makeText(context, "Berhasil disimpan!", Toast.LENGTH_SHORT).show()
                                 navController.navigate("skrining")
@@ -152,6 +184,8 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
                                 })
                         },
                         modifier = Modifier.padding(top = 16.dp)
+                            .background(Color.Transparent),
+                        colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
                     ) {
                         Text("Simpan")
                     }
@@ -159,7 +193,10 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
 
                     Button(onClick = {
                         navController.navigate("skrining")
-                    }, modifier = Modifier.padding(top = 16.dp)) {
+                    }, modifier = Modifier.padding(top = 16.dp)
+                        .background(Color.Transparent),
+                        colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
+                    ) {
                         Text(text = "Jangan Simpan")
                     }
                 }

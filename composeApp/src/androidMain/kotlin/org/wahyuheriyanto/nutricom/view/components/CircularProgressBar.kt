@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun CustomCircularProgressBar(
-    current: Int,
-    max: Int
+    current: Float?,
+    max: Float?
 ) {
-    val progress = current.toFloat() / max.toFloat()
+    val progress = (current ?: 0f) / (max ?: 2200f)
     val progressPercentage = (progress * 100).toInt()
 
     val (color, label) = when {
@@ -55,7 +55,7 @@ fun HealthCircularProgressBar(
     val progress = current / max
 
     val (color, label) = when {
-        current <= 18.5 -> Color.Yellow to "Underweight"
+        current <= 18.5 -> Color(android.graphics.Color.parseColor("#FFB700")) to "Underweight"
         current > 18.5 && current < 24.9 -> Color(0xFF00AA16 )to "Normal"
         current >= 25 && current < 29.9 -> Color.Yellow to "Overweight"
         else -> Color.Red to "Obesitas"

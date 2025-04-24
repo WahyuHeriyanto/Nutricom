@@ -115,7 +115,7 @@ actual fun fetchRecommender(viewModelTwo: DataViewModel){
                 val recommenderList = document.map {doc ->
                     RecommenderItem(
                         id = doc.id,
-                        imageUrl = doc.getString("sentence") ?: "",
+                        imageUrl = doc.getString("imageUrl") ?: "",
                         sentence = doc.getString("sentence") ?: ""
                     )
                 }

@@ -29,8 +29,12 @@ import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesInputData
+import org.wahyuheriyanto.nutricom.viewmodel.fetchDataHealth
+import org.wahyuheriyanto.nutricom.viewmodel.fetchUserProfile
 
 @Composable
 fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredictViewModel) {
@@ -45,7 +49,51 @@ fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredi
     var hbA1c by remember { mutableStateOf("") }
     var bloodGlucose by remember { mutableStateOf("") }
     val prediction by viewModel.prediction.collectAsState()
+    var showDialog by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(Unit) {
+        if (showDialog) {
+            // Do nothing, wait for dialog
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Peringatan") },
+            text = { Text("Prediksi ini tidak 100% akurat dan hanya berfungsi sebagai deteksi awal. Gunakan hasil ini sebagai referensi awal, bukan diagnosis medis. \n\n"
+                    + "Jika Anda merasa memiliki keluhan atau gejala tertentu, segera konsultasikan ke fasilitas kesehatan terdekat untuk pemeriksaan lebih lanjut\n\n"
+                    + "Data kesehatan terbaru telah ditemukan. Apakah anda ingin menggunakannya?", textAlign = TextAlign.Justify
+            ) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    fetchDataHealth { health ->
+                        bmi = health.bmi.toString()
+                        age = health.age.toString()
+                        smokingHistory = health.smokingHistory.toString()
+                        hypertension = statusDarahTinggi(health.apHi.toFloat(),health.apLo.toFloat())
+                        heartDisease = health.heartDisease.toString()
+                        bloodGlucose = health.gluc.toString()
+                        hbA1c = health.hba1c.toString()
+                    }
+                    fetchUserProfile { profile ->
+                        gender = if (profile.gender == "Laki-laki") "1" else "0"
+                    }
+                }) {
+                    Text("Ya, gunakan", color = Color(android.graphics.Color.parseColor("#00AA16")))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("Buat data baru", color = Color(android.graphics.Color.parseColor("#00AA16")))
+                }
+            }
+        )
+    }
 
 
     Column(modifier = Modifier
@@ -63,7 +111,7 @@ fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredi
                 )
             ),
             fontSize = 22.sp,
-            color = androidx.compose.ui.graphics.Color.Black
+            color = Color.Black
         )
         Spacer(modifier = Modifier.height(15.dp))
         Image(painter = painterResource(id = R.drawable.diabetes_pictures), contentDescription ="",
@@ -73,7 +121,7 @@ fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredi
                 .clip(RoundedCornerShape(20.dp)),
             alignment = Alignment.Center
         )
-        Spacer(modifier = Modifier.height(15.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Box(modifier = Modifier.fillMaxWidth()){
             Text(
@@ -85,7 +133,7 @@ fun DiabetesScreen(navController: NavController, dataPredictViewModel: DataPredi
                     )
                 ),
                 fontSize = 18.sp,
-                color = androidx.compose.ui.graphics.Color.Black
+                color = Color.Black
             )
         }
         CustomDropdownField(
@@ -190,6 +238,11 @@ fun CustomTextField(
     )
 }
 
+fun statusDarahTinggi(sistolik: Float, diastolik: Float): String = when {
+    sistolik <= 140 && diastolik <= 90 -> "0"
+    else -> "1"
+}
+
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDropdownField(
@@ -215,6 +268,7 @@ fun CustomDropdownField(
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor()
+                .fillMaxWidth()
         )
         ExposedDropdownMenu(
             expanded = expanded,

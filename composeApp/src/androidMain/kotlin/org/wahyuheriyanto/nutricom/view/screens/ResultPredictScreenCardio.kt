@@ -49,8 +49,8 @@ fun ResultPredictScreenCardio(navController: NavController, viewModel: CardioVie
     val prediction by viewModel.prediction.collectAsState()
 
     val imageRes = when (prediction) {
-        1 -> R.drawable.gula
-        0 -> R.drawable.kolesterol
+        1 -> R.drawable.berpotensi_kardiovaskular
+        0 -> R.drawable.tidak_berpotensi_kardiovaskular
         else -> R.drawable.green_box_signin // default jika belum ada hasil
     }
 
@@ -139,7 +139,7 @@ fun ResultPredictScreenCardio(navController: NavController, viewModel: CardioVie
                     horizontalArrangement = Arrangement.Center){
                     Button(
                         onClick = {
-                            saveRecommendationsIfPredictionIsPositive(prediction)
+                            saveRecommendationsIfPredictionIsPositive(rekomendasiList)
                             dataPredictViewModel.sendDataCardioToFirestore(prediction, onSuccess = {
                                 Toast.makeText(context, "Berhasil disimpan!", Toast.LENGTH_SHORT).show()
                                 navController.navigate("skrining")

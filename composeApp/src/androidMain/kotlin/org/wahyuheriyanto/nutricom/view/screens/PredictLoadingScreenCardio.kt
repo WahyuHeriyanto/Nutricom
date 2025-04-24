@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,12 +15,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import kotlinx.coroutines.delay
+import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
 
 @Composable
@@ -41,6 +49,10 @@ fun PredictLoadingScreenCardio(
 ) {
     val prediction by viewModel.prediction.collectAsState()
     val hasNavigated = remember { mutableStateOf(false) }
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.chip))
+    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+
+    var dotCount by remember { mutableStateOf(1) }
 
     // Jalankan prediksi saat komposisi dimulai
     LaunchedEffect(Unit) {
@@ -49,6 +61,14 @@ fun PredictLoadingScreenCardio(
             age, gender, height, weight,
             apHi, apLo, cholesterol, gluc, smoke, alco, active
         )
+    }
+
+    // Looping titik-titik
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(500L)
+            dotCount = (dotCount % 3) + 1
+        }
     }
 
     // Navigasi otomatis setelah hasil tersedia
@@ -66,9 +86,16 @@ fun PredictLoadingScreenCardio(
         contentAlignment = Alignment.Center
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            CircularProgressIndicator()
+            LottieAnimation(
+                composition = composition,
+                progress = { progress },
+                modifier = Modifier.size(150.dp)
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Memprediksi hasil...", fontWeight = FontWeight.Bold)
+            Text(
+                text = "Memprediksi hasil" + ".".repeat(dotCount),
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

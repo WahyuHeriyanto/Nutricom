@@ -130,7 +130,7 @@ fun NutrisiScreen(viewModel: AuthViewModel, navController: NavController, viewMo
             ){
                 Column {
                     Row {
-                        CustomCircularProgressBar(current = 150, max = 1800)
+                        CustomCircularProgressBar(current = calories.toFloat(), max = maxIntake["kalori"]?.toFloat())
                         Spacer(modifier = Modifier.width(15.dp))
                         Column {
                             Text(text = "Kebutuhan Kalori Harian",

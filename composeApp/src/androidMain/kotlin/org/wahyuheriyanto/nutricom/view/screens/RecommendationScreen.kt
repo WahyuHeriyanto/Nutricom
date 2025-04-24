@@ -41,10 +41,11 @@ fun RecommendationScreen(navController: NavController, viewModel: AuthViewModel,
     }
 
     Column (modifier = Modifier
+        .background(Color(android.graphics.Color.parseColor("#F4F4F4")))
         .fillMaxSize()
         .padding(top = 25.dp, start = 30.dp, end = 30.dp)
         .verticalScroll(scrollState)
-        .background(Color(android.graphics.Color.parseColor("#F4F4F4")))
+
     ) {
         Text(
             text = "Rekomendasi Kesehatan",

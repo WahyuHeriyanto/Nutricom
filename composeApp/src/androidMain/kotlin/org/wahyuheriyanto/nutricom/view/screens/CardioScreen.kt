@@ -29,10 +29,13 @@ import org.wahyuheriyanto.nutricom.view.factory.DiabetesViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.DiabetesViewModel
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.ui.text.style.TextAlign
 import org.wahyuheriyanto.nutricom.view.factory.CardioViewModelFactory
 import org.wahyuheriyanto.nutricom.viewmodel.CardioInputData
 import org.wahyuheriyanto.nutricom.viewmodel.CardioViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.DataPredictViewModel
+import org.wahyuheriyanto.nutricom.viewmodel.fetchDataHealth
+import org.wahyuheriyanto.nutricom.viewmodel.fetchUserProfile
 
 @Composable
 fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredictViewModel) {
@@ -50,7 +53,55 @@ fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredict
     var alco by remember { mutableStateOf("") }
     var active by remember { mutableStateOf("") }
     val prediction by viewModel.prediction.collectAsState()
+    var showDialog by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(Unit) {
+        if (showDialog) {
+            // Do nothing, wait for dialog
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = {},
+            title = { Text("Peringatan") },
+            text = { Text("Prediksi ini tidak 100% akurat dan hanya berfungsi sebagai deteksi awal. Gunakan hasil ini sebagai referensi awal, bukan diagnosis medis. \n\n"
+                    + "Jika Anda merasa memiliki keluhan atau gejala tertentu, segera konsultasikan ke fasilitas kesehatan terdekat untuk pemeriksaan lebih lanjut\n\n"
+                    + "Data kesehatan terbaru telah ditemukan. Apakah anda ingin menggunakannya?", textAlign = TextAlign.Justify
+            ) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    fetchDataHealth { health ->
+                        height = health.height.toString()
+                        weight = health.weight.toString()
+                        age = health.age.toString()
+                        apHi = health.apHi.toString()
+                        apLo = health.apLo.toString()
+                        cholesterol = statusKolesterol(health.cholesterol.toFloat())
+                        gluc = kategoriGlukosa(health.gluc.toFloat())
+                        smoke = if (health.smokingHistory.toString() in listOf("0", "1", "4")) "0" else "1"
+                        alco = health.alcoholConsume.toString()
+                        active = if (health.activity.toString() in listOf("2", "1.8")) "1" else "0"
+
+                    }
+                    fetchUserProfile { profile ->
+                        gender = if (profile.gender == "Laki-laki") "1" else "0"
+                    }
+                }) {
+                    Text("Ya, gunakan", color = Color(android.graphics.Color.parseColor("#00AA16")))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
+                    Text("Buat data baru", color = Color(android.graphics.Color.parseColor("#00AA16")))
+                }
+            }
+        )
+    }
 
 
     Column(modifier = Modifier
@@ -60,7 +111,7 @@ fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredict
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally){
         Text(
-            text = "Screening Resiko Kardiovaskular",
+            text = "Screening Resiko",
             fontFamily = FontFamily(
                 Font(
                     resId = R.font.inter_semibold,
@@ -68,10 +119,21 @@ fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredict
                 )
             ),
             fontSize = 22.sp,
-            color = androidx.compose.ui.graphics.Color.Black
+            color = Color.Black
+        )
+        Text(
+            text = "Kardiovaskular",
+            fontFamily = FontFamily(
+                Font(
+                    resId = R.font.inter_semibold,
+                    weight = FontWeight.Bold
+                )
+            ),
+            fontSize = 22.sp,
+            color = Color.Black
         )
         Spacer(modifier = Modifier.height(15.dp))
-        Image(painter = painterResource(id = R.drawable.diabetes_pictures), contentDescription ="",
+        Image(painter = painterResource(id = R.drawable.cardio_image), contentDescription ="",
             modifier = Modifier
                 .width(320.dp)
                 .height(180.dp)
@@ -118,19 +180,19 @@ fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredict
         )
         CustomDropdownField(
             label = "Riwayat Merokok",
-            options = listOf("Ya" to "0", "Tidak" to "1"),
+            options = listOf("Ya" to "1", "Tidak" to "0"),
             selectedValue = smoke,
             onValueChange = { smoke = it }
         )
         CustomDropdownField(
             label = "Riwayat Konsumsi Alkohol",
-            options = listOf("Ya" to "0", "Tidak" to "1"),
+            options = listOf("Ya" to "1", "Tidak" to "0"),
             selectedValue = alco,
             onValueChange = { alco = it }
         )
         CustomDropdownField(
             label = "Riwayat Aktivitas Fisik",
-            options = listOf("Ya" to "0", "Tidak" to "1"),
+            options = listOf("Ya" to "1", "Tidak" to "0"),
             selectedValue = active,
             onValueChange = { active = it }
         )
@@ -173,3 +235,16 @@ fun CardioScreen(navController: NavController, dataPredictViewModel: DataPredict
         }
     }
 }
+
+fun statusKolesterol(kolesterol : Float): String = when {
+    kolesterol < 200 -> "0"
+    kolesterol >= 200 && kolesterol < 240 -> "1"
+    else -> "2"
+}
+
+fun kategoriGlukosa(glukosa: Float): String = when {
+    glukosa <= 140 -> "0"
+    glukosa <= 199 -> "1"
+    else -> "2"
+}
+

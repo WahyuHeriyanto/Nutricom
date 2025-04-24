@@ -55,18 +55,18 @@ fun RecListActive(recItem: RecommenderItem, viewModel: DataViewModel){
                     checked = true
                     showDialog = false
                     deleteRecommenderItem(recItem.id)
-                    viewModel.updateRecommender(
-                        viewModel.recommenders.value.filterNot { it.id == recItem.id }
-                    )
+//                    viewModel.updateRecommender(
+//                        viewModel.recommenders.value.filterNot { it.id == recItem.id }
+//                    )
                 }) {
-                    Text("Ya")
+                    Text("Ya", color = Color.Green)
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showDialog = false
                 }) {
-                    Text("Tidak")
+                    Text("Tidak", color = Color.Green)
                 }
             }
         )
@@ -155,18 +155,6 @@ fun RecommenderActive(recItem: RecommenderItem) {
                     ),
                     fontSize = 16.sp,
                     color = Color(android.graphics.Color.parseColor("#737373"))
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                androidx.compose.material3.Text(
-                    text = recItem.sentence,
-                    fontFamily = FontFamily(
-                        Font(
-                            resId = R.font.inter_medium,
-                            weight = FontWeight.Medium
-                        )
-                    ),
-                    fontSize = 20.sp,
-                    color = Color(android.graphics.Color.parseColor("#00AA16"))
                 )
             }
         }

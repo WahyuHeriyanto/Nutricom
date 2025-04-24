@@ -65,11 +65,9 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
     val coroutineScope = rememberCoroutineScope()
     var height by remember { mutableStateOf("") }
     var weight by remember { mutableStateOf("") }
-//    val heightMeter = height.toFloat() / 100f
     var bmi by remember { mutableStateOf("") }
     var apHi by remember { mutableStateOf("") }
     var apLo by remember { mutableStateOf("") }
-//    val bloodPresCal = apHi.toFloat() - apLo.toFloat()
     var bloodPressure by remember { mutableStateOf("") }
     var cardio by remember { mutableStateOf("") }
     var diabetes by remember { mutableStateOf("") }
@@ -150,7 +148,7 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
             title = { Text("Mohon tunggu") },
             text = {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Data sedang diolah mohon tunggu sebentar")
+                    Text("Data sedang diolah mohon tunggu sebentar", textAlign = TextAlign.Justify)
                     Spacer(modifier = Modifier.height(16.dp))
                     CircularProgressIndicator()
                 }
@@ -163,10 +161,10 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
         AlertDialog(
             onDismissRequest = { showResult = false },
             title = { Text("Hasil Pemeriksaan") },
-            text = { Text(resultText) },
+            text = { Text(resultText, textAlign = TextAlign.Justify) },
             confirmButton = {
                 TextButton(onClick = { showResult = false }) {
-                    Text("Tutup")
+                    Text("Tutup", color = Color.Green)
                 }
             }
         )
@@ -216,21 +214,21 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
                 color = Color.Black
             )
         }
-        CustomTextField("Tinggi badan", height, KeyboardType.Decimal) { height = it }
-        CustomTextField("Berat badan", weight, KeyboardType.Decimal) { weight = it }
+        CustomTextField("Tinggi Badan", height, KeyboardType.Decimal) { height = it }
+        CustomTextField("Berat Badan", weight, KeyboardType.Decimal) { weight = it }
 //        CustomTextField("BMI", (weight.toFloat() / (heightMeter * heightMeter)).toString(), KeyboardType.Decimal) { bmi = it }
-        CustomTextField("Tekanan darah Sistolik (Atas)", apHi, KeyboardType.Decimal) { apHi = it }
-        CustomTextField("Tekanan darah Diastolik (Bawah)", apLo, KeyboardType.Decimal) { apLo = it }
+        CustomTextField("Tekanan Darah Sistolik (Atas)", apHi, KeyboardType.Decimal) { apHi = it }
+        CustomTextField("Tekanan Darah Diastolik (Bawah)", apLo, KeyboardType.Decimal) { apLo = it }
 //        CustomTextField("Tekanan Nadi ", bloodPresCal.toString(), KeyboardType.Decimal) { bloodPressure = it }
         CustomDropdownField(
-            label = "Riwayat penyakit jantung/kardiovaskular",
-            options = listOf("ya" to "0", "tidak" to "1"),
+            label = "Riwayat Penyakit Jantung/Kardiovaskular",
+            options = listOf("Ya" to "0", "Tidak" to "1"),
             selectedValue = cardio,
             onValueChange = { cardio = it }
         )
         CustomDropdownField(
-            label = "Riwayat penyakit diabetes melitus",
-            options = listOf("ya" to "0", "tidak" to "1"),
+            label = "Riwayat Penyakit Diabetes Melitus",
+            options = listOf("Ya" to "0", "Tidak" to "1"),
             selectedValue = diabetes,
             onValueChange = { diabetes = it }
         )
@@ -270,7 +268,7 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
             selectedValue = active,
             onValueChange = { active = it }
         )
-        CustomTextField("Frekuensi Jam Tidur (dalam jam)", sleep, KeyboardType.Decimal) { sleep = it }
+        CustomTextField("Frekuensi Jam Tidur (Dalam Jam)", sleep, KeyboardType.Decimal) { sleep = it }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -287,11 +285,11 @@ fun UmumScreen(navController: NavController, dataPredictViewModel: DataPredictVi
                 color = Color.Black
             )
         }
-        CustomTextField("Kadar LDL dalam darah", ldl, KeyboardType.Decimal) { ldl = it }
-        CustomTextField("Kadar HDL dalam darah", hdl, KeyboardType.Decimal) { hdl = it }
-        CustomTextField("Kadar Triglyceride dalam darah", tri, KeyboardType.Decimal) { tri = it }
-        CustomTextField("Kadar Kolesterol total", cholesterol, KeyboardType.Decimal) { cholesterol = it }
-        CustomTextField("Kadar gula dalam darah", gluc, KeyboardType.Decimal) { gluc = it }
+        CustomTextField("Kadar LDL Dalam Darah", ldl, KeyboardType.Decimal) { ldl = it }
+        CustomTextField("Kadar HDL Dalam Darah", hdl, KeyboardType.Decimal) { hdl = it }
+        CustomTextField("Kadar Triglyceride Dalam Darah", tri, KeyboardType.Decimal) { tri = it }
+        CustomTextField("Kadar Kolesterol Total", cholesterol, KeyboardType.Decimal) { cholesterol = it }
+        CustomTextField("Kadar Gula Dalam Darah", gluc, KeyboardType.Decimal) { gluc = it }
         CustomTextField("HbA1c", hba1c, KeyboardType.Decimal) { hba1c = it }
 
 
@@ -369,8 +367,8 @@ fun kategoriTekananDarah(sistolik: Float, diastolik: Float): String = when {
 fun kategoriGula(glukosa: Float): String = when {
     glukosa < 70 -> "Rendah"
     glukosa <= 140 -> "Normal"
-    glukosa <= 199 -> "Pra-diabetes"
-    else -> "Diabetes"
+    glukosa <= 199 -> "Tinggi"
+    else -> "Sangat Tinggi"
 }
 
 fun analisisGayaHidup(activity: Float, smoke: String, alco: String, sleep: Float): String {
@@ -408,8 +406,8 @@ fun generateHealthComplaint(
     }
 
     when (gulaCategory) {
-        "Pra-diabetes" -> complaints.add("berisiko diabetes")
-        "Diabetes" -> complaints.add("mengalami diabetes")
+        "Tinggi" -> complaints.add("berisiko diabetes")
+        "Sangat Tinggi" -> complaints.add("beresiko tinggi diabetes")
     }
 
     if (gayaHidup in listOf("pola hidup kurang sehat", "kurang tidur", "perlu perbaikan gaya hidup")) {

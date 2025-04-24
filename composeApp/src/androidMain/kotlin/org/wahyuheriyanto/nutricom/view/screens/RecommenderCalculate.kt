@@ -12,41 +12,41 @@ data class RecommendationData(
     val sentence: String
 )
 
-fun saveRecommendationsIfPredictionIsPositive(prediction: Int?) {
-    if (prediction != 1) return
+fun saveRecommendationsIfPredictionIsPositive(recommender: List<RecommendationData>) {
+//    if (prediction != 1) return
 
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
     val firestore = FirebaseFirestore.getInstance()
 
-    val recommendations = listOf(
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Pergi ke fasilitas kesehatan terdekat dan berkonsultasi dengan dokter"
-        ),
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Mengurangi konsumsi makanan tinggi gula"
-        ),
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Meningkatkan aktivitas fisik"
-        ),
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Waktu tidur yang berkualitas"
-        ),
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Hindari rokok dan alkohol"
-        ),
-        RecommendationData(
-            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
-            sentence = "Hindari luka fisik"
-        )
-    )
+//    val recommendations = listOf(
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Pergi ke fasilitas kesehatan terdekat dan berkonsultasi dengan dokter"
+//        ),
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Mengurangi konsumsi makanan tinggi gula"
+//        ),
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Meningkatkan aktivitas fisik"
+//        ),
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Waktu tidur yang berkualitas"
+//        ),
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Hindari rokok dan alkohol"
+//        ),
+//        RecommendationData(
+//            imageUrl = "https://firebasestorage.googleapis.com/v0/b/nutricom-41968.firebasestorage.app/o/page1.jpg?alt=media&token=751d6001-a63c-4a92-969f-8cc912e0cfaa",
+//            sentence = "Hindari luka fisik"
+//        )
+//    )
 
     CoroutineScope(Dispatchers.IO).launch {
-        recommendations.forEach { recommendation ->
+        recommender.forEach { recommendation ->
             val docRef = firestore.collection("recommendations")
                 .document(userId)
                 .collection("active")
