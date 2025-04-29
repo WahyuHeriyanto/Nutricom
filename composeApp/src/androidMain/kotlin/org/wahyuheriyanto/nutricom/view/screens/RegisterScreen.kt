@@ -19,6 +19,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Icon
 import java.util.Calendar
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -189,7 +190,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
             Box(
                 modifier = Modifier
                     .padding(0.dp, 10.dp)
-                    .size(320.dp, 700.dp)
+                    .size(320.dp, 730.dp)
                     .constrainAs(loginBox) {
                         start.linkTo(backStartGuideline)
                         end.linkTo(backEndGuideline)
@@ -504,6 +505,7 @@ fun RegisterScreen(viewModel: AuthViewModel, onLoginSuccess: () -> Unit) {
                                         birth
                                     )
                                 )
+                                Log.e("CekDaftar","lewat")
                             } else {
                                 showErrorDialog = true
                             }

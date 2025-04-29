@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,13 +48,14 @@ import org.wahyuheriyanto.nutricom.viewmodel.LoginState
 import org.wahyuheriyanto.nutricom.viewmodel.fetchLastestArticle
 import org.wahyuheriyanto.nutricom.viewmodel.fetchRecommender
 import org.wahyuheriyanto.nutricom.viewmodel.performData
+import org.wahyuheriyanto.nutricom.viewmodel.updateUserStatus
 
 
 @Composable
 fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navController: NavController) {
     val loginState: LoginState by viewModel.loginState.collectAsState()
     val name by viewModel.userName.collectAsState()
-    val newUserStatus by viewModel.statusLogin.collectAsState()
+    val newUserStatus by viewModelTwo.newUser.collectAsState()
     val bmi by viewModelTwo.bmi.collectAsState()
     val weightVal by viewModelTwo.height_value.collectAsState()
     val heightVal by viewModelTwo.weight_value.collectAsState()
@@ -62,6 +64,7 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
     val scrollState = rememberScrollState()
     val columnScrollState = rememberScrollState()
     var showDialog by remember { mutableStateOf(false) }
+    var isFirst by remember { mutableStateOf(true) }
     performData(viewModel = viewModel, viewModelTwo = viewModelTwo)
 
     fetchLastestArticle(viewModelTwo = viewModelTwo)
@@ -72,9 +75,11 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
         fetchRecommender(viewModelTwo)
     }
     LaunchedEffect(newUserStatus) {
-        if (newUserStatus) {
+        if (newUserStatus && isFirst) {
             delay(2000) // Delay 1.5 detik
             showDialog = true
+            isFirst = false
+
         }
     }
 
@@ -159,33 +164,54 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
                             color = Color(android.graphics.Color.parseColor("#737373")))
                         Spacer(modifier = Modifier.height(5.dp))
                         Row (verticalAlignment = Alignment.Bottom){
-                            when (loginState) {
-                                is LoginState.Loading -> { }
-                                is LoginState.Success -> {
-                                    val bmiValue = bmi.toString()
-                                    Text(text = bmiValue,
-                                        fontFamily = FontFamily(
-                                            Font(
-                                                resId = R.font.inter_medium,
-                                                weight = FontWeight.Medium
-                                            )
-                                        ),
-                                        fontSize = 24.sp,
-                                        color = Color(android.graphics.Color.parseColor("#00AA16"))
-                                    )
-                                }
-                                else -> { }
-                            }
+                            if (loginState is LoginState.Success) {
+                                val bmiValue = bmi.toString()
+                                val bmiLabel: String
+                                val bmiColorHex: String
 
-                            Text(text = " Normal",
-                                fontFamily = FontFamily(
-                                    Font(
-                                        resId = R.font.inter_medium,
-                                        weight = FontWeight.Medium
-                                    )
-                                ),
-                                fontSize = 16.sp,
-                                color = Color(android.graphics.Color.parseColor("#00AA16")))
+                                when {
+                                    bmi <= 18.5 -> {
+                                        bmiLabel = "Underweight"
+                                        bmiColorHex = "#FFB700"
+                                    }
+                                    bmi < 24.9 -> {
+                                        bmiLabel = "Normal"
+                                        bmiColorHex = "#00AA16"
+                                    }
+                                    bmi < 29.9 -> {
+                                        bmiLabel = "Overweight"
+                                        bmiColorHex = "#FFA500"
+                                    }
+                                    else -> {
+                                        bmiLabel = "Obese"
+                                        bmiColorHex = "#FF0000"
+                                    }
+                                }
+
+                                Text(
+                                    text = bmiValue,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            resId = R.font.inter_medium,
+                                            weight = FontWeight.Medium
+                                        )
+                                    ),
+                                    fontSize = 24.sp,
+                                    color = Color(android.graphics.Color.parseColor(bmiColorHex))
+                                )
+                                Spacer(modifier = Modifier.width(2.dp)) // sedikit jarak antara nilai dan label
+                                Text(
+                                    text = bmiLabel,
+                                    fontFamily = FontFamily(
+                                        Font(
+                                            resId = R.font.inter_medium,
+                                            weight = FontWeight.Medium
+                                        )
+                                    ),
+                                    fontSize = 16.sp,
+                                    color = Color(android.graphics.Color.parseColor(bmiColorHex))
+                                )
+                            }
                         }
                     }
                     Column {
@@ -389,9 +415,13 @@ fun HomeScreen(viewModel: AuthViewModel, viewModelTwo: DataViewModel, navControl
                         Button(onClick = {
                             navController.navigate("newScreening")
                             showDialog = false
-                        }
+                            updateUserStatus(viewModelTwo, false)
+                        },
+                            modifier = Modifier.background(Color.Transparent),
+                            colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
+
                         ) {
-                            Text("Lanjut")
+                            Text("Lanjut", color = Color.White)
                         }
                     }
                 )

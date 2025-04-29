@@ -1,5 +1,6 @@
 package org.wahyuheriyanto.nutricom.view.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -26,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -119,14 +122,20 @@ fun DataDiriScreen(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(24.dp))
-            Button(
-                onClick = {
-                    if (isEditing) showDialog = true else isEditing = true
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(if (isEditing) "Simpan" else "Edit")
+            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center){
+                Button(
+                    onClick = {
+                        if (isEditing) showDialog = true else isEditing = true
+                    },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .background(Color.Transparent),
+                    colors = ButtonDefaults.buttonColors(Color(android.graphics.Color.parseColor("#00AA16")))
+                ) {
+                    Text(if (isEditing) "Simpan" else "Edit", color = Color.White)
+                }
             }
+
         }
     } ?: Box(
         modifier = Modifier.fillMaxSize(),

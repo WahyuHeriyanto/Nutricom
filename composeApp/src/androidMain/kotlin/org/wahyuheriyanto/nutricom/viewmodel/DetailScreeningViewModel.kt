@@ -31,6 +31,7 @@ sealed class ScreeningDetailState {
 }
 
 data class UmumData(
+    val id: String = "",
     val type: String = "",
     val height: Double = 0.0,
     val weight: Double = 0.0,
@@ -54,6 +55,7 @@ data class UmumData(
 )
 
 data class DiabetesData(
+    val id: String = "",
     val type: String = "",
     val gender: Double = 0.0,
     val age: Double = 0.0,
@@ -68,6 +70,7 @@ data class DiabetesData(
 )
 
 data class CardioData(
+    val id: String = "",
     val type: String = "",
     val age: Double = 0.0,
     val gender: Double = 0.0,
@@ -80,6 +83,7 @@ data class CardioData(
     val smoke: Double = 0.0,
     val alco: Double = 0.0,
     val active: Double = 0.0,
+    val prediction: String = "",
     val timestamp: Long = 0L
 )
 

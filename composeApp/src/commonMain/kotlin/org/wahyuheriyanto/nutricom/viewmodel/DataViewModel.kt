@@ -15,6 +15,7 @@ class DataViewModel :ViewModel(){
     private val _height = MutableStateFlow(0L)
     private val _calorie = MutableStateFlow(0L)
     private val _bmi = MutableStateFlow(0L)
+    private val _newUser = MutableStateFlow(false)
 
     //Nutrisi
     private val _calories = MutableStateFlow(0L)
@@ -28,6 +29,7 @@ class DataViewModel :ViewModel(){
     val height_value: StateFlow<Long> = _height
     val calorie: StateFlow<Long> = _calorie
     val bmi: StateFlow<Long> = _bmi
+    val newUser: StateFlow<Boolean> = _newUser
 
     //nutrisi
     val calories: StateFlow<Long> = _calories
@@ -53,16 +55,22 @@ class DataViewModel :ViewModel(){
     val consumtion : StateFlow<List<ConsumtionItem>> = _consumtion
     val nutri : StateFlow<List<Nutricions>> = _nutricions
 
-    fun updateData(newWeight: Long,
+    fun updateData(newUser: Boolean,
+                   newWeight: Long,
                      newHeight: Long,
                      newCalorie: Long,
                      newBmi: Long)
     {
+        _newUser.value = newUser
         _weight.value = newWeight
         _height.value = newHeight
         _calorie.value = newCalorie
         _bmi.value = newBmi
 
+    }
+
+    fun updateUserStatus(newUser: Boolean){
+        _newUser.value = newUser
     }
 
     fun updateImage(newImage: List<String>)

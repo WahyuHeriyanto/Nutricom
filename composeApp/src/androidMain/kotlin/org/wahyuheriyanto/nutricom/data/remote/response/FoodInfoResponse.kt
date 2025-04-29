@@ -9,7 +9,8 @@ data class FoodInfoResponse(
 data class ProductInfo(
     @SerializedName("product_name") val productName: String?,
     @SerializedName("nutriments") val nutriments: Nutrients?,
-    @SerializedName("code") val code: String?
+    @SerializedName("code") val code: String?,
+    @SerializedName("image_url") val imageUrl: String?,
 )
 
 data class Nutrients(

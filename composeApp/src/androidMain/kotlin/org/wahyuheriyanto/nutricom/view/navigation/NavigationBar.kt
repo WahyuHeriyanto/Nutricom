@@ -320,6 +320,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                         val documentId = backStackEntry.arguments?.getString("id") ?: ""
 
                         DetailScreeningScreen(
+                            navController = navController,
                             viewModel = viewModel(),
                             type = type,
                             documentId = documentId
@@ -327,10 +328,8 @@ fun NavigationBar(viewModel: AuthViewModel,
                     }
 
                     composable(
-                        route = "detailFoodScreen/{id}/{imageUrl}/{name}/{calories}/{fat}/{saturatedFat}/{cholesterol}/{sugars}/{salt}",
+                        route = "detailFoodScreen/{name}/{calories}/{fat}/{saturatedFat}/{cholesterol}/{sugars}/{salt}",
                         arguments = listOf(
-                            navArgument("id") { type = NavType.StringType },
-                            navArgument("imageUrl") { type = NavType.StringType },
                             navArgument("name") { type = NavType.StringType },
                             navArgument("calories") { type = NavType.StringType },
                             navArgument("fat") { type = NavType.StringType },
@@ -340,8 +339,6 @@ fun NavigationBar(viewModel: AuthViewModel,
                             navArgument("salt") { type = NavType.StringType },
                         )
                     ) { backStackEntry ->
-                        val id = backStackEntry.arguments?.getString("id") ?: ""
-                        val imageUrl = backStackEntry.arguments?.getString("imageUrl") ?: ""
                         val name = backStackEntry.arguments?.getString("name") ?: ""
                         val calories = backStackEntry.arguments?.getString("calories") ?: ""
                         val fat = backStackEntry.arguments?.getString("fat") ?: ""
@@ -351,7 +348,7 @@ fun NavigationBar(viewModel: AuthViewModel,
                         val salt = backStackEntry.arguments?.getString("salt") ?: ""
 
                         DetailFoodScreen(
-                            navController, viewModelTwo,id, imageUrl,name,calories,fat,saturatedFat,cholesterol,sugars,salt
+                            navController, viewModelTwo,name,calories,fat,saturatedFat,cholesterol,sugars,salt
                         )
                     }
                 }

@@ -1,5 +1,6 @@
 package org.wahyuheriyanto.nutricom.view.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,8 +29,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.R
@@ -38,7 +42,8 @@ import org.wahyuheriyanto.nutricom.viewmodel.ScanViewModel
 
 @Composable
 fun ConsumtionLoading(){
-    Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))
+    Box(modifier = Modifier
+        .clip(RoundedCornerShape(8.dp))
         .height(96.dp)
         .background(color = Color.LightGray)
         .shimmerLoadingAnimation()
@@ -57,7 +62,8 @@ fun ConsumtionLoading(){
 
 @Composable
 fun ConsumtionItem(consumtion: ConsumtionItem, navController: NavController, viewModel: ScanViewModel, onDeleteClick: () -> Unit) {
-    Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))
+    Box(modifier = Modifier
+        .clip(RoundedCornerShape(8.dp))
         .background(color = Color.White)
         .clickable {
             val id = consumtion.id
@@ -67,32 +73,32 @@ fun ConsumtionItem(consumtion: ConsumtionItem, navController: NavController, vie
             val cholesterol = consumtion.cholesterol.toString()
             val sugars = consumtion.sugars.toString()
             val salt = consumtion.salt.toString()
-            navController.navigate("detailFoodScreen/${id}/${consumtion.imageUrl}/${consumtion.name}/${calories}/${fat}/${saturatedFat}/${cholesterol}/${sugars}/${salt}")
+            navController.navigate("detailFoodScreen/${consumtion.name}/${calories}/${fat}/${saturatedFat}/${cholesterol}/${sugars}/${salt}")
         }
+        .padding(8.dp)
     )
     {
         Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-                .background(color = Color.White),
-            horizontalArrangement = Arrangement.Center
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
         ) {
+            // Gambar makanan
             Image(
                 painter = rememberAsyncImagePainter(consumtion.imageUrl),
-                contentDescription = "Article Image",
+                contentDescription = "Food Image",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(70.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                contentScale = ContentScale.Crop
+                    .size(60.dp)
+                    .clip(RoundedCornerShape(8.dp))
             )
 
             Spacer(modifier = Modifier.width(12.dp))
 
+            // Nama makanan + Kalori
             Column(
                 modifier = Modifier
-                    .background(color = Color.Transparent),
-                verticalArrangement = Arrangement.SpaceBetween
+                    .weight(1f) // Biar kolom ini fleksibel lebarnya
             ) {
                 Text(
                     text = consumtion.name,
@@ -103,22 +109,28 @@ fun ConsumtionItem(consumtion: ConsumtionItem, navController: NavController, vie
                         )
                     ),
                     fontSize = 16.sp,
-                    color = Color(android.graphics.Color.parseColor("#737373"))
+                    color = Color(0xFF212121),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = consumtion.calories.toString(),
+                    text = "${consumtion.calories} Kalori",
                     fontFamily = FontFamily(
                         Font(
                             resId = R.font.inter_medium,
-                            weight = FontWeight.Medium
+                            weight = FontWeight.Normal
                         )
                     ),
-                    fontSize = 20.sp,
-                    color = Color(android.graphics.Color.parseColor("#00AA16"))
+                    fontSize = 14.sp,
+                    color = Color(0xFF737373)
                 )
             }
-            IconButton(onClick = onDeleteClick) {
+
+            // Tombol hapus
+            IconButton(
+                onClick = onDeleteClick
+            ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
@@ -126,8 +138,6 @@ fun ConsumtionItem(consumtion: ConsumtionItem, navController: NavController, vie
                 )
             }
         }
-
     }
-
 
 }

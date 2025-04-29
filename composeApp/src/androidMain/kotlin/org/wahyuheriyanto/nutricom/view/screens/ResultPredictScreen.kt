@@ -49,9 +49,6 @@ fun ResultPredictScreen(navController: NavController, viewModel: DiabetesViewMod
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val prediction by viewModel.prediction.collectAsState(initial = -1)
-//    Log.e("cekForce","lewat hasil udah mau ditampilin")
-//
-    Log.e("cekprediksi","satu $prediction")
 
     val imageRes = when (prediction) {
         1 -> R.drawable.berpotensi_diabetes

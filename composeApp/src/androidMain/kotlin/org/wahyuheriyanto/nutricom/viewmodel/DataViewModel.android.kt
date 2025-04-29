@@ -26,13 +26,14 @@ actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
                 firestore.collection("datas").document(uids).get()
                     .addOnSuccessListener { document ->
                         Log.e("CekUidSekarang", "Point : $uids")
+                        val newUser = document.getBoolean("newUser") ?: false
                         val weightValue = document.getLong("weight") ?: 0L
                         val heightValue = document.getLong("height") ?: 0L
                         val calorieValue = document.getLong("calorie") ?: 0L
                         val bmiValue = document.getLong("bmi") ?: 0L
                         when {
                             weightValue != 0L -> {
-                                viewModelTwo.updateData(weightValue,heightValue,calorieValue,bmiValue)
+                                viewModelTwo.updateData(newUser, weightValue,heightValue,calorieValue,bmiValue)
                             }
                             else -> {
                                 Log.e("Errorkukuku","Belum keisi")
@@ -50,7 +51,6 @@ actual fun performData(viewModel: AuthViewModel, viewModelTwo: DataViewModel){
     }
     }
 }
-
 
 actual fun fetchImageUrls(viewModelTwo: DataViewModel) {
     CoroutineScope(Dispatchers.IO).launch {
@@ -229,6 +229,7 @@ actual fun performDataLogin(
                 val firestore = FirebaseFirestore.getInstance()
                 firestore.collection("datas").document(uids).get()
                     .addOnSuccessListener { document ->
+                        val newUser = document.getBoolean("newUser") ?: false
                         val weightValue = document.getLong("weight") ?: 0L
                         val heightValue = document.getLong("height") ?: 0L
                         val calorieValue = document.getLong("calorie") ?: 0L
@@ -236,7 +237,7 @@ actual fun performDataLogin(
                         when {
                             weightValue != 0L -> {
                                 Log.e("cekisiuid","weight value $weightValue $heightValue")
-                                viewModelTwo.updateData(weightValue,heightValue,calorieValue,bmiValue)
+                                viewModelTwo.updateData(newUser, weightValue,heightValue,calorieValue,bmiValue)
                             }
                             else -> {
                                 Log.e("Errorkukuku","Belum keisi")
@@ -264,7 +265,7 @@ actual fun fetchConsumtion(viewModelTwo: DataViewModel) {
                 val consumeList = documents.map { doc ->
                     ConsumtionItem(
                         id = doc.id,
-                        imageUrl = doc.getString("barcode") ?: "",
+                        imageUrl = doc.getString("imageUrl") ?: "",
                         name = doc.getString("name")?: "",
                         calories = doc.getLong("calories")?: 0L,
                         cholesterol = doc.getLong("cholesterol")?: 0L,
@@ -321,6 +322,14 @@ fun deleteRecommenderItem( itemId: String) {
     val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
     val firestore = FirebaseFirestore.getInstance()
     firestore.collection("recommendations").document(userId)
+        .collection("active").document(itemId)
+        .delete()
+}
+
+fun deleteScreeningItem( itemId: String) {
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val firestore = FirebaseFirestore.getInstance()
+    firestore.collection("screening").document(userId)
         .collection("active").document(itemId)
         .delete()
 }
@@ -393,6 +402,7 @@ fun submitScreening(inputs: List<Float>) {
     val bmi = if (heightMeter != 0f) weight / (heightMeter * heightMeter) else 0f
 
     val userUpdate = mapOf(
+        "newUser" to false,
         "age" to age,
         "weight" to weight,
         "height" to height,
@@ -426,6 +436,10 @@ fun submitScreening(inputs: List<Float>) {
         .addOnFailureListener {
             Log.e("Screening", "Gagal menyimpan data: ${it.message}")
         }
+}
+
+fun updateUserStatus(viewModelTwo: DataViewModel, status : Boolean){
+    viewModelTwo.updateUserStatus(status)
 }
 
 @SuppressLint("SuspiciousIndentation")

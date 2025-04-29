@@ -84,10 +84,11 @@ actual fun performRegister(viewModel: AuthViewModel,
                     "userName" to user,
                     "phoneNumber" to phone,
                     "dateOfBirth" to birth,
-                    "gender" to gender,
-                    "newUser" to true
+                    "gender" to gender
+
                 )
                 val healthData = hashMapOf(
+                    "newUser" to true,
                     "height" to 0L,
                     "weight" to 0L,
                     "bmi" to 0L
@@ -118,12 +119,14 @@ actual fun performRegister(viewModel: AuthViewModel,
                     .await()
 
                 viewModel.setLoginState(LoginState.Success("Registration successful!"))
+                Log.e("ErrorRegis","Berhasil")
             } else {
                 Log.e("ErrorRegis","Masih error")
             }
 
         } catch (e: Exception) {
             viewModel.setLoginState(LoginState.Error("Registration failed"))
+            Log.e("ErrorRegis","Masih error, errornya $e")
         }
     }
 }

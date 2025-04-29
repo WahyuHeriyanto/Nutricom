@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -29,6 +30,9 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import org.wahyuheriyanto.nutricom.R
 import org.wahyuheriyanto.nutricom.data.model.ScreeningItem
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
@@ -52,6 +56,9 @@ fun ScreeningLoading(){
 
 @Composable
 fun ScreeningItem(screening: ScreeningItem, navController: NavController) {
+    val formattedDate = remember(screening.timestamp) {
+        SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date(screening.timestamp))
+    }
 
     Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))
         .background(color = Color.White)
@@ -85,7 +92,7 @@ fun ScreeningItem(screening: ScreeningItem, navController: NavController) {
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = screening.timestamp.toString(),
+                    text = formattedDate,
                     fontFamily = FontFamily(
                         Font(
                             resId = R.font.inter_medium,

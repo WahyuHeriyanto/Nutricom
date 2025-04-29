@@ -33,7 +33,7 @@ import org.wahyuheriyanto.nutricom.viewmodel.DataViewModel
 import org.wahyuheriyanto.nutricom.viewmodel.deleteConsumtion
 
 @Composable
-fun DetailFoodScreen(navController: NavController, viewmodel: DataViewModel, id : String, imageUrl: String, name : String, calories :String,
+fun DetailFoodScreen(navController: NavController, viewmodel: DataViewModel, name : String, calories :String,
                      fat : String, saturatedFat : String, cholesterol : String, sugars : String, salt : String
 ) {
 
@@ -261,28 +261,8 @@ fun DetailFoodScreen(navController: NavController, viewmodel: DataViewModel, id 
                                 )
                             }
                         }
-                    }
 
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    //Tombol scan ulang
-                    Button(
-                        onClick = {
-                            deleteConsumtion(viewModelTwo = viewmodel, id)
-                            navController.navigate("nutrisiDetail")
-                            }
-
-                    ) {
-                        Text(text = "Hapus")
-                    }
-
-                }
-
+            }
             }
         }
     }

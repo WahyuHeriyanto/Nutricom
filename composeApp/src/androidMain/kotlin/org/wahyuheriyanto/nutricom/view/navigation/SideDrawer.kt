@@ -20,7 +20,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,6 +81,8 @@ fun performingLogout(navController: NavController, context: Context, viewModel: 
 @Composable
 fun SideDrawer(navController: NavController, viewModel: AuthViewModel) {
     val context = LocalContext.current
+    val name by viewModel.fullName.collectAsState()
+    val id by viewModel.uid.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -98,12 +106,13 @@ fun SideDrawer(navController: NavController, viewModel: AuthViewModel) {
             Column(
                 modifier = Modifier
                     .padding(start = 8.dp), // Add some spacing between the image and text
-                verticalArrangement = Arrangement.Center, // Center items vertically
-                horizontalAlignment = Alignment.CenterHorizontally // Center items horizontally
+                verticalArrangement = Arrangement.Center // Center items vertically
+//                horizontalAlignment = Alignment.CenterHorizontally // Center items horizontally
             ) {
-                Text(text = "Username:", fontSize = 18.sp)
+                Text(text = "$name", fontSize = 18.sp)
                 Spacer(modifier = Modifier.height(5.dp))
-                Text(text = "ID Number : ", fontSize = 16.sp)
+                val displayId = if (id.length > 12) id.take(12) else id
+                Text(text = "User#$displayId ", fontSize = 12.sp, color = Color.Gray)
             }
         }
 
@@ -131,7 +140,7 @@ fun SideDrawer(navController: NavController, viewModel: AuthViewModel) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.profile_icon),
+                imageVector = Icons.Default.ExitToApp,
                 contentDescription = "",
                 modifier = Modifier.size(24.dp)
             )

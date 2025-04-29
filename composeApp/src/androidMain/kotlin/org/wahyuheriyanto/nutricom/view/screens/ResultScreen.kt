@@ -292,6 +292,7 @@ fun ResultScreen(navController: NavController, viewModel: ScanViewModel
                         Button(onClick = {
                             foodInfo?.product?.let { product ->
                                 foodViewModel.addFoodEntry(
+                                    imageUrl = product.imageUrl ?: "Tidak tersedia",
                                     barcode = product.code ?: "Tidak tersedia",
                                     name = product.productName ?: "Tidak ditemukan",
                                     calories = product.nutriments?.calories ?: 0.0,

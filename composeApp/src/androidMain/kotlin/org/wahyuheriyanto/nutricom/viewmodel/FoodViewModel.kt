@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.util.Date
 
 data class FoodEntry(
+    val imageUrl: String,
     val barcode: String,
     val name: String,
     val calories: Double,
@@ -24,11 +25,11 @@ data class FoodEntry(
 class FoodViewModel : ViewModel() {
     private val db = FirebaseFirestore.getInstance()
 
-    fun addFoodEntry(barcode: String, name: String, calories: Double, sugars:Double, cholesterol: Double, fat: Double, salt: Double, saturatedFat: Double) {
+    fun addFoodEntry(imageUrl:String, barcode: String, name: String, calories: Double, sugars:Double, cholesterol: Double, fat: Double, salt: Double, saturatedFat: Double) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         // Buat objek data makanan
-        val foodEntry = FoodEntry(barcode, name, calories, sugars, cholesterol, fat, salt, saturatedFat)
+        val foodEntry = FoodEntry(imageUrl, barcode, name, calories, sugars, cholesterol, fat, salt, saturatedFat)
 
         // Simpan ke Firestore di path consume/{uid}/food/{auto_id}
         db.collection("consume").document(userId)
